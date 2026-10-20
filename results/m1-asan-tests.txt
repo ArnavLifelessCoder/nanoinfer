@@ -19,16 +19,16 @@ test 1
 1: [----------] Global test environment set-up.
 1: [----------] 5 tests from MappedFile
 1: [ RUN      ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths
-1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (11 ms)
+1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (13 ms)
 1: [ RUN      ] MappedFile.MissingFileFailsCleanly
-1: [       OK ] MappedFile.MissingFileFailsCleanly (7 ms)
+1: [       OK ] MappedFile.MissingFileFailsCleanly (8 ms)
 1: [ RUN      ] MappedFile.EmptyFileFailsCleanly
-1: [       OK ] MappedFile.EmptyFileFailsCleanly (9 ms)
+1: [       OK ] MappedFile.EmptyFileFailsCleanly (11 ms)
 1: [ RUN      ] MappedFile.DirectoryFailsCleanly
-1: [       OK ] MappedFile.DirectoryFailsCleanly (9 ms)
+1: [       OK ] MappedFile.DirectoryFailsCleanly (11 ms)
 1: [ RUN      ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile
-1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (11 ms)
-1: [----------] 5 tests from MappedFile (51 ms total)
+1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (14 ms)
+1: [----------] 5 tests from MappedFile (61 ms total)
 1:
 1: [----------] 1 test from Checksum
 1: [ RUN      ] Checksum.MatchesStandardVectorAndChaining
@@ -37,23 +37,23 @@ test 1
 1:
 1: [----------] 6 tests from LoaderTest
 1: [ RUN      ] LoaderTest.ReadsShapesStridesAndZeroCopyValues
-1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (10 ms)
+1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (13 ms)
 1: [ RUN      ] LoaderTest.RejectsEveryTruncationBoundary
-1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (1447 ms)
+1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (1584 ms)
 1: [ RUN      ] LoaderTest.RejectsBitCorruptionAtEveryByte
-1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (1743 ms)
+1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (2226 ms)
 1: [ RUN      ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum
-1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (66 ms)
+1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (69 ms)
 1: [ RUN      ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData
-1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (43 ms)
+1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (47 ms)
 1: [ RUN      ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames
-1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (29 ms)
-1: [----------] 6 tests from LoaderTest (3342 ms total)
+1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (30 ms)
+1: [----------] 6 tests from LoaderTest (3972 ms total)
 1:
 1: [----------] Global test environment tear-down
-1: [==========] 12 tests from 3 test suites ran. (3395 ms total)
+1: [==========] 12 tests from 3 test suites ran. (4035 ms total)
 1: [  PASSED  ] 12 tests.
-1/4 Test #1: unit .............................   Passed    8.73 sec
+1/4 Test #1: unit .............................   Passed    4.27 sec
 test 2
     Start 2: export_tiny
 
@@ -368,7 +368,7 @@ test 2
 2:     "weight_layout": "Conv1D [in, out]; embeddings [vocab/ctx, d_model]"
 2:   }
 2: }
-2/4 Test #2: export_tiny ......................   Passed   23.95 sec
+2/4 Test #2: export_tiny ......................   Passed   24.38 sec
 test 3
     Start 3: roundtrip_tiny
 
@@ -404,7 +404,7 @@ test 3
 3: PASS ln_f.weight shape=[16] crc32=f700a42a
 3: PASS ln_f.bias shape=[16] crc32=758d6336
 3: PASS all 28 tensor shapes, checksums, offsets and sizes
-3/4 Test #3: roundtrip_tiny ...................   Passed    4.20 sec
+3/4 Test #3: roundtrip_tiny ...................   Passed    1.94 sec
 test 4
     Start 4: loader_integration
 
@@ -420,8 +420,8 @@ test 4
 4: PASS clean error for trailing: model error: file length mismatch
 4: PASS clean error for corrupt: model error: tensor checksum mismatch
 4: PASS missing CLI argument
-4/4 Test #4: loader_integration ...............   Passed    6.39 sec
+4/4 Test #4: loader_integration ...............   Passed    8.08 sec
 
 100% tests passed, 0 tests failed out of 4
 
-Total Test time (real) =  43.29 sec
+Total Test time (real) =  38.69 sec

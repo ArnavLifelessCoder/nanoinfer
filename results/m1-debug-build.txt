@@ -1,2 +1,1 @@
-[1/2] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_loader.cpp.obj
-[2/2] Linking CXX executable nanoinfer_tests.exe
+ninja: no work to do.
