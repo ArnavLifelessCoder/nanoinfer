@@ -31,6 +31,7 @@ From the project directory in PowerShell:
 ```powershell
 . .\scripts\dev-shell.ps1
 uv sync --locked
+New-Item -ItemType Directory -Force build | Out-Null
 python -m pytest --basetemp=build/pytest -v
 python -m python.export --tiny --output build/fixtures/tiny.bin --golden build/fixtures/golden
 .\scripts\test.ps1 debug
@@ -59,6 +60,7 @@ export UV_CACHE_DIR="$PWD/.cache/uv"
 export HF_HOME="$PWD/.cache/huggingface"
 export TIKTOKEN_CACHE_DIR="$PWD/.cache/tiktoken"
 uv sync --locked
+mkdir -p build
 uv run python -m pytest --basetemp=build/pytest -v
 uv run python -m python.export --tiny --output build/fixtures/tiny.bin --golden build/fixtures/golden
 cmake --preset debug
