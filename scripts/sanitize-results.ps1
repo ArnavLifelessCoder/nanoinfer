@@ -8,7 +8,6 @@ $replacements = [ordered]@{
     $env:ProgramFiles = '<program-files>'
     '/home/runner/work/nanoinfer/nanoinfer' = '<project>'
     '/opt/hostedtoolcache' = '<hosted-toolcache>'
-    'D:\a\nanoinfer\nanoinfer' = '<project>'
     'C:\hostedtoolcache' = '<hosted-toolcache>'
     '/home/runner' = '<runner>'
     'D:\a' = '<runner>'
