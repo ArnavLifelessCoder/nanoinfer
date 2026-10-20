@@ -187,6 +187,26 @@ hidden element from masking an error in a small element. The original spec is
 unchanged; [the M2 review packet](docs/m2-review.md) records this clarification
 and links the full validation output.
 
+The owner withdrew the separate strict `1e-4` gate for `abs(torch) < 1024`;
+the reviewer identified the errors in channels 138/447/373 as float32
+accumulation. The subset remains visible in
+[Debug statistics](results/m2-debug-hidden-stats.json) and
+[ASan statistics](results/m2-asan-hidden-stats.json), alongside every requested
+error maximum, violation count and worst-element coordinate. Regenerate with:
+
+```powershell
+python scripts/hidden_error_stats.py --golden golden --captures build/debug/pretrained --output results/m2-debug-hidden-stats.json
+python scripts/hidden_error_stats.py --golden golden --captures build/asan/pretrained --output results/m2-asan-hidden-stats.json
+```
+
+`golden_negative` requires the default forward to pass a fixed tiny stress
+fixture, then rejects two separately compiled test-only variants: exact erf
+GELU and LayerNorm epsilon `1e-6`. The fixture scales MLP weights to exercise
+GELU away from zero. Both variants must fail the same approved numerical gate
+on every prompt. The switches do not enter the normal library or CLI.
+M4 will compare the complete optimized forward against the scalar reference
+as well as PyTorch, since layer 11 already lies close to the tolerance bound.
+
 CI builds Debug and ASan on Windows and Linux and runs formatting and Python lint
 checks. CI uses a seeded tiny GPT-2 so weights are neither committed nor downloaded
 for each job. Its golden test compares native logits, block states and 32 greedy

@@ -43,3 +43,29 @@ element, including final LayerNorm, require
 strict maximum absolute error below `1e-3`, and greedy IDs must match exactly.
 This addresses float32 spacing at large pretrained hidden activations; it is
 not a tensor-wide relative allowance. The written project spec is unchanged.
+
+The owner withdrew the additional strict `1e-4` requirement for elements with
+`abs(torch) < 1024`. The reviewer traced the larger errors in channels 138, 447
+and 373 to float32 accumulation rather than an implementation error. Those
+elements still use the approved combined bound. Their subset maximum remains
+visible in the statistics; it is not a separate acceptance gate.
+
+`scripts/hidden_error_stats.py` records every block and final LayerNorm for each
+prompt: absolute error, the below-1024 subset maximum, relative error for
+`abs(torch) >= 1`, the count above absolute `1e-4`, and worst-error coordinates
+with the reference magnitude. Coordinates are zero-based. A separate entry
+identifies the worst element under the combined tolerance.
+
+`golden_negative` runs the normal reference and two separately compiled
+test-only variants, substituting exact erf GELU and LayerNorm epsilon `1e-6`.
+A fixed seed-42 tiny model uses MLP input weights multiplied by 20 and output
+weights by 5 to exercise GELU away from its nearly linear region. PyTorch
+produces fresh goldens with the correct activation and epsilon. The normal
+forward must pass; both altered forwards must fail the same numerical gate
+on every prompt. Test switches are private to the variant libraries and are
+absent from the normal library and CLI.
+
+For M4, compare the complete optimized forward against this scalar reference
+as well as PyTorch. Layer 11 is already close to the combined tolerance bound,
+so PyTorch-only checks do not adequately isolate numerical drift introduced
+by each optimization.

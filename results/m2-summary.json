@@ -11,7 +11,7 @@
   "runs": {
     "debug": {
       "report": "results/m2-debug-pretrained.json",
-      "executable_sha256": "ee245beda3958b0119a5f2f4a5a42e84802e176ad2d5338c99e44cced5c26291",
+      "executable_sha256": "2c2029cabed671a386dbcfb0dd41a97b4e08d1d87497bdbf1d211be69c9eb550",
       "prompts": [
         {
           "file": "prompt_0.npz",
@@ -140,7 +140,7 @@
     },
     "asan": {
       "report": "results/m2-asan-pretrained.json",
-      "executable_sha256": "1c7dbc0a64e47098ac238e894cbc35829bcfb11da5f562ae5369c15029082557",
+      "executable_sha256": "ea2d2cfc89c9e39cdf6e2334567b51cbb9ca1160f022cf0b31a731cd6c429856",
       "prompts": [
         {
           "file": "prompt_0.npz",

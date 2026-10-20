@@ -32,14 +32,21 @@ exceeds the original absolute bound. The optional
 `results/m2-hidden-precision-diagnostic.json`; it is not an acceptance test.
 Runtime arithmetic remains float32.
 
+The owner withdrew condition 3, the strict absolute `1e-4` gate for
+`abs(torch) < 1024`. The reviewer identified the errors in channels 138/447/373
+as float32 accumulation, not a forward-pass bug. These elements remain subject
+to the combined elementwise bound; the below-1024 statistic is diagnostic.
+
 | Acceptance criterion | Status and measured evidence |
 |---|---|
 | Every pretrained prompt's logits | Met in Debug and ASan; maximum absolute difference `0.00018310546875 < 0.001` |
 | Every complete block state and final LayerNorm | Met under the approved combined bound; largest elementwise error/bound ratio `0.943782678711 <= 1` |
 | Greedy generation | Met in Debug and ASan; all 32 IDs match exactly for each of the three prompts |
-| Local tests | Met; CTest 7/7 in each preset, GoogleTest 20/20 at seeds 42 and 1234, Python 30/30 |
+| Local tests | Met; CTest 8/8 in each preset, GoogleTest 21/21 at seeds 42 and 1234, Python 36/36 |
 | CI tiny-model golden check | Met in Windows and Ubuntu Debug/ASan, including all 32 greedy IDs |
 | M1 follow-ups | Met; schema rejection and temporary-copy sanitizer regressions pass |
+| Condition 2, detailed statistics | Met; every prompt's 12 blocks and final_ln have all requested fields, for both local presets |
+| Condition 4, negative forward tests | Met; correct tiny forward passes and both wrong-activation/epsilon variants fail on every prompt; runs in CTest and CI |
 
 Maximum absolute hidden error is `0.00048828125`. This exceeds the original
 absolute-only limit; acceptance uses the explicitly approved elementwise bound.
@@ -60,9 +67,12 @@ The complete local output is committed, with machine-specific paths redacted:
 | Pretrained Debug | [full output](../results/m2-debug-pretrained.txt), [all numerical errors](../results/m2-debug-pretrained.json) |
 | Pretrained ASan | [full output](../results/m2-asan-pretrained.txt), [all numerical errors](../results/m2-asan-pretrained.json) |
 | Aggregated pretrained acceptance and actual greedy IDs | [summary](../results/m2-summary.json) |
+| Per-prompt/layer hidden statistics | [Debug](../results/m2-debug-hidden-stats.json), [ASan](../results/m2-asan-hidden-stats.json) |
+| Negative forward tests | [Debug report](../results/m2-debug-negative.json), [ASan report](../results/m2-asan-negative.json); full output in the CTest logs above |
+| Negative-test control | [test fails when both mutant paths point to the normal executable](../results/m2-negative-control.txt) |
 | Sanitizer test isolation | [original failure](../results/m2-sanitizer-isolation-regression.txt), [passing regression](../results/m2-sanitizer-isolation.txt) |
 | Tensor shape validation | [original failure](../results/m2-schema-regression.txt), [passing regression](../results/m2-schema-tests.txt) |
-| GELU cubic rounding | [original failure](../results/m2-gelu-order-regression.txt), [passing operations](../results/m2-reference-ops-tests.txt) |
+| GELU and attention | [original cubic-rounding failure](../results/m2-gelu-order-regression.txt), [current float64 GELU and nonzero-Q/K scale tests](../results/m2-reference-ops-tests.txt) |
 
 `scripts/test-m2.ps1 -Preset debug -Pretrained` and the corresponding `asan`
 command reproduce the local suite. Run `python scripts/summarize_m2.py` after
@@ -72,21 +82,45 @@ golden-file and executable SHA-256 values. These are correctness runs, not
 benchmarks. Each native process has one thread; separate golden cases may run
 as independent processes.
 
-The implementation at `1a9f8a5` passed all five jobs in
-[run 39430228523](https://github.com/ArnavLifelessCoder/nanoinfer/actions/runs/39430228523):
+The preset script also runs `scripts/hidden_error_stats.py`. Statistics use
+float64 subtraction of the saved float32 tensors and include maximum absolute
+error, maximum absolute error where `abs(torch) < 1024`, maximum relative error
+where `abs(torch) >= 1`, count of errors strictly greater than `1e-4`, and the
+zero-based position, channel and `abs(torch)` of the largest absolute error.
+Empty subsets have a null maximum and a zero count; ties choose the first
+row-major element. The highest combined-tolerance-ratio element is recorded
+separately, along with capture and golden hashes.
+
+`golden_negative` uses the seed-42 tiny model with MLP input weights scaled by
+20 and output weights by 5. This fixed fixture exercises GELU's curvature;
+the unscaled tiny initialization keeps activations too close to zero to
+reliably distinguish erf from tanh at the approved tolerance. Fresh PyTorch
+goldens use the correct defaults. Normal C++ forward must pass on every
+prompt; both deliberately altered forwards must fail on every prompt. Native
+process failures are errors, not successful negative checks. The switches
+`NANOINFER_TEST_EXACT_GELU` and `NANOINFER_TEST_LAYERNORM_EPS` are private to
+separate libraries under `BUILD_TESTING`; neither changes the normal library.
+The `FAIL prompt` lines inside `golden_negative` are expected numeric
+rejections, followed by the test's overall passing result.
+
+The reviewed fixes at `f81aa11` passed all five jobs in
+[run 39435515677](https://github.com/ArnavLifelessCoder/nanoinfer/actions/runs/39435515677):
 Windows and Ubuntu Debug/ASan, plus lint. Ubuntu ASan includes UBSan with
 `-fno-sanitize-recover=all` and the deliberate-overflow failure probe.
+All four test jobs run `golden_negative`.
 The delivery message identifies the final commit and its gating run after the
 evidence and documentation commit. The earlier implementation run above is
 not a substitute for that final gate. TSan is skipped because M2 has no runtime
 worker threads.
 
-One initial local ASan invocation stalled in the malformed-shape subprocess
+An earlier local ASan invocation stalled in the malformed-shape subprocess
 without a sanitizer diagnostic. A fresh invocation rejected that same file
-correctly. The stalled run was stopped and the complete suite rerun with
-`ctest --preset asan --verbose --no-tests=error --timeout 180`; all seven checks
-passed. The committed ASan output is that completed rerun. Its pretrained
-generation check and alternate-seed unit run also completed successfully.
+correctly, and a complete rerun passed. The current committed output is a fresh
+eight-test run including the added negative golden test, followed by pretrained
+generation and alternate-seed unit checks. Rebuilding initially encountered a
+Windows image-file lock from that old process. The old executable was moved
+aside inside the ignored ASan build folder and the link retried; source code
+did not need a workaround.
 
 ## Files changed
 
@@ -97,7 +131,8 @@ generation check and alternate-seed unit run also completed successfully.
 | Correctness CLI | `src/tools/reference.hpp`, `src/tools/reference.cpp`, `src/platform/reference_main_windows.cpp`, `src/platform/reference_main_posix.cpp` |
 | Loader schema and inspector | `include/nanoinfer/model.hpp`, `src/model/loader.cpp`, `src/tools/inspect.hpp`, `src/tools/inspect.cpp`, both `src/platform/inspect_main_*.cpp` |
 | Schema and format tests | `tests/model_schema.py`, `tests/test_loader.cpp`, `tests/loader_integration.py` |
-| Forward comparison and boundary tests | `tests/golden_forward.py`, `tests/test_golden_comparison.py`, `tests/reference_contract.py` |
+| Forward comparison and boundary tests | `tests/golden_forward.py`, `tests/golden_negative.py`, `tests/test_golden_comparison.py`, `tests/reference_contract.py` |
+| Detailed numerical statistics | `scripts/hidden_error_stats.py`, `tests/test_hidden_error_stats.py` |
 | Test integration and reproduction | `CMakeLists.txt`, `tests/test_sanitize_results.ps1`, `scripts/test-m2.ps1`, `scripts/summarize_m2.py`, `scripts/check_hidden_precision.py` |
 | Documentation and evidence | `README.md`, `docs/gpt2-contract.md`, `golden/README.md`, this packet, `results/m2-*` |
 
@@ -118,3 +153,7 @@ generation check and alternate-seed unit run also completed successfully.
 - No optimized kernels exist yet, so no optimized/reference differential pair
   or GEMM performance claim is made. KV cache, sampling, threads, int8,
   roofline analysis and performance benchmarks remain later milestones.
+- M4 must compare the complete optimized forward against the scalar reference
+  and PyTorch after each optimization. Layer 11's high tolerance ratio makes
+  this an explicit requirement, not only a kernel-level differential check.
+- Review follow-up commits consistently use the `nanoinfer:` prefix.

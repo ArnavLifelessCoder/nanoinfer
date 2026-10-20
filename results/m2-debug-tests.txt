@@ -15,20 +15,20 @@ test 1
 1: Working Directory: <project>/build/debug
 1: Test timeout computed to be: 1500
 1: Random seed: 42
-1: [==========] Running 20 tests from 4 test suites.
+1: [==========] Running 21 tests from 4 test suites.
 1: [----------] Global test environment set-up.
 1: [----------] 5 tests from MappedFile
 1: [ RUN      ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths
-1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (16 ms)
+1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (45 ms)
 1: [ RUN      ] MappedFile.MissingFileFailsCleanly
-1: [       OK ] MappedFile.MissingFileFailsCleanly (10 ms)
+1: [       OK ] MappedFile.MissingFileFailsCleanly (24 ms)
 1: [ RUN      ] MappedFile.EmptyFileFailsCleanly
-1: [       OK ] MappedFile.EmptyFileFailsCleanly (15 ms)
+1: [       OK ] MappedFile.EmptyFileFailsCleanly (37 ms)
 1: [ RUN      ] MappedFile.DirectoryFailsCleanly
-1: [       OK ] MappedFile.DirectoryFailsCleanly (14 ms)
+1: [       OK ] MappedFile.DirectoryFailsCleanly (39 ms)
 1: [ RUN      ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile
-1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (19 ms)
-1: [----------] 5 tests from MappedFile (77 ms total)
+1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (66 ms)
+1: [----------] 5 tests from MappedFile (214 ms total)
 1:
 1: [----------] 1 test from Checksum
 1: [ RUN      ] Checksum.MatchesStandardVectorAndChaining
@@ -37,22 +37,22 @@ test 1
 1:
 1: [----------] 6 tests from LoaderTest
 1: [ RUN      ] LoaderTest.ReadsShapesStridesAndZeroCopyValues
-1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (16 ms)
+1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (37 ms)
 1: [ RUN      ] LoaderTest.RejectsEveryTruncationBoundary
-1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (2194 ms)
+1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (5862 ms)
 1: [ RUN      ] LoaderTest.RejectsBitCorruptionAtEveryByte
-1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (2443 ms)
+1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (4294 ms)
 1: [ RUN      ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum
-1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (85 ms)
+1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (158 ms)
 1: [ RUN      ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData
-1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (55 ms)
+1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (103 ms)
 1: [ RUN      ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames
-1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (42 ms)
-1: [----------] 6 tests from LoaderTest (4837 ms total)
+1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (67 ms)
+1: [----------] 6 tests from LoaderTest (10524 ms total)
 1:
-1: [----------] 8 tests from ReferenceOps
+1: [----------] 9 tests from ReferenceOps
 1: [ RUN      ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage
-1: [       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (3 ms)
+1: [       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (2 ms)
 1: [ RUN      ] ReferenceOps.EmbeddingsBiasAndResidual
 1: [       OK ] ReferenceOps.EmbeddingsBiasAndResidual (0 ms)
 1: [ RUN      ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon
@@ -61,18 +61,20 @@ test 1
 1: [       OK ] ReferenceOps.GeluUsesTanhApproximation (0 ms)
 1: [ RUN      ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues
 1: [       OK ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues (0 ms)
-1: [ RUN      ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling
-1: [       OK ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling (1 ms)
+1: [ RUN      ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange
+1: [       OK ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange (1 ms)
+1: [ RUN      ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead
+1: [       OK ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead (0 ms)
 1: [ RUN      ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate
 1: [       OK ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate (0 ms)
 1: [ RUN      ] ReferenceOps.InvalidShapesFailBeforeIndexing
 1: [       OK ] ReferenceOps.InvalidShapesFailBeforeIndexing (0 ms)
-1: [----------] 8 tests from ReferenceOps (7 ms total)
+1: [----------] 9 tests from ReferenceOps (6 ms total)
 1:
 1: [----------] Global test environment tear-down
-1: [==========] 20 tests from 4 test suites ran. (4923 ms total)
-1: [  PASSED  ] 20 tests.
-1/7 Test #1: unit .............................   Passed    5.06 sec
+1: [==========] 21 tests from 4 test suites ran. (10745 ms total)
+1: [  PASSED  ] 21 tests.
+1/8 Test #1: unit .............................   Passed   13.78 sec
 test 2
     Start 2: export_tiny
 
@@ -387,7 +389,7 @@ test 2
 2:     "weight_layout": "Conv1D [in, out]; embeddings [vocab/ctx, d_model]"
 2:   }
 2: }
-2/7 Test #2: export_tiny ......................   Passed   30.70 sec
+2/8 Test #2: export_tiny ......................   Passed   17.93 sec
 test 3
     Start 3: roundtrip_tiny
 
@@ -423,7 +425,7 @@ test 3
 3: PASS ln_f.weight shape=[16] crc32=f700a42a
 3: PASS ln_f.bias shape=[16] crc32=758d6336
 3: PASS all 28 tensor shapes, checksums, offsets and sizes
-3/7 Test #3: roundtrip_tiny ...................   Passed    2.77 sec
+3/8 Test #3: roundtrip_tiny ...................   Passed    3.32 sec
 test 4
     Start 4: loader_integration
 
@@ -439,7 +441,7 @@ test 4
 4: PASS clean error for trailing: model error: file length mismatch
 4: PASS clean error for corrupt: model error: tensor checksum mismatch
 4: PASS missing CLI argument
-4/7 Test #4: loader_integration ...............   Passed    3.73 sec
+4/8 Test #4: loader_integration ...............   Passed    2.90 sec
 test 5
     Start 5: model_schema
 
@@ -508,7 +510,7 @@ test 5
 5: PASS reject out-of-range layer index
 5: PASS reject config width mismatch
 5: PASS reject huge header layer count
-5/7 Test #5: model_schema .....................   Passed   12.82 sec
+5/8 Test #5: model_schema .....................   Passed   11.22 sec
 test 6
     Start 6: golden_tiny
 
@@ -525,7 +527,7 @@ test 6
 6: PASS generated 32 tokens
 6: PASS prompt_2.npz: {'logits': 4.470348358154297e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 7.450580596923828e-09}; greedy_match=True
 6: PASS all golden logits, hidden states and greedy continuations
-6/7 Test #6: golden_tiny ......................   Passed    2.34 sec
+6/8 Test #6: golden_tiny ......................   Passed    4.55 sec
 test 7
     Start 7: reference_contract
 
@@ -544,8 +546,42 @@ test 7
 7: PASS reject negative-count
 7: PASS reject count-overflow
 7: PASS greedy chooses lowest ID on ties, emits requested count and has no EOS stop
-7/7 Test #7: reference_contract ...............   Passed   39.85 sec
+7/8 Test #7: reference_contract ...............   Passed   22.61 sec
+test 8
+    Start 8: golden_negative
 
-100% tests passed, 0 tests failed out of 7
+8: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.golden_negative" "--executable" "<project>/build/debug/gpt2ref.exe" "--erf-executable" "<project>/build/debug/gpt2ref_test_exact_gelu.exe" "--epsilon-executable" "<project>/build/debug/gpt2ref_test_layernorm_eps.exe" "--directory" "<project>/build/debug/negative-golden" "--report" "<project>/build/debug/negative-report.json"
+8: Working Directory: <project>
+8: Test timeout computed to be: 1500
+8: PASS forward, positions=1; generating 0 tokens by full-prefix recomputation
+8: PASS prompt_0.npz: {'logits': 4.470348358154297e-08, 'final_ln': 4.470348358154297e-07, 'layer_0': 1.341104507446289e-07, 'layer_1': 2.384185791015625e-07}; greedy_match=True
+8: PASS forward, positions=2; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: PASS prompt_1.npz: {'logits': 5.960464477539063e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 2.980232238769531e-07, 'layer_1': 3.5762786865234375e-07}; greedy_match=True
+8: PASS forward, positions=3; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: PASS prompt_2.npz: {'logits': 6.705522537231445e-08, 'final_ln': 7.152557373046875e-07, 'layer_0': 2.384185791015625e-07, 'layer_1': 3.5762786865234375e-07}; greedy_match=True
+8: PASS forward, positions=1; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: FAIL prompt_0.npz: {'logits': 5.196034908294678e-05, 'final_ln': 0.00042557716369628906, 'layer_0': 0.00012689828872680664, 'layer_1': 0.0002027750015258789}; greedy_match=True
+8: PASS forward, positions=2; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: FAIL prompt_1.npz: {'logits': 8.836761116981506e-05, 'final_ln': 0.0007026195526123047, 'layer_0': 0.00017392635345458984, 'layer_1': 0.0005272030830383301}; greedy_match=True
+8: PASS forward, positions=3; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: FAIL prompt_2.npz: {'logits': 4.2982399463653564e-05, 'final_ln': 0.00029850006103515625, 'layer_0': 0.00017654895782470703, 'layer_1': 0.00034880638122558594}; greedy_match=True
+8: PASS forward, positions=1; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: FAIL prompt_0.npz: {'logits': 0.0005234293639659882, 'final_ln': 0.0034945979714393616, 'layer_0': 0.003926396369934082, 'layer_1': 0.004076361656188965}; greedy_match=True
+8: PASS forward, positions=2; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: FAIL prompt_1.npz: {'logits': 0.001355990068987012, 'final_ln': 0.01858454942703247, 'layer_0': 0.011838257312774658, 'layer_1': 0.014262378215789795}; greedy_match=True
+8: PASS forward, positions=3; generating 0 tokens by full-prefix recomputation
+8: PASS generated 0 tokens
+8: FAIL prompt_2.npz: {'logits': 0.0018432000651955605, 'final_ln': 0.017105072736740112, 'layer_0': 0.012513160705566406, 'layer_1': 0.01068204641342163}; greedy_match=True
+8: PASS default forward; golden comparison rejects exact erf GELU and LayerNorm eps 1e-6
+8/8 Test #8: golden_negative ..................   Passed   22.91 sec
 
-Total Test time (real) =  97.35 sec
+100% tests passed, 0 tests failed out of 8
+
+Total Test time (real) =  99.33 sec

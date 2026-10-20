@@ -1,18 +1,18 @@
 Random seed: 1234
-[==========] Running 20 tests from 4 test suites.
+[==========] Running 21 tests from 4 test suites.
 [----------] Global test environment set-up.
 [----------] 5 tests from MappedFile
 [ RUN      ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths
-[       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (21 ms)
+[       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (47 ms)
 [ RUN      ] MappedFile.MissingFileFailsCleanly
-[       OK ] MappedFile.MissingFileFailsCleanly (12 ms)
+[       OK ] MappedFile.MissingFileFailsCleanly (34 ms)
 [ RUN      ] MappedFile.EmptyFileFailsCleanly
-[       OK ] MappedFile.EmptyFileFailsCleanly (17 ms)
+[       OK ] MappedFile.EmptyFileFailsCleanly (89 ms)
 [ RUN      ] MappedFile.DirectoryFailsCleanly
-[       OK ] MappedFile.DirectoryFailsCleanly (16 ms)
+[       OK ] MappedFile.DirectoryFailsCleanly (73 ms)
 [ RUN      ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile
-[       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (23 ms)
-[----------] 5 tests from MappedFile (92 ms total)
+[       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (93 ms)
+[----------] 5 tests from MappedFile (340 ms total)
 
 [----------] 1 test from Checksum
 [ RUN      ] Checksum.MatchesStandardVectorAndChaining
@@ -21,20 +21,20 @@ Random seed: 1234
 
 [----------] 6 tests from LoaderTest
 [ RUN      ] LoaderTest.ReadsShapesStridesAndZeroCopyValues
-[       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (20 ms)
+[       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (37 ms)
 [ RUN      ] LoaderTest.RejectsEveryTruncationBoundary
-[       OK ] LoaderTest.RejectsEveryTruncationBoundary (2903 ms)
+[       OK ] LoaderTest.RejectsEveryTruncationBoundary (4858 ms)
 [ RUN      ] LoaderTest.RejectsBitCorruptionAtEveryByte
-[       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (2643 ms)
+[       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (5545 ms)
 [ RUN      ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum
-[       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (93 ms)
+[       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (193 ms)
 [ RUN      ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData
-[       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (63 ms)
+[       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (116 ms)
 [ RUN      ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames
-[       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (37 ms)
-[----------] 6 tests from LoaderTest (5762 ms total)
+[       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (71 ms)
+[----------] 6 tests from LoaderTest (10826 ms total)
 
-[----------] 8 tests from ReferenceOps
+[----------] 9 tests from ReferenceOps
 [ RUN      ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage
 [       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (3 ms)
 [ RUN      ] ReferenceOps.EmbeddingsBiasAndResidual
@@ -45,14 +45,16 @@ Random seed: 1234
 [       OK ] ReferenceOps.GeluUsesTanhApproximation (0 ms)
 [ RUN      ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues
 [       OK ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues (0 ms)
-[ RUN      ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling
-[       OK ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling (1 ms)
+[ RUN      ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange
+[       OK ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange (1 ms)
+[ RUN      ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead
+[       OK ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead (0 ms)
 [ RUN      ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate
 [       OK ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate (0 ms)
 [ RUN      ] ReferenceOps.InvalidShapesFailBeforeIndexing
 [       OK ] ReferenceOps.InvalidShapesFailBeforeIndexing (0 ms)
-[----------] 8 tests from ReferenceOps (10 ms total)
+[----------] 9 tests from ReferenceOps (9 ms total)
 
 [----------] Global test environment tear-down
-[==========] 20 tests from 4 test suites ran. (5867 ms total)
-[  PASSED  ] 20 tests.
+[==========] 21 tests from 4 test suites ran. (11178 ms total)
+[  PASSED  ] 21 tests.

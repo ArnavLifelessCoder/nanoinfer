@@ -1,0 +1,203 @@
+{
+  "fixture": "seed 42 tiny GPT-2; MLP fc weights x20, projection weights x5",
+  "reason": "exercise nonlinear GELU curvature rather than only its near-zero regime",
+  "reference_torch": "2.11.0+cu128",
+  "tolerance": {
+    "logits_max_abs_exclusive": 0.001,
+    "hidden_atol": 0.0001,
+    "hidden_rtol": 1e-06
+  },
+  "default_passed": true,
+  "rejected_on_every_prompt": {
+    "exact_erf_gelu": true,
+    "layer_norm_eps_1e_6": true
+  },
+  "runs": {
+    "default": [
+      {
+        "file": "prompt_0.npz",
+        "max_abs_diff": {
+          "logits": 4.470348358154297e-08,
+          "final_ln": 4.470348358154297e-07,
+          "layer_0": 1.341104507446289e-07,
+          "layer_1": 2.384185791015625e-07
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 0.004463089290220443,
+          "layer_0": 0.0013408482030006575,
+          "layer_1": 0.002384170216020603
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": []
+      },
+      {
+        "file": "prompt_1.npz",
+        "max_abs_diff": {
+          "logits": 5.960464477539063e-08,
+          "final_ln": 4.76837158203125e-07,
+          "layer_0": 2.980232238769531e-07,
+          "layer_1": 3.5762786865234375e-07
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 0.004704216573249471,
+          "layer_0": 0.002959884549726817,
+          "layer_1": 0.003541218779709276
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": []
+      },
+      {
+        "file": "prompt_2.npz",
+        "max_abs_diff": {
+          "logits": 6.705522537231445e-08,
+          "final_ln": 7.152557373046875e-07,
+          "layer_0": 2.384185791015625e-07,
+          "layer_1": 3.5762786865234375e-07
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 0.0070740779462584065,
+          "layer_0": 0.0023698998128942176,
+          "layer_1": 0.0035722444763196344
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": []
+      }
+    ],
+    "exact_erf_gelu": [
+      {
+        "file": "prompt_0.npz",
+        "max_abs_diff": {
+          "logits": 5.196034908294678e-05,
+          "final_ln": 0.00042557716369628906,
+          "layer_0": 0.00012689828872680664,
+          "layer_1": 0.0002027750015258789
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 4.218232229440568,
+          "layer_0": 1.2639172186820666,
+          "layer_1": 2.016038026957273
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": [
+          "final_ln: max elementwise tolerance ratio 4.218232229440568",
+          "layer_0: max elementwise tolerance ratio 1.2639172186820666",
+          "layer_1: max elementwise tolerance ratio 2.016038026957273"
+        ]
+      },
+      {
+        "file": "prompt_1.npz",
+        "max_abs_diff": {
+          "logits": 8.836761116981506e-05,
+          "final_ln": 0.0007026195526123047,
+          "layer_0": 0.00017392635345458984,
+          "layer_1": 0.0005272030830383301
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 6.954465734715476,
+          "layer_0": 1.731029434715781,
+          "layer_1": 5.247064185204428
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": [
+          "final_ln: max elementwise tolerance ratio 6.954465734715476",
+          "layer_0: max elementwise tolerance ratio 1.731029434715781",
+          "layer_1: max elementwise tolerance ratio 5.247064185204428"
+        ]
+      },
+      {
+        "file": "prompt_2.npz",
+        "max_abs_diff": {
+          "logits": 4.2982399463653564e-05,
+          "final_ln": 0.00029850006103515625,
+          "layer_0": 0.00017654895782470703,
+          "layer_1": 0.00034880638122558594
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 2.9573722678305527,
+          "layer_0": 1.747891460170197,
+          "layer_1": 3.4442816011018236
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": [
+          "final_ln: max elementwise tolerance ratio 2.9573722678305527",
+          "layer_0: max elementwise tolerance ratio 1.747891460170197",
+          "layer_1: max elementwise tolerance ratio 3.4442816011018236"
+        ]
+      }
+    ],
+    "layer_norm_eps_1e_6": [
+      {
+        "file": "prompt_0.npz",
+        "max_abs_diff": {
+          "logits": 0.0005234293639659882,
+          "final_ln": 0.0034945979714393616,
+          "layer_0": 0.003926396369934082,
+          "layer_1": 0.004076361656188965
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 34.92939109049608,
+          "layer_0": 38.85862232268286,
+          "layer_1": 40.174260539836794
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": [
+          "final_ln: max elementwise tolerance ratio 34.92939109049608",
+          "layer_0: max elementwise tolerance ratio 38.85862232268286",
+          "layer_1: max elementwise tolerance ratio 40.174260539836794"
+        ]
+      },
+      {
+        "file": "prompt_1.npz",
+        "max_abs_diff": {
+          "logits": 0.001355990068987012,
+          "final_ln": 0.01858454942703247,
+          "layer_0": 0.011838257312774658,
+          "layer_1": 0.014262378215789795
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 185.2568933157946,
+          "layer_0": 117.52382122346351,
+          "layer_1": 142.12653717819083
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": [
+          "logits: max abs diff 0.001355990068987012 >= 1e-3",
+          "final_ln: max elementwise tolerance ratio 185.2568933157946",
+          "layer_0: max elementwise tolerance ratio 117.52382122346351",
+          "layer_1: max elementwise tolerance ratio 142.12653717819083"
+        ]
+      },
+      {
+        "file": "prompt_2.npz",
+        "max_abs_diff": {
+          "logits": 0.0018432000651955605,
+          "final_ln": 0.017105072736740112,
+          "layer_0": 0.012513160705566406,
+          "layer_1": 0.01068204641342163
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 170.26792384082913,
+          "layer_0": 123.99091661642927,
+          "layer_1": 106.02848697292885
+        },
+        "greedy_tokens": 0,
+        "greedy_match": true,
+        "failures": [
+          "logits: max abs diff 0.0018432000651955605 >= 1e-3",
+          "final_ln: max elementwise tolerance ratio 170.26792384082913",
+          "layer_0: max elementwise tolerance ratio 123.99091661642927",
+          "layer_1: max elementwise tolerance ratio 106.02848697292885"
+        ]
+      }
+    ]
+  },
+  "passed": true
+}
