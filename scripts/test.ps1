@@ -22,5 +22,6 @@ try {
     }
 }
 finally {
+    & (Join-Path $PSScriptRoot 'sanitize-results.ps1')
     Pop-Location
 }

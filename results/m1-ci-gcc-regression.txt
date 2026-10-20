@@ -16,8 +16,8 @@
 2026-10-20T12:12:50.7752697Z ##[group]Runner Image
 2026-10-20T12:12:50.7753779Z Image: ubuntu-24.04
 2026-10-20T12:12:50.7754742Z Version: 20261012.334.1
-2026-10-20T12:12:50.7757071Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
-2026-10-20T12:12:50.7760158Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
+2026-10-20T12:12:50.7757071Z Included Software: http<drive>//github.com/actions/runner-images/blob/ubuntu24/20261012.334/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-20T12:12:50.7760158Z Image Release: http<drive>//github.com/actions/runner-images/releases/tag/ubuntu24%2F20261012.334
 2026-10-20T12:12:50.7761865Z ##[endgroup]
 2026-10-20T12:12:50.7763920Z ##[group]GITHUB_TOKEN Permissions
 2026-10-20T12:12:50.7767027Z Contents: read
@@ -57,7 +57,7 @@
 2026-10-20T12:12:51.9088898Z [command]/usr/bin/git version
 2026-10-20T12:12:51.9160366Z git version 2.55.0
 2026-10-20T12:12:51.9188618Z ##[endgroup]
-2026-10-20T12:12:51.9205724Z Temporarily overriding HOME='/home/runner/work/_temp/b624595c-9bef-4340-ad9c-f3b82a644910' before making global git config changes
+2026-10-20T12:12:51.9205724Z Temporarily overriding HOME='<runner>/work/_temp/b624595c-9bef-4340-ad9c-f3b82a644910' before making global git config changes
 2026-10-20T12:12:51.9209195Z Adding repository directory to the temporary git global config as a safe directory
 2026-10-20T12:12:51.9215177Z [command]/usr/bin/git config --global --add safe.directory <project>
 2026-10-20T12:12:51.9271301Z Deleting the contents of '<project>'
@@ -77,7 +77,7 @@
 2026-10-20T12:12:51.9409141Z hint:
 2026-10-20T12:12:51.9410365Z hint: Disable this message with "git config set advice.defaultBranchName false"
 2026-10-20T12:12:51.9412271Z Initialized empty Git repository in <project>/.git/
-2026-10-20T12:12:51.9423430Z [command]/usr/bin/git remote add origin https://github.com/ArnavLifelessCoder/nanoinfer
+2026-10-20T12:12:51.9423430Z [command]/usr/bin/git remote add origin http<drive>//github.com/ArnavLifelessCoder/nanoinfer
 2026-10-20T12:12:51.9479764Z ##[endgroup]
 2026-10-20T12:12:51.9481195Z ##[group]Disabling automatic garbage collection
 2026-10-20T12:12:51.9483784Z [command]/usr/bin/git config --local gc.auto 0
@@ -86,14 +86,14 @@
 2026-10-20T12:12:51.9531841Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
 2026-10-20T12:12:51.9569264Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
 2026-10-20T12:12:51.9964629Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-10-20T12:12:52.0013511Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-20T12:12:52.0013511Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.http<drive>//github.com/.extraheader' || :"
 2026-10-20T12:12:52.0265546Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
 2026-10-20T12:12:52.0307413Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
-2026-10-20T12:12:52.0546451Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-20T12:12:52.0546451Z [command]/usr/bin/git config --local http.http<drive>//github.com/.extraheader AUTHORIZATION: basic ***
 2026-10-20T12:12:52.0591220Z ##[endgroup]
 2026-10-20T12:12:52.0592628Z ##[group]Fetching the repository
 2026-10-20T12:12:52.0602373Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +e4ad4f716ecb98faf2c74e892dece74582089096:refs/remotes/origin/m1
-2026-10-20T12:12:52.3144112Z From https://github.com/ArnavLifelessCoder/nanoinfer
+2026-10-20T12:12:52.3144112Z From http<drive>//github.com/ArnavLifelessCoder/nanoinfer
 2026-10-20T12:12:52.3145815Z  * [new ref]         e4ad4f716ecb98faf2c74e892dece74582089096 -> origin/m1
 2026-10-20T12:12:52.3152878Z ##[endgroup]
 2026-10-20T12:12:52.3155608Z ##[group]Determining the checkout info
@@ -125,7 +125,7 @@
 2026-10-20T12:12:52.5799354Z with:
 2026-10-20T12:12:52.5799920Z   activate-environment: false
 2026-10-20T12:12:52.5800597Z   working-directory: <project>
-2026-10-20T12:12:52.5801345Z   server-url: https://github.com
+2026-10-20T12:12:52.5801345Z   server-url: http<drive>//github.com
 2026-10-20T12:12:52.5808252Z   github-token: ***
 2026-10-20T12:12:52.5809180Z   enable-cache: auto
 2026-10-20T12:12:52.5810889Z   cache-dependency-glob: **/*requirements*.txt
@@ -159,11 +159,11 @@
 2026-10-20T12:12:52.7881209Z Getting latest version from GitHub API...
 2026-10-20T12:12:53.0399768Z manifest-file not provided, reading from local file.
 2026-10-20T12:12:53.0449800Z manifest-file does not contain version 0.13.3, arch x86_64, platform unknown-linux-gnu. Falling back to GitHub releases.
-2026-10-20T12:12:53.0452317Z Downloading uv from "https://github.com/astral-sh/uv/releases/download/0.13.3/uv-x86_64-unknown-linux-gnu.tar.gz" ...
-2026-10-20T12:12:53.2895798Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/5b86e4d8-84d2-428c-9607-ea0035f090e2 -f /home/runner/work/_temp/d480584d-bad8-4f22-8ffa-beb1355f5c94
-2026-10-20T12:12:53.6079516Z Added /home/runner/.local/bin to the path
+2026-10-20T12:12:53.0452317Z Downloading uv from "http<drive>//github.com/astral-sh/uv/releases/download/0.13.3/uv-x86_64-unknown-linux-gnu.tar.gz" ...
+2026-10-20T12:12:53.2895798Z [command]/usr/bin/tar xz --warning=no-unknown-keyword --overwrite -C <runner>/work/_temp/5b86e4d8-84d2-428c-9607-ea0035f090e2 -f <runner>/work/_temp/d480584d-bad8-4f22-8ffa-beb1355f5c94
+2026-10-20T12:12:53.6079516Z Added <runner>/.local/bin to the path
 2026-10-20T12:12:53.6088175Z Added <hosted-toolcache>/uv/0.13.3/x86_64 to the path
-2026-10-20T12:12:53.6107092Z Set UV_CACHE_DIR to /home/runner/work/_temp/setup-uv-cache
+2026-10-20T12:12:53.6107092Z Set UV_CACHE_DIR to <runner>/work/_temp/setup-uv-cache
 2026-10-20T12:12:53.6107830Z Successfully installed uv version 0.13.3
 2026-10-20T12:12:53.6110031Z Searching files using cache dependency glob: <project>/**/*requirements*.txt,<project>/**/*requirements*.in,<project>/**/*constraints*.txt,<project>/**/*constraints*.in,<project>/**/pyproject.toml,<project>/**/uv.lock,<project>/**/*.py.lock
 2026-10-20T12:12:53.6569464Z <project>/pyproject.toml
@@ -174,7 +174,7 @@
 2026-10-20T12:12:54.3842749Z (node:2429) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
 2026-10-20T12:12:54.4231255Z Received 1377 of 1377 (100.0%), 0.1 MBs/sec
 2026-10-20T12:12:54.4231937Z Cache Size: ~0 MB (1377 B)
-2026-10-20T12:12:54.4267649Z [command]/usr/bin/tar -xf /home/runner/work/_temp/b10d2adb-127a-4d99-9661-2610cb2ae4fd/cache.tzst -P -C <project> --use-compress-program unzstd
+2026-10-20T12:12:54.4267649Z [command]/usr/bin/tar -xf <runner>/work/_temp/b10d2adb-127a-4d99-9661-2610cb2ae4fd/cache.tzst -P -C <project> --use-compress-program unzstd
 2026-10-20T12:12:54.4343625Z Cache restored successfully
 2026-10-20T12:12:54.4351003Z uv cache restored from GitHub Actions cache with key: setup-uv-1-x86_64-unknown-linux-gnu-3.13.16-pruned-f66a0baa5fdc608362d0deb98526349babd70c30a5323dd010b42603f4ec7c93
 2026-10-20T12:12:54.4520899Z ##[group]Run uv sync --locked
@@ -187,7 +187,7 @@
 2026-10-20T12:12:54.4863236Z   Python2_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:12:54.4863739Z   Python3_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:12:54.4864239Z   LD_LIBRARY_PATH: <hosted-toolcache>/Python/3.13.16/x64/lib
-2026-10-20T12:12:54.4864700Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-20T12:12:54.4864700Z   UV_CACHE_DIR: <runner>/work/_temp/setup-uv-cache
 2026-10-20T12:12:54.4865012Z ##[endgroup]
 2026-10-20T12:12:54.5053999Z Using CPython 3.13.16 interpreter at: <hosted-toolcache>/Python/3.13.16/x64/bin/python3
 2026-10-20T12:12:54.5054685Z Creating virtual environment at: .venv
@@ -260,7 +260,7 @@
 2026-10-20T12:12:56.9247254Z   Python2_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:12:56.9247637Z   Python3_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:12:56.9248364Z   LD_LIBRARY_PATH: <hosted-toolcache>/Python/3.13.16/x64/lib
-2026-10-20T12:12:56.9248750Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-20T12:12:56.9248750Z   UV_CACHE_DIR: <runner>/work/_temp/setup-uv-cache
 2026-10-20T12:12:56.9249050Z ##[endgroup]
 2026-10-20T12:12:57.0831616Z ##[group]Run uv run python -m pytest --basetemp=build/pytest -v
 2026-10-20T12:12:57.0832124Z [36;1muv run python -m pytest --basetemp=build/pytest -v[0m
@@ -272,7 +272,7 @@
 2026-10-20T12:12:57.0901120Z   Python2_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:12:57.0901530Z   Python3_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:12:57.0901918Z   LD_LIBRARY_PATH: <hosted-toolcache>/Python/3.13.16/x64/lib
-2026-10-20T12:12:57.0902294Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-20T12:12:57.0902294Z   UV_CACHE_DIR: <runner>/work/_temp/setup-uv-cache
 2026-10-20T12:12:57.0902603Z ##[endgroup]
 2026-10-20T12:12:58.2254350Z ============================= test session starts ==============================
 2026-10-20T12:12:58.2255144Z platform linux -- Python 3.13.16, pytest-8.4.2, pluggy-1.7.0 -- <project>/.venv/bin/python
@@ -281,7 +281,7 @@
 2026-10-20T12:12:58.2256798Z configfile: pyproject.toml
 2026-10-20T12:12:58.2257086Z testpaths: tests
 2026-10-20T12:13:07.8576183Z collecting ... collected 20 items
-2026-10-20T12:13:07.8576553Z 
+2026-10-20T12:13:07.8576553Z
 2026-10-20T12:13:07.8892580Z tests/test_export.py::test_conv1d_orientation_and_tied_embedding PASSED  [  5%]
 2026-10-20T12:13:07.8967845Z tests/test_export.py::test_untied_output_is_rejected PASSED              [ 10%]
 2026-10-20T12:13:07.9039769Z tests/test_export.py::test_unsupported_activation_is_rejected PASSED     [ 15%]
@@ -302,7 +302,7 @@
 2026-10-20T12:13:08.6504274Z tests/test_model_format.py::test_reject_invalid_config[config3] PASSED   [ 90%]
 2026-10-20T12:13:08.6516155Z tests/test_model_format.py::test_reject_invalid_config[config4] PASSED   [ 95%]
 2026-10-20T12:13:09.3530804Z tests/test_model_format.py::test_reject_empty_model PASSED               [100%]
-2026-10-20T12:13:09.3531505Z 
+2026-10-20T12:13:09.3531505Z
 2026-10-20T12:13:09.3531755Z ============================= 20 passed in 10.50s ==============================
 2026-10-20T12:13:10.0588453Z ##[group]Run cmake --preset debug
 2026-10-20T12:13:10.0588823Z [36;1mcmake --preset debug[0m
@@ -314,12 +314,12 @@
 2026-10-20T12:13:10.0655115Z   Python2_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:13:10.0655509Z   Python3_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:13:10.0655907Z   LD_LIBRARY_PATH: <hosted-toolcache>/Python/3.13.16/x64/lib
-2026-10-20T12:13:10.0656300Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-20T12:13:10.0656300Z   UV_CACHE_DIR: <runner>/work/_temp/setup-uv-cache
 2026-10-20T12:13:10.0656610Z ##[endgroup]
 2026-10-20T12:13:11.0522732Z Preset CMake variables:
-2026-10-20T12:13:11.0523076Z 
+2026-10-20T12:13:11.0523076Z
 2026-10-20T12:13:11.0523343Z   CMAKE_BUILD_TYPE="Debug"
-2026-10-20T12:13:11.0523594Z 
+2026-10-20T12:13:11.0523594Z
 2026-10-20T12:13:11.0523819Z -- The CXX compiler identification is GNU 13.3.0
 2026-10-20T12:13:11.0854396Z -- Detecting CXX compiler ABI info
 2026-10-20T12:13:11.2115888Z -- Detecting CXX compiler ABI info - done
@@ -349,7 +349,7 @@
 2026-10-20T12:13:12.3087730Z   Python2_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:13:12.3088737Z   Python3_ROOT_DIR: <hosted-toolcache>/Python/3.13.16/x64
 2026-10-20T12:13:12.3089160Z   LD_LIBRARY_PATH: <hosted-toolcache>/Python/3.13.16/x64/lib
-2026-10-20T12:13:12.3089550Z   UV_CACHE_DIR: /home/runner/work/_temp/setup-uv-cache
+2026-10-20T12:13:12.3089550Z   UV_CACHE_DIR: <runner>/work/_temp/setup-uv-cache
 2026-10-20T12:13:12.3089854Z ##[endgroup]
 2026-10-20T12:13:14.1039900Z [1/18] Building CXX object CMakeFiles/gpt2inspect.dir/src/platform/inspect_main_posix.cpp.o
 2026-10-20T12:13:14.1539624Z [2/18] Building CXX object CMakeFiles/gpt2inspect.dir/src/tools/inspect.cpp.o
@@ -362,7 +362,7 @@
 2026-10-20T12:13:18.0424678Z [9/18] Linking CXX executable gpt2inspect
 2026-10-20T12:13:18.5479701Z [10/18] Building CXX object _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/src/gmock_main.cc.o
 2026-10-20T12:13:18.7798922Z [11/18] Building CXX object CMakeFiles/nanoinfer_tests.dir/tests/test_loader.cpp.o
-2026-10-20T12:13:18.7804562Z FAILED: [code=1] CMakeFiles/nanoinfer_tests.dir/tests/test_loader.cpp.o 
+2026-10-20T12:13:18.7804562Z FAILED: [code=1] CMakeFiles/nanoinfer_tests.dir/tests/test_loader.cpp.o
 2026-10-20T12:13:18.7809357Z /usr/bin/c++  -I<project>/include -isystem <project>/build/debug/_deps/googletest-src/googletest/include -isystem <project>/build/debug/_deps/googletest-src/googletest -g -std=c++20 -Wall -Wextra -Wpedantic -Werror -MD -MT CMakeFiles/nanoinfer_tests.dir/tests/test_loader.cpp.o -MF CMakeFiles/nanoinfer_tests.dir/tests/test_loader.cpp.o.d -o CMakeFiles/nanoinfer_tests.dir/tests/test_loader.cpp.o -c <project>/tests/test_loader.cpp
 2026-10-20T12:13:18.7825692Z <project>/tests/test_loader.cpp: In member function ‘virtual void nanoinfer::LoaderTest_RejectsInvalidMetadataEvenWithCorrectChecksum_Test::TestBody()’:
 2026-10-20T12:13:18.7829358Z <project>/tests/test_loader.cpp:134:19: error: loop variable ‘<structured bindings>’ creates a copy from type ‘const std::pair<long unsigned int, unsigned int>’ [-Werror=range-loop-construct]
@@ -388,16 +388,16 @@
 2026-10-20T12:13:21.3763156Z Post job cleanup.
 2026-10-20T12:13:21.4672538Z [command]/usr/bin/git version
 2026-10-20T12:13:21.4722748Z git version 2.55.0
-2026-10-20T12:13:21.4769980Z Temporarily overriding HOME='/home/runner/work/_temp/a7bc966c-33b4-423c-aaa9-9a19a32f3b7a' before making global git config changes
+2026-10-20T12:13:21.4769980Z Temporarily overriding HOME='<runner>/work/_temp/a7bc966c-33b4-423c-aaa9-9a19a32f3b7a' before making global git config changes
 2026-10-20T12:13:21.4771454Z Adding repository directory to the temporary git global config as a safe directory
 2026-10-20T12:13:21.4776864Z [command]/usr/bin/git config --global --add safe.directory <project>
 2026-10-20T12:13:21.4824899Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
 2026-10-20T12:13:21.4866288Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
 2026-10-20T12:13:21.5128462Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
-2026-10-20T12:13:21.5160333Z http.https://github.com/.extraheader
-2026-10-20T12:13:21.5177681Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
-2026-10-20T12:13:21.5215720Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-20T12:13:21.5160333Z http.http<drive>//github.com/.extraheader
+2026-10-20T12:13:21.5177681Z [command]/usr/bin/git config --local --unset-all http.http<drive>//github.com/.extraheader
+2026-10-20T12:13:21.5215720Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.http<drive>//github.com/.extraheader' || :"
 2026-10-20T12:13:21.5486505Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
 2026-10-20T12:13:21.5535763Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
 2026-10-20T12:13:21.5953099Z Cleaning up orphan processes
-2026-10-20T12:13:21.6233896Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, astral-sh/setup-uv@v6. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-10-20T12:13:21.6233896Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, astral-sh/setup-uv@v6. For more information see: http<drive>//github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

@@ -1,3 +1,3 @@
 All checks passed!
-9 files already formatted
-clang-format: PASS
+10 files already formatted
+PASS clang-format --dry-run --Werror on all tracked C++ sources

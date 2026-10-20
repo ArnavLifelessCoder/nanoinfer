@@ -1,7 +1,7 @@
-UpdateCTestConfiguration  from :C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/DartConfiguration.tcl
-UpdateCTestConfiguration  from :C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/DartConfiguration.tcl
-Parse Config file:C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/DartConfiguration.tcl
-Test project C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug
+UpdateCTestConfiguration  from :<project>/DartConfiguration.tcl
+UpdateCTestConfiguration  from :<project>/build/debug/DartConfiguration.tcl
+Parse Config file:<project>/build/debug/DartConfiguration.tcl
+Test project <project>/build/debug
 Constructing a list of tests
 Done constructing a list of tests
 Updating test list for fixtures
@@ -11,24 +11,24 @@ Checking test dependency graph end
 test 1
     Start 1: unit
 
-1: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\build\debug\nanoinfer_tests.exe"
-1: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug
+1: Test command: "<project>\build\debug\nanoinfer_tests.exe"
+1: Working Directory: <project>/build/debug
 1: Test timeout computed to be: 1500
 1: Random seed: 42
 1: [==========] Running 12 tests from 3 test suites.
 1: [----------] Global test environment set-up.
 1: [----------] 5 tests from MappedFile
 1: [ RUN      ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths
-1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (7 ms)
+1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (9 ms)
 1: [ RUN      ] MappedFile.MissingFileFailsCleanly
-1: [       OK ] MappedFile.MissingFileFailsCleanly (4 ms)
+1: [       OK ] MappedFile.MissingFileFailsCleanly (6 ms)
 1: [ RUN      ] MappedFile.EmptyFileFailsCleanly
-1: [       OK ] MappedFile.EmptyFileFailsCleanly (5 ms)
+1: [       OK ] MappedFile.EmptyFileFailsCleanly (8 ms)
 1: [ RUN      ] MappedFile.DirectoryFailsCleanly
-1: [       OK ] MappedFile.DirectoryFailsCleanly (20 ms)
+1: [       OK ] MappedFile.DirectoryFailsCleanly (7 ms)
 1: [ RUN      ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile
-1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (7 ms)
-1: [----------] 5 tests from MappedFile (45 ms total)
+1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (9 ms)
+1: [----------] 5 tests from MappedFile (42 ms total)
 1:
 1: [----------] 1 test from Checksum
 1: [ RUN      ] Checksum.MatchesStandardVectorAndChaining
@@ -37,28 +37,28 @@ test 1
 1:
 1: [----------] 6 tests from LoaderTest
 1: [ RUN      ] LoaderTest.ReadsShapesStridesAndZeroCopyValues
-1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (6 ms)
+1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (8 ms)
 1: [ RUN      ] LoaderTest.RejectsEveryTruncationBoundary
-1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (940 ms)
+1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (1231 ms)
 1: [ RUN      ] LoaderTest.RejectsBitCorruptionAtEveryByte
-1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (1119 ms)
+1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (1290 ms)
 1: [ RUN      ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum
-1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (36 ms)
+1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (42 ms)
 1: [ RUN      ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData
-1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (22 ms)
+1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (29 ms)
 1: [ RUN      ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames
-1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (23 ms)
-1: [----------] 6 tests from LoaderTest (2148 ms total)
+1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (18 ms)
+1: [----------] 6 tests from LoaderTest (2619 ms total)
 1:
 1: [----------] Global test environment tear-down
-1: [==========] 12 tests from 3 test suites ran. (2194 ms total)
+1: [==========] 12 tests from 3 test suites ran. (2662 ms total)
 1: [  PASSED  ] 12 tests.
-1/4 Test #1: unit .............................   Passed    5.26 sec
+1/4 Test #1: unit .............................   Passed    6.93 sec
 test 2
     Start 2: export_tiny
 
-2: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\.venv\Scripts\python.exe" "-m" "python.export" "--tiny" "--output" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/fixtures/tiny.bin" "--golden" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/fixtures/golden"
-2: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime
+2: Test command: "<project>\.venv\Scripts\python.exe" "-m" "python.export" "--tiny" "--output" "<project>/build/debug/fixtures/tiny.bin" "--golden" "<project>/build/debug/fixtures/golden"
+2: Working Directory: <project>
 2: Test timeout computed to be: 1500
 2: {
 2:   "format_version": 1,
@@ -368,12 +368,12 @@ test 2
 2:     "weight_layout": "Conv1D [in, out]; embeddings [vocab/ctx, d_model]"
 2:   }
 2: }
-2/4 Test #2: export_tiny ......................   Passed   22.88 sec
+2/4 Test #2: export_tiny ......................   Passed   22.98 sec
 test 3
     Start 3: roundtrip_tiny
 
-3: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\.venv\Scripts\python.exe" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/tests/roundtrip.py" "--inspector" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/gpt2inspect.exe" "--model" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/fixtures/tiny.bin" "--manifest" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/fixtures/tiny.json"
-3: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug
+3: Test command: "<project>\.venv\Scripts\python.exe" "<project>/tests/roundtrip.py" "--inspector" "<project>/build/debug/gpt2inspect.exe" "--model" "<project>/build/debug/fixtures/tiny.bin" "--manifest" "<project>/build/debug/fixtures/tiny.json"
+3: Working Directory: <project>/build/debug
 3: Test timeout computed to be: 1500
 3: PASS wte.weight shape=[97, 16] crc32=65d97508
 3: PASS wpe.weight shape=[64, 16] crc32=52c6ea9f
@@ -404,12 +404,12 @@ test 3
 3: PASS ln_f.weight shape=[16] crc32=f700a42a
 3: PASS ln_f.bias shape=[16] crc32=758d6336
 3: PASS all 28 tensor shapes, checksums, offsets and sizes
-3/4 Test #3: roundtrip_tiny ...................   Passed    3.42 sec
+3/4 Test #3: roundtrip_tiny ...................   Passed    3.52 sec
 test 4
     Start 4: loader_integration
 
-4: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\.venv\Scripts\python.exe" "-m" "tests.loader_integration" "--inspector" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/gpt2inspect.exe" "--directory" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug/awkward"
-4: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime
+4: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.loader_integration" "--inspector" "<project>/build/debug/gpt2inspect.exe" "--directory" "<project>/build/debug/awkward"
+4: Working Directory: <project>
 4: Test timeout computed to be: 1500
 4: Random seed: 42
 4: PASS 32 random/awkward tensors, all ranks, Unicode path and JSON escaping
@@ -420,8 +420,8 @@ test 4
 4: PASS clean error for trailing: model error: file length mismatch
 4: PASS clean error for corrupt: model error: tensor checksum mismatch
 4: PASS missing CLI argument
-4/4 Test #4: loader_integration ...............   Passed    2.84 sec
+4/4 Test #4: loader_integration ...............   Passed    2.87 sec
 
 100% tests passed, 0 tests failed out of 4
 
-Total Test time (real) =  34.43 sec
+Total Test time (real) =  36.32 sec
