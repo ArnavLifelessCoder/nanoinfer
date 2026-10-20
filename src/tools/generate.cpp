@@ -27,7 +27,8 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
   if (arguments.size() == 1 && arguments[0] == "--help") {
     std::cout << "gpt2rt --model MODEL --prompt-ids IDS [--max-new 128] [--temp 0]\n"
                  "       [--top-k 0] [--top-p 1] [--seed 42]\n"
-                 "stdout: JSON prompt_ids and generated_ids; temp=0 selects greedy.\n";
+                 "stdout: JSON prompt_ids and generated_ids; temp=0 selects greedy.\n"
+              << std::flush;
     return 0;
   }
   try {
@@ -92,7 +93,7 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
     write_ids(ids);
     std::cout << ",\"generated_ids\":";
     write_ids(generated);
-    std::cout << "}\n";
+    std::cout << "}\n" << std::flush;
     return 0;
   } catch (const std::exception& error) {
     std::cerr << "generation error: " << error.what() << '\n';

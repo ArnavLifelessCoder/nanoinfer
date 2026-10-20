@@ -132,6 +132,11 @@ if(BUILD_TESTING)
     --golden "${CMAKE_BINARY_DIR}/fixtures/golden" --directory "${CMAKE_BINARY_DIR}/generation")
   set_tests_properties(generation_cli PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     FIXTURES_REQUIRED tiny_model)
+  add_test(NAME cli_output COMMAND "${Python3_EXECUTABLE}" -m tests.cli_output
+    --inspector "$<TARGET_FILE:gpt2inspect>" --generator "$<TARGET_FILE:gpt2rt>"
+    --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin")
+  set_tests_properties(cli_output PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED tiny_model)
   add_executable(gpt2cachecheck tests/cache_check.cpp ${REFERENCE_MAIN})
   target_include_directories(gpt2cachecheck PRIVATE src)
   target_link_libraries(gpt2cachecheck PRIVATE nanoinfer project_options)

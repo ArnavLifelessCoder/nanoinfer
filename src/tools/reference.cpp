@@ -85,7 +85,7 @@ int reference_main(std::span<const std::filesystem::path> arguments) {
       manifest << generated[i];
     }
     manifest << "]}\n";
-    std::cout << "PASS generated " << generated.size() << " tokens\n";
+    std::cout << "PASS generated " << generated.size() << " tokens\n" << std::flush;
     return 0;
   } catch (const std::exception& error) {
     std::cerr << "reference error: " << error.what() << '\n';

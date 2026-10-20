@@ -49,7 +49,7 @@ int inspect_model(const std::filesystem::path& path, bool layout_only) {
                 << ",\"byte_size\":" << tensor.values.size_bytes()
                 << ",\"crc32\":" << crc32(std::as_bytes(tensor.values)) << '}';
     }
-    std::cout << "]}\n";
+    std::cout << "]}\n" << std::flush;
     return 0;
   } catch (const std::exception& error) {
     std::cerr << "model error: " << error.what() << '\n';
