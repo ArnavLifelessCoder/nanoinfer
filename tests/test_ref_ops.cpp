@@ -127,15 +127,43 @@ TEST(ReferenceOps, StableSoftmaxWithLargeAndNegativeValues) {
   }
 }
 
-TEST(ReferenceOps, GeluRoundsTheCubicTermBeforeScaling) {
+TEST(ReferenceOps, GeluMatchesFloat64OracleAcrossActivationRange) {
   for (int index = -4000; index <= 4000; ++index) {
     const float x = static_cast<float>(index) / 1000.0F;
-    const float cube = x * x * x;
-    const float expected =
-        0.5F * x * (1.0F + std::tanh(0.7978845608028654F * (x + 0.044715F * cube)));
+    const double value = x;
+    const double expected =
+        0.5 * value *
+        (1 + std::tanh(std::sqrt(2 / std::acos(-1.0)) * (value + 0.044715 * std::pow(value, 3))));
     std::array<float, 1> actual{x};
     ref::gelu(actual);
-    ASSERT_EQ(actual[0], expected) << "x=" << x;
+    ASSERT_NEAR(actual[0], expected, 5e-7) << "x=" << x;
+  }
+}
+
+TEST(ReferenceOps, AttentionScalesNonzeroQueriesAndKeysPerHead) {
+  // Head width four requires scale 1/2. Both keys contribute at position one.
+  constexpr std::size_t width = 8;
+  std::vector<float> qkv(2 * 3 * width), output(2 * width);
+  for (std::size_t head = 0; head < 2; ++head) {
+    const auto offset = head * 4;
+    qkv[3 * width + offset] = 2.0F;
+    qkv[width + offset] = static_cast<float>(head + 1);
+    qkv[4 * width + offset] = static_cast<float>(head + 2);
+    for (std::size_t channel = 0; channel < 4; ++channel) {
+      qkv[2 * width + offset + channel] = static_cast<float>(channel + head);
+      qkv[5 * width + offset + channel] = static_cast<float>(channel + head + 10);
+    }
+  }
+  ref::causal_attention(qkv, 2, width, 2, output);
+  // Scaled score difference is one, so the second key has sigmoid(1) mass.
+  const double second_mass = 1 / (1 + std::exp(-1.0));
+  for (std::size_t head = 0; head < 2; ++head) {
+    for (std::size_t channel = 0; channel < 4; ++channel) {
+      const auto offset = head * 4 + channel;
+      const double first = static_cast<double>(channel + head);
+      EXPECT_NEAR(output[offset], first, 1e-6);
+      EXPECT_NEAR(output[width + offset], first + 10 * second_mass, 2e-6);
+    }
   }
 }
 

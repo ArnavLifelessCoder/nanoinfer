@@ -1,10 +1,10 @@
 Random seed: 1234
 Note: Google Test filter = ReferenceOps.*
-[==========] Running 8 tests from 1 test suite.
+[==========] Running 9 tests from 1 test suite.
 [----------] Global test environment set-up.
-[----------] 8 tests from ReferenceOps
+[----------] 9 tests from ReferenceOps
 [ RUN      ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage
-[       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (24 ms)
+[       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (39 ms)
 [ RUN      ] ReferenceOps.EmbeddingsBiasAndResidual
 [       OK ] ReferenceOps.EmbeddingsBiasAndResidual (0 ms)
 [ RUN      ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon
@@ -13,14 +13,16 @@ Note: Google Test filter = ReferenceOps.*
 [       OK ] ReferenceOps.GeluUsesTanhApproximation (0 ms)
 [ RUN      ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues
 [       OK ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues (0 ms)
-[ RUN      ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling
-[       OK ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling (1 ms)
+[ RUN      ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange
+[       OK ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange (1 ms)
+[ RUN      ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead
+[       OK ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead (0 ms)
 [ RUN      ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate
 [       OK ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate (0 ms)
 [ RUN      ] ReferenceOps.InvalidShapesFailBeforeIndexing
 [       OK ] ReferenceOps.InvalidShapesFailBeforeIndexing (0 ms)
-[----------] 8 tests from ReferenceOps (28 ms total)
+[----------] 9 tests from ReferenceOps (44 ms total)
 
 [----------] Global test environment tear-down
-[==========] 8 tests from 1 test suite ran. (28 ms total)
-[  PASSED  ] 8 tests.
+[==========] 9 tests from 1 test suite ran. (44 ms total)
+[  PASSED  ] 9 tests.
