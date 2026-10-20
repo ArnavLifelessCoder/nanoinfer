@@ -2,8 +2,12 @@
 
 import argparse
 import json
-import subprocess
 from pathlib import Path
+
+if __package__:
+    from .native_process import capture
+else:
+    from native_process import capture
 
 
 def main() -> None:
@@ -13,12 +17,8 @@ def main() -> None:
     parser.add_argument("--manifest", type=Path, required=True)
     args = parser.parse_args()
     expected = json.loads(args.manifest.read_text(encoding="utf-8"))
-    completed = subprocess.run(
-        [str(args.inspector.resolve()), str(args.model.resolve())],
-        capture_output=True,
-        text=True,
-        check=True,
-    )
+    completed = capture([str(args.inspector.resolve()), str(args.model.resolve())])
+    completed.check_returncode()
     actual = json.loads(completed.stdout)
     assert actual["format_version"] == expected["format_version"]
     assert actual["config"] == expected["config"]

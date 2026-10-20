@@ -2,13 +2,13 @@
 
 import argparse
 import json
-import subprocess
 from pathlib import Path
 
 import numpy as np
 import torch
 
 from python.export import export_weights, make_tiny
+from tests.native_process import capture
 
 
 def main() -> None:
@@ -30,10 +30,8 @@ def main() -> None:
         ids = directory / f"{label}.txt"
         output = directory / label
         ids.write_text(" ".join(map(str, tokens)), encoding="utf-8")
-        result = subprocess.run(
+        result = capture(
             [executable, str(path), str(ids), str(output), str(new_tokens)],
-            capture_output=True,
-            text=True,
         )
         assert result.returncode == (0 if success else 1), (label, result.stderr, result.stdout)
         if not success:
@@ -74,7 +72,7 @@ def main() -> None:
         ("count-overflow", [1], 4294967296),
     ):
         run(label, ids, count, success=False)
-    missing_args = subprocess.run([executable], capture_output=True, text=True)
+    missing_args = capture([executable])
     assert missing_args.returncode == 2 and "usage:" in missing_args.stderr
 
     with torch.no_grad():

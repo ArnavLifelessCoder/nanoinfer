@@ -2,10 +2,11 @@
 
 import argparse
 import json
-import subprocess
 from pathlib import Path
 
 import numpy as np
+
+from tests.native_process import capture
 
 
 def main():
@@ -28,7 +29,7 @@ def main():
 
     def run(ids, options, success=True):
         ids_path.write_text(" ".join(map(str, ids)), encoding="utf-8")
-        result = subprocess.run(base + options, capture_output=True, text=True)
+        result = capture(base + options)
         assert result.returncode == (0 if success else 1), result
         if success:
             assert not result.stderr, result.stderr
@@ -86,9 +87,9 @@ def main():
         ([1], ["--max-new", "0", "--max-new", "0"]),
     ]:
         run(ids, options, success=False)
-    missing = subprocess.run([base[0]], capture_output=True, text=True)
+    missing = capture([base[0]])
     assert missing.returncode == 1 and not missing.stdout
-    help_result = subprocess.run([base[0], "--help"], capture_output=True, text=True)
+    help_result = capture([base[0], "--help"])
     assert help_result.returncode == 0 and "stdout: JSON" in help_result.stdout
     print("PASS context boundaries, numeric validation, option errors and help", flush=True)
 

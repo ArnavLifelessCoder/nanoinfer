@@ -2,12 +2,12 @@
 
 import argparse
 import json
-import subprocess
 from pathlib import Path
 
 import numpy as np
 
 from python.model_format import write_model
+from tests.native_process import capture
 
 
 def main() -> None:
@@ -30,7 +30,7 @@ def main() -> None:
     expected = write_model(model, dict(layers=1, d_model=7, heads=1, vocab=11, ctx=8), tensors)
     executable = str(args.inspector.resolve())
     command = [executable, str(model.resolve()), "--layout-only"]
-    result = subprocess.run(command, capture_output=True, text=True)
+    result = capture(command)
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout) == expected
     print(f"PASS {len(tensors)} random/awkward tensors, all ranks, Unicode path and JSON escaping")
@@ -45,12 +45,12 @@ def main() -> None:
     }
     for label, data in malformed.items():
         model.write_bytes(data)
-        result = subprocess.run(command, capture_output=True, text=True)
+        result = capture(command)
         assert result.returncode == 1, (label, result.returncode, result.stderr)
         assert result.stdout == ""
         assert result.stderr.startswith("model error:")
         print(f"PASS clean error for {label}: {result.stderr.strip()}")
-    result = subprocess.run([executable], capture_output=True, text=True)
+    result = capture([executable])
     assert result.returncode == 2 and "usage:" in result.stderr
     print("PASS missing CLI argument")
 

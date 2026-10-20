@@ -1,12 +1,12 @@
 """Reject structurally valid files whose tensors disagree with GPT-2 config."""
 
 import argparse
-import subprocess
 from pathlib import Path
 
 import numpy as np
 
 from python.model_format import write_model
+from tests.native_process import capture
 
 
 def tensor_shapes(config: dict) -> dict:
@@ -45,7 +45,7 @@ def main() -> None:
 
     def check(label, values, expected, header=config):
         write_model(path, header, values)
-        result = subprocess.run([executable, str(path.resolve())], capture_output=True, text=True)
+        result = capture([executable, str(path.resolve())])
         assert result.returncode == expected, (label, result.returncode, result.stderr)
         if expected:
             assert result.stdout == "" and result.stderr.startswith("model error:")
