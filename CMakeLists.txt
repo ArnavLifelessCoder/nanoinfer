@@ -84,9 +84,12 @@ if(BUILD_TESTING)
   add_executable(nanoinfer_tests tests/test_main.cpp tests/test_mapped_file.cpp tests/test_loader.cpp)
   target_link_libraries(nanoinfer_tests PRIVATE nanoinfer project_options GTest::gtest)
   add_test(NAME unit COMMAND nanoinfer_tests)
-  if(EXISTS "${CMAKE_SOURCE_DIR}/.venv")
-    set(ENV{VIRTUAL_ENV} "${CMAKE_SOURCE_DIR}/.venv")
-    set(Python3_FIND_VIRTUALENV FIRST)
+  if(NOT DEFINED Python3_EXECUTABLE AND EXISTS "${CMAKE_SOURCE_DIR}/.venv")
+    # setup-python sets Python3_ROOT_DIR, which can override virtualenv discovery.
+    find_program(NANOINFER_VENV_PYTHON NAMES python python3
+      PATHS "${CMAKE_SOURCE_DIR}/.venv/Scripts" "${CMAKE_SOURCE_DIR}/.venv/bin"
+      NO_DEFAULT_PATH REQUIRED)
+    set(Python3_EXECUTABLE "${NANOINFER_VENV_PYTHON}")
   endif()
   find_package(Python3 3.11 REQUIRED COMPONENTS Interpreter)
   add_test(NAME export_tiny COMMAND "${Python3_EXECUTABLE}" -m python.export
