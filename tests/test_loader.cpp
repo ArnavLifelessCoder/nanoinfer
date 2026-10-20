@@ -131,7 +131,7 @@ TEST_F(LoaderTest, RejectsInvalidMetadataEvenWithCorrectChecksum) {
       {64 + 124, 1},
       {64 + 120, 0},
   }};
-  for (const auto [offset, value] : invalid) {
+  for (const auto& [offset, value] : invalid) {
     SCOPED_TRACE(offset);
     auto bytes = fixture();
     put(bytes, offset, value);
@@ -151,7 +151,7 @@ TEST_F(LoaderTest, RejectsOverflowOverlapsOffsetsAndTrailingData) {
       {64 + 72, std::numeric_limits<std::uint64_t>::max()},
       {64 + 112, std::numeric_limits<std::uint64_t>::max()},
   }};
-  for (const auto [offset, value] : invalid) {
+  for (const auto& [offset, value] : invalid) {
     SCOPED_TRACE(offset);
     auto bytes = fixture();
     put(bytes, offset, value);
