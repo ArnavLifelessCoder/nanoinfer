@@ -14,6 +14,8 @@ try {
     & ctest --preset $Preset --verbose --no-tests=error 2>&1 |
         Tee-Object "results/m2-$Preset-tests.txt"
     if ($LASTEXITCODE -ne 0) { throw 'CTest failed' }
+    Copy-Item -LiteralPath "build/$Preset/negative-report.json" `
+        -Destination "results/m2-$Preset-negative.json"
     & "build/$Preset/nanoinfer_tests.exe" --seed=1234 2>&1 |
         Tee-Object "results/m2-$Preset-seed1234.txt"
     if ($LASTEXITCODE -ne 0) { throw 'Alternate-seed unit tests failed' }

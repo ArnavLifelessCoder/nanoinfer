@@ -76,8 +76,9 @@ else()
   set(INSPECT_MAIN src/platform/inspect_main_posix.cpp)
   set(REFERENCE_MAIN src/platform/reference_main_posix.cpp)
 endif()
-add_library(nanoinfer STATIC ${MAPPING_SOURCE} src/model/loader.cpp src/ops/ref/ops.cpp
+set(NANOINFER_SOURCES ${MAPPING_SOURCE} src/model/loader.cpp src/ops/ref/ops.cpp
   src/runtime/reference.cpp)
+add_library(nanoinfer STATIC ${NANOINFER_SOURCES})
 target_include_directories(nanoinfer PUBLIC include)
 target_link_libraries(nanoinfer PRIVATE project_options)
 add_executable(gpt2inspect src/tools/inspect.cpp ${INSPECT_MAIN})
@@ -130,4 +131,24 @@ if(BUILD_TESTING)
   add_test(NAME reference_contract COMMAND "${Python3_EXECUTABLE}" -m tests.reference_contract
     --executable "$<TARGET_FILE:gpt2ref>" --directory "${CMAKE_BINARY_DIR}/reference-contract")
   set_tests_properties(reference_contract PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  # Mutation switches are private to test-only libraries. The normal library
+  # and CLI never receive them, even when BUILD_TESTING is enabled.
+  foreach(mutation IN ITEMS EXACT_GELU LAYERNORM_EPS)
+    string(TOLOWER "${mutation}" suffix)
+    add_library(nanoinfer_test_${suffix} STATIC ${NANOINFER_SOURCES})
+    target_include_directories(nanoinfer_test_${suffix} PUBLIC include)
+    target_link_libraries(nanoinfer_test_${suffix} PRIVATE project_options)
+    target_compile_definitions(nanoinfer_test_${suffix} PRIVATE NANOINFER_TEST_${mutation})
+    add_executable(gpt2ref_test_${suffix} src/tools/reference.cpp ${REFERENCE_MAIN})
+    target_include_directories(gpt2ref_test_${suffix} PRIVATE src)
+    target_link_libraries(gpt2ref_test_${suffix} PRIVATE
+      nanoinfer_test_${suffix} project_options)
+  endforeach()
+  add_test(NAME golden_negative COMMAND "${Python3_EXECUTABLE}" -m tests.golden_negative
+    --executable "$<TARGET_FILE:gpt2ref>"
+    --erf-executable "$<TARGET_FILE:gpt2ref_test_exact_gelu>"
+    --epsilon-executable "$<TARGET_FILE:gpt2ref_test_layernorm_eps>"
+    --directory "${CMAKE_BINARY_DIR}/negative-golden"
+    --report "${CMAKE_BINARY_DIR}/negative-report.json")
+  set_tests_properties(golden_negative PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()

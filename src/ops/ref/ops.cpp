@@ -86,7 +86,12 @@ void layer_norm(std::span<const float> input, std::span<const float> scale,
       variance += centered * centered;
     }
     variance /= static_cast<float>(width);
+#ifdef NANOINFER_TEST_LAYERNORM_EPS
+    // Compiled only into the separate negative-test library.
+    const float inverse = 1.0F / std::sqrt(variance + 1e-6F);
+#else
     const float inverse = 1.0F / std::sqrt(variance + 1e-5F);
+#endif
     for (std::size_t j = 0; j < width; ++j) {
       output[row * width + j] = (source[j] - mean) * inverse * scale[j] + shift[j];
     }
@@ -95,8 +100,13 @@ void layer_norm(std::span<const float> input, std::span<const float> scale,
 
 void gelu(std::span<float> values) {
   for (auto& value : values) {
+#ifdef NANOINFER_TEST_EXACT_GELU
+    // Compiled only into the separate negative-test library.
+    value = 0.5F * value * (1.0F + std::erf(value / std::sqrt(2.0F)));
+#else
     const float cube = value * value * value;
     value = 0.5F * value * (1.0F + std::tanh(0.7978845608028654F * (value + 0.044715F * cube)));
+#endif
   }
 }
 
