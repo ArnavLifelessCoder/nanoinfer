@@ -14,6 +14,12 @@ try {
     & ctest --preset $Preset --verbose --no-tests=error 2>&1 |
         Tee-Object -FilePath "results/m1-$Preset-tests.txt"
     if ($LASTEXITCODE -ne 0) { throw 'CTest failed.' }
+    if (Test-Path -LiteralPath 'models/gpt2.bin') {
+        & python tests/roundtrip.py --inspector "build/$Preset/gpt2inspect.exe" `
+            --model models/gpt2.bin --manifest models/gpt2.json 2>&1 |
+            Tee-Object -FilePath "results/m1-$Preset-gpt2.txt"
+        if ($LASTEXITCODE -ne 0) { throw 'Pretrained GPT-2 round-trip failed.' }
+    }
 }
 finally {
     Pop-Location

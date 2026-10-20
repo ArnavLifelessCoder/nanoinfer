@@ -62,14 +62,37 @@ endif()
 
 if(WIN32)
   set(MAPPING_SOURCE src/platform/mapped_file_windows.cpp)
+  set(INSPECT_MAIN src/platform/inspect_main_windows.cpp)
 else()
   set(MAPPING_SOURCE src/platform/mapped_file_posix.cpp)
+  set(INSPECT_MAIN src/platform/inspect_main_posix.cpp)
 endif()
 add_library(nanoinfer STATIC ${MAPPING_SOURCE} src/model/loader.cpp)
 target_include_directories(nanoinfer PUBLIC include)
 target_link_libraries(nanoinfer PRIVATE project_options)
+add_executable(gpt2inspect src/tools/inspect.cpp ${INSPECT_MAIN})
+target_include_directories(gpt2inspect PRIVATE src)
+target_link_libraries(gpt2inspect PRIVATE nanoinfer project_options)
 if(BUILD_TESTING)
   add_executable(nanoinfer_tests tests/test_main.cpp tests/test_mapped_file.cpp tests/test_loader.cpp)
   target_link_libraries(nanoinfer_tests PRIVATE nanoinfer project_options GTest::gtest)
   add_test(NAME unit COMMAND nanoinfer_tests)
+  if(EXISTS "${CMAKE_SOURCE_DIR}/.venv")
+    set(ENV{VIRTUAL_ENV} "${CMAKE_SOURCE_DIR}/.venv")
+    set(Python3_FIND_VIRTUALENV FIRST)
+  endif()
+  find_package(Python3 3.11 REQUIRED COMPONENTS Interpreter)
+  add_test(NAME export_tiny COMMAND "${Python3_EXECUTABLE}" -m python.export
+    --tiny --output "${CMAKE_BINARY_DIR}/fixtures/tiny.bin"
+    --golden "${CMAKE_BINARY_DIR}/fixtures/golden")
+  set_tests_properties(export_tiny PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_SETUP tiny_model)
+  add_test(NAME roundtrip_tiny COMMAND "${Python3_EXECUTABLE}"
+    "${CMAKE_SOURCE_DIR}/tests/roundtrip.py" --inspector "$<TARGET_FILE:gpt2inspect>"
+    --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin"
+    --manifest "${CMAKE_BINARY_DIR}/fixtures/tiny.json")
+  set_tests_properties(roundtrip_tiny PROPERTIES FIXTURES_REQUIRED tiny_model)
+  add_test(NAME loader_integration COMMAND "${Python3_EXECUTABLE}" -m tests.loader_integration
+    --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/awkward")
+  set_tests_properties(loader_integration PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()
