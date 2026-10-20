@@ -1,0 +1,36 @@
+{
+  "model": "gpt2",
+  "seed": 42,
+  "torch": "2.11.0+cu128",
+  "transformers": "4.57.1",
+  "revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+  "attention": "eager",
+  "dtype": "float32",
+  "threads": 1,
+  "hidden_state_semantics": "block outputs after both residuals; final_ln separately",
+  "prompts": [
+    {
+      "text": "Hello",
+      "ids": [
+        15496
+      ],
+      "file": "prompt_0.npz"
+    },
+    {
+      "text": "The cat",
+      "ids": [
+        464,
+        3797
+      ],
+      "file": "prompt_1.npz"
+    },
+    {
+      "text": "Why?",
+      "ids": [
+        5195,
+        30
+      ],
+      "file": "prompt_2.npz"
+    }
+  ]
+}
