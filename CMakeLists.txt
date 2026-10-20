@@ -70,16 +70,22 @@ endif()
 if(WIN32)
   set(MAPPING_SOURCE src/platform/mapped_file_windows.cpp)
   set(INSPECT_MAIN src/platform/inspect_main_windows.cpp)
+  set(REFERENCE_MAIN src/platform/reference_main_windows.cpp)
 else()
   set(MAPPING_SOURCE src/platform/mapped_file_posix.cpp)
   set(INSPECT_MAIN src/platform/inspect_main_posix.cpp)
+  set(REFERENCE_MAIN src/platform/reference_main_posix.cpp)
 endif()
-add_library(nanoinfer STATIC ${MAPPING_SOURCE} src/model/loader.cpp src/ops/ref/ops.cpp)
+add_library(nanoinfer STATIC ${MAPPING_SOURCE} src/model/loader.cpp src/ops/ref/ops.cpp
+  src/runtime/reference.cpp)
 target_include_directories(nanoinfer PUBLIC include)
 target_link_libraries(nanoinfer PRIVATE project_options)
 add_executable(gpt2inspect src/tools/inspect.cpp ${INSPECT_MAIN})
 target_include_directories(gpt2inspect PRIVATE src)
 target_link_libraries(gpt2inspect PRIVATE nanoinfer project_options)
+add_executable(gpt2ref src/tools/reference.cpp ${REFERENCE_MAIN})
+target_include_directories(gpt2ref PRIVATE src)
+target_link_libraries(gpt2ref PRIVATE nanoinfer project_options)
 if(BUILD_TESTING)
   add_executable(nanoinfer_tests tests/test_main.cpp tests/test_mapped_file.cpp tests/test_loader.cpp
     tests/test_ref_ops.cpp)
@@ -115,4 +121,10 @@ if(BUILD_TESTING)
   add_test(NAME model_schema COMMAND "${Python3_EXECUTABLE}" -m tests.model_schema
     --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/schema")
   set_tests_properties(model_schema PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  add_test(NAME golden_tiny COMMAND "${Python3_EXECUTABLE}" -m tests.golden_forward
+    --executable "$<TARGET_FILE:gpt2ref>" --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin"
+    --golden "${CMAKE_BINARY_DIR}/fixtures/golden" --directory "${CMAKE_BINARY_DIR}/golden-check"
+    --report "${CMAKE_BINARY_DIR}/golden-report.json")
+  set_tests_properties(golden_tiny PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED tiny_model)
 endif()

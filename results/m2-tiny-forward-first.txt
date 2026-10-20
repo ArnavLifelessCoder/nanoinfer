@@ -1,0 +1,351 @@
+UpdateCTestConfiguration  from :<project>/DartConfiguration.tcl
+UpdateCTestConfiguration  from :<project>/build/debug/DartConfiguration.tcl
+Parse Config file:<project>/build/debug/DartConfiguration.tcl
+Test project <project>/build/debug
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added setup test export_tiny required by fixture tiny_model
+Added 1 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 2
+    Start 2: export_tiny
+
+2: Test command: "<project>\.venv\Scripts\python.exe" "-m" "python.export" "--tiny" "--output" "<project>/build/debug/fixtures/tiny.bin" "--golden" "<project>/build/debug/fixtures/golden"
+2: Working Directory: <project>
+2: Test timeout computed to be: 1500
+2: {
+2:   "format_version": 1,
+2:   "config": {
+2:     "layers": 2,
+2:     "d_model": 16,
+2:     "heads": 2,
+2:     "vocab": 97,
+2:     "ctx": 64
+2:   },
+2:   "tensors": [
+2:     {
+2:       "name": "wte.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         97,
+2:         16
+2:       ],
+2:       "offset": 3648,
+2:       "byte_size": 6208,
+2:       "crc32": 1708750088
+2:     },
+2:     {
+2:       "name": "wpe.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 9856,
+2:       "byte_size": 4096,
+2:       "crc32": 1388767903
+2:     },
+2:     {
+2:       "name": "h.0.ln_1.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 13952,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.0.ln_1.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 14016,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_attn.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         48
+2:       ],
+2:       "offset": 14080,
+2:       "byte_size": 3072,
+2:       "crc32": 184779411
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_attn.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         48
+2:       ],
+2:       "offset": 17152,
+2:       "byte_size": 192,
+2:       "crc32": 2348746994
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         16
+2:       ],
+2:       "offset": 17344,
+2:       "byte_size": 1024,
+2:       "crc32": 1610141689
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18368,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.ln_2.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18432,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.0.ln_2.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18496,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_fc.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         64
+2:       ],
+2:       "offset": 18560,
+2:       "byte_size": 4096,
+2:       "crc32": 768724231
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_fc.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64
+2:       ],
+2:       "offset": 22656,
+2:       "byte_size": 256,
+2:       "crc32": 227968344
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 22912,
+2:       "byte_size": 4096,
+2:       "crc32": 2981679276
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27008,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.ln_1.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27072,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.1.ln_1.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27136,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_attn.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         48
+2:       ],
+2:       "offset": 27200,
+2:       "byte_size": 3072,
+2:       "crc32": 3948583692
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_attn.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         48
+2:       ],
+2:       "offset": 30272,
+2:       "byte_size": 192,
+2:       "crc32": 2348746994
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         16
+2:       ],
+2:       "offset": 30464,
+2:       "byte_size": 1024,
+2:       "crc32": 776059860
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31488,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.ln_2.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31552,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.1.ln_2.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31616,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_fc.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         64
+2:       ],
+2:       "offset": 31680,
+2:       "byte_size": 4096,
+2:       "crc32": 4045243238
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_fc.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64
+2:       ],
+2:       "offset": 35776,
+2:       "byte_size": 256,
+2:       "crc32": 227968344
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 36032,
+2:       "byte_size": 4096,
+2:       "crc32": 320104244
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40128,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "ln_f.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40192,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "ln_f.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40256,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     }
+2:   ],
+2:   "source": {
+2:     "torch": "2.11.0+cu128",
+2:     "transformers": "4.57.1",
+2:     "revision": null,
+2:     "weight_layout": "Conv1D [in, out]; embeddings [vocab/ctx, d_model]"
+2:   }
+2: }
+1/2 Test #2: export_tiny ......................   Passed   25.14 sec
+test 6
+    Start 6: golden_tiny
+
+6: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.golden_forward" "--executable" "<project>/build/debug/gpt2ref.exe" "--model" "<project>/build/debug/fixtures/tiny.bin" "--golden" "<project>/build/debug/fixtures/golden" "--directory" "<project>/build/debug/golden-check" "--report" "<project>/build/debug/golden-report.json"
+6: Working Directory: <project>
+6: Test timeout computed to be: 1500
+6: PASS forward, positions=1; generating 32 tokens by full-prefix recomputation
+6: PASS generated 32 tokens
+6: PASS prompt_0.npz: {'logits': 2.9802322387695312e-08, 'final_ln': 6.705522537231445e-08, 'layer_0': 1.862645149230957e-09, 'layer_1': 3.725290298461914e-09}; greedy 32/32
+6: PASS forward, positions=2; generating 32 tokens by full-prefix recomputation
+6: PASS generated 32 tokens
+6: PASS prompt_1.npz: {'logits': 5.960464477539063e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 3.725290298461914e-09}; greedy 32/32
+6: PASS forward, positions=3; generating 32 tokens by full-prefix recomputation
+6: PASS generated 32 tokens
+6: PASS prompt_2.npz: {'logits': 4.470348358154297e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 7.450580596923828e-09}; greedy 32/32
+6: PASS all golden logits, hidden states and greedy continuations
+2/2 Test #6: golden_tiny ......................   Passed    5.40 sec
+
+The following tests passed:
+	export_tiny
+	golden_tiny
+
+100% tests passed, 0 tests failed out of 2
+
+Total Test time (real) =  30.58 sec
