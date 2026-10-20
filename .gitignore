@@ -1,0 +1,17 @@
+/00-CONVENTIONS.md
+/04-cpu-inference-runtime.md
+/AGENTS.md
+/build/
+/.venv/
+/.cache/
+/.tmp/
+/models/
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.onnx
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+/CMakeUserPresets.json
