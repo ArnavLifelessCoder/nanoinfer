@@ -111,4 +111,7 @@ if(BUILD_TESTING)
   add_test(NAME loader_integration COMMAND "${Python3_EXECUTABLE}" -m tests.loader_integration
     --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/awkward")
   set_tests_properties(loader_integration PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  add_test(NAME model_schema COMMAND "${Python3_EXECUTABLE}" -m tests.model_schema
+    --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/schema")
+  set_tests_properties(model_schema PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()

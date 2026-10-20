@@ -50,7 +50,7 @@ std::uint32_t crc32(std::span<const std::byte> bytes, std::uint32_t seed) {
   return crc ^ 0xffffffffU;
 }
 
-Model::Model(const std::filesystem::path& path) : file_(path) {
+Model::Model(const std::filesystem::path& path, ModelValidation validation) : file_(path) {
   require(std::endian::native == std::endian::little, "little-endian host required");
   static_assert(sizeof(float) == 4 && std::numeric_limits<float>::is_iec559);
   const auto bytes = file_.bytes();
@@ -136,6 +136,43 @@ Model::Model(const std::filesystem::path& path) : file_(path) {
     tensors_.push_back(std::move(view));
   }
   require(expected_offset == bytes.size(), "unexpected trailing data");
+  if (validation == ModelValidation::gpt2) {
+    validate_gpt2();
+  }
+}
+
+void Model::validate_gpt2() const {
+  const std::uint64_t d = config_.d_model;
+  require(tensors_.size() == 4ULL + 12ULL * config_.layers, "GPT-2 tensor count mismatch");
+  auto shape = [this](const std::string& name, std::vector<std::uint64_t> expected) {
+    const auto found = std::find_if(tensors_.begin(), tensors_.end(),
+                                    [&name](const auto& view) { return view.name == name; });
+    if (found == tensors_.end()) {
+      throw FormatError("missing GPT-2 tensor: " + name);
+    }
+    if (found->shape != expected) {
+      throw FormatError("tensor shape disagrees with header config: " + name);
+    }
+  };
+  shape("wte.weight", {config_.vocab, d});
+  shape("wpe.weight", {config_.ctx, d});
+  shape("ln_f.weight", {d});
+  shape("ln_f.bias", {d});
+  for (std::uint32_t layer = 0; layer < config_.layers; ++layer) {
+    const auto prefix = "h." + std::to_string(layer) + ".";
+    for (const auto* norm : {"ln_1", "ln_2"}) {
+      shape(prefix + norm + ".weight", {d});
+      shape(prefix + norm + ".bias", {d});
+    }
+    shape(prefix + "attn.c_attn.weight", {d, 3 * d});
+    shape(prefix + "attn.c_attn.bias", {3 * d});
+    shape(prefix + "attn.c_proj.weight", {d, d});
+    shape(prefix + "attn.c_proj.bias", {d});
+    shape(prefix + "mlp.c_fc.weight", {d, 4 * d});
+    shape(prefix + "mlp.c_fc.bias", {4 * d});
+    shape(prefix + "mlp.c_proj.weight", {4 * d, d});
+    shape(prefix + "mlp.c_proj.bias", {d});
+  }
 }
 
 const TensorView& Model::tensor(std::string_view name) const {

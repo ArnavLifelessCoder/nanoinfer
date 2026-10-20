@@ -37,9 +37,13 @@ struct TensorView {
 // Matches zlib.crc32, including its optional seed for chained ranges.
 [[nodiscard]] std::uint32_t crc32(std::span<const std::byte> bytes, std::uint32_t seed = 0);
 
+enum class ModelValidation { gpt2, layout_only };
+
 class Model {
  public:
-  explicit Model(const std::filesystem::path& path);
+  explicit Model(const std::filesystem::path& path,
+                 ModelValidation validation = ModelValidation::gpt2);
+  void validate_gpt2() const;
   [[nodiscard]] const ModelConfig& config() const noexcept { return config_; }
   [[nodiscard]] std::span<const TensorView> tensors() const noexcept { return tensors_; }
   [[nodiscard]] const TensorView& tensor(std::string_view name) const;

@@ -29,7 +29,8 @@ def main() -> None:
     model = args.directory / "weights \u03bb.bin"
     expected = write_model(model, dict(layers=1, d_model=7, heads=1, vocab=11, ctx=8), tensors)
     executable = str(args.inspector.resolve())
-    result = subprocess.run([executable, str(model.resolve())], capture_output=True, text=True)
+    command = [executable, str(model.resolve()), "--layout-only"]
+    result = subprocess.run(command, capture_output=True, text=True)
     assert result.returncode == 0, result.stderr
     assert json.loads(result.stdout) == expected
     print(f"PASS {len(tensors)} random/awkward tensors, all ranks, Unicode path and JSON escaping")
@@ -44,7 +45,7 @@ def main() -> None:
     }
     for label, data in malformed.items():
         model.write_bytes(data)
-        result = subprocess.run([executable, str(model.resolve())], capture_output=True, text=True)
+        result = subprocess.run(command, capture_output=True, text=True)
         assert result.returncode == 1, (label, result.returncode, result.stderr)
         assert result.stdout == ""
         assert result.stderr.startswith("model error:")

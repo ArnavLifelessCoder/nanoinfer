@@ -23,9 +23,9 @@ void json_string(std::string_view value) {
 }
 }  // namespace
 
-int inspect_model(const std::filesystem::path& path) {
+int inspect_model(const std::filesystem::path& path, bool layout_only) {
   try {
-    const Model model(path);
+    const Model model(path, layout_only ? ModelValidation::layout_only : ModelValidation::gpt2);
     const auto& config = model.config();
     std::cout << "{\"format_version\":1,\"config\":{\"layers\":" << config.layers
               << ",\"d_model\":" << config.d_model << ",\"heads\":" << config.heads

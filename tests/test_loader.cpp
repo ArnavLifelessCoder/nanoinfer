@@ -62,7 +62,7 @@ class LoaderTest : public ::testing::Test {
 
   void rejects(const std::vector<std::byte>& bytes) {
     test::write_file(path, bytes);
-    EXPECT_THROW((Model(path)), std::runtime_error);
+    EXPECT_THROW((Model(path, ModelValidation::layout_only)), std::runtime_error);
     // A failed constructor must release handles as well as successful ones.
     EXPECT_TRUE(std::filesystem::remove(path));
   }
@@ -79,7 +79,7 @@ TEST(Checksum, MatchesStandardVectorAndChaining) {
 
 TEST_F(LoaderTest, ReadsShapesStridesAndZeroCopyValues) {
   test::write_file(path, fixture());
-  const Model model(path);
+  const Model model(path, ModelValidation::layout_only);
   ASSERT_EQ(model.tensors().size(), 2);
   EXPECT_EQ(model.config().d_model, 7);
   const auto& view = model.tensor("a");
