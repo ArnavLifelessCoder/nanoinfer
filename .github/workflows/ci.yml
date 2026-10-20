@@ -20,9 +20,7 @@ jobs:
         with:
           arch: x64
       - run: uv sync --locked
-      - name: Create test output directory in a clean checkout
-        run: uv run python -c "from pathlib import Path; Path('build').mkdir(exist_ok=True)"
-      - run: uv run python -m pytest --basetemp=build/pytest -v
+      - run: uv run python -m pytest --basetemp="${{ runner.temp }}/pytest" -v
       - run: cmake --preset ${{ matrix.preset }}
       - run: cmake --build --preset ${{ matrix.preset }}
       - run: ctest --preset ${{ matrix.preset }} --verbose --no-tests=error
