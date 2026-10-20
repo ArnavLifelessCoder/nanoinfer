@@ -1,0 +1,37 @@
+{
+  "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+  "fresh_build": "build/asan-m3-reliability-validated",
+  "requested_suites": 5,
+  "completed_suites": 2,
+  "passed": false,
+  "runs": [
+    {
+      "label": "m3-validated-1",
+      "build_directory": "build/asan-m3-reliability-validated",
+      "git_head": "729d38e36c466f81af6e3651db61c8f4e8f14fcf",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 0,
+      "idle_seconds": 12,
+      "captures": []
+    },
+    {
+      "label": "m3-validated-2",
+      "build_directory": "build/asan-m3-reliability-validated",
+      "git_head": "729d38e36c466f81af6e3651db61c8f4e8f14fcf",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 0,
+      "idle_seconds": 12,
+      "captures": [
+        {
+          "pid": 44780,
+          "process": "gpt2inspect",
+          "cpu_seconds": 0.015625,
+          "thread_count": 1,
+          "has_exited": false,
+          "dump": "build/diagnostics/dumps/m3-validated-2-gpt2inspect-44780.dmp",
+          "capture_exit_code": -2
+        }
+      ]
+    }
+  ]
+}

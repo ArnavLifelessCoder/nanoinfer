@@ -18,3 +18,13 @@ if ($null -ne (Get-DiagnosticProcessPath -NativeProcess ([pscustomobject]@{Path=
     throw 'A sibling build must be skipped.'
 }
 Write-Output 'PASS process-path exit race, already-exited process and sibling-build exclusion'
+$seen = @{}
+$now = [datetime]::UtcNow
+$first = Update-DiagnosticObservation $seen 17 100 0.015625 $now
+$same = Update-DiagnosticObservation $seen 17 100 0.015625 $now.AddSeconds(20)
+if ($same.Changed -ne $first.Changed) { throw 'Idle time must accumulate for the same process.' }
+$replacement = Update-DiagnosticObservation $seen 17 200 0.015625 $now.AddSeconds(30)
+if ($replacement.Changed -ne $now.AddSeconds(30) -or $replacement.StartTicks -ne 200) {
+    throw 'Reused PID and equal CPU time must not inherit the previous process idle timer.'
+}
+Write-Output 'PASS stable identity and reused-PID idle tracking'

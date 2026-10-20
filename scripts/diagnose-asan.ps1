@@ -27,14 +27,10 @@ while (-not $test.HasExited) {
             continue
         }
         $key = $native.Id
-        if (-not $seen.ContainsKey($key)) {
-            $seen[$key] = @{ CPU = $native.CPU; Changed = [DateTime]::UtcNow; Captured = $false }
-        }
-        $state = $seen[$key]
-        if ($native.CPU -ne $state.CPU) {
-            $state.CPU = $native.CPU
-            $state.Changed = [DateTime]::UtcNow
-        }
+        $started = $native.StartTime
+        $cpu = $native.CPU
+        if ($null -eq $started -or $null -eq $cpu) { continue }
+        $state = Update-DiagnosticObservation $seen $key $started.Ticks $cpu ([DateTime]::UtcNow)
         if (-not $state.Captured -and
             ([DateTime]::UtcNow - $state.Changed).TotalSeconds -ge $IdleSeconds) {
             $state.Captured = $true
@@ -43,6 +39,8 @@ while (-not $test.HasExited) {
             $log = Join-Path $output "$name-capture.txt"
             $record = [ordered]@{
                 pid = $key
+                start_time = $started.ToString('o')
+                idle_since_utc = $state.Changed.ToString('o')
                 process = $native.ProcessName
                 cpu_seconds = $native.CPU
                 thread_count = $native.Threads.Count
@@ -51,8 +49,9 @@ while (-not $test.HasExited) {
             }
             & $procdump -accepteula -ma $key $dump *> $log
             $record.capture_exit_code = $LASTEXITCODE
+            $record.dump_exists = Test-Path -LiteralPath $dump
             $captures.Add($record)
-            Write-Output "Captured idle process $name; ProcDump exit=$LASTEXITCODE"
+            Write-Output "Idle-process capture attempt $name; ProcDump exit=$LASTEXITCODE; dump=$($record.dump_exists)"
         }
     }
     Start-Sleep -Seconds 1
