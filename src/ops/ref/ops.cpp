@@ -95,8 +95,8 @@ void layer_norm(std::span<const float> input, std::span<const float> scale,
 
 void gelu(std::span<float> values) {
   for (auto& value : values) {
-    value = 0.5F * value *
-            (1.0F + std::tanh(0.7978845608028654F * (value + 0.044715F * value * value * value)));
+    const float cube = value * value * value;
+    value = 0.5F * value * (1.0F + std::tanh(0.7978845608028654F * (value + 0.044715F * cube)));
   }
 }
 

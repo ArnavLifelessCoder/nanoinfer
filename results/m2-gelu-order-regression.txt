@@ -1,0 +1,23 @@
+Random seed: 42
+Note: Google Test filter = ReferenceOps.GeluRoundsTheCubicTermBeforeScaling
+[==========] Running 1 test from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 1 test from ReferenceOps
+[ RUN      ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling
+<project>\tests\test_ref_ops.cpp(138): error: Expected equality of these values:
+  actual[0]
+    Which is: -0.00157974241
+  expected
+    Which is: -0.00157983915
+x=-3.247999906539917
+
+[  FAILED  ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling (22 ms)
+[----------] 1 test from ReferenceOps (22 ms total)
+
+[----------] Global test environment tear-down
+[==========] 1 test from 1 test suite ran. (23 ms total)
+[  PASSED  ] 0 tests.
+[  FAILED  ] 1 test, listed below:
+[  FAILED  ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling
+
+ 1 FAILED TEST

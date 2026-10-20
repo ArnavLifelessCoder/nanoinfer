@@ -127,6 +127,18 @@ TEST(ReferenceOps, StableSoftmaxWithLargeAndNegativeValues) {
   }
 }
 
+TEST(ReferenceOps, GeluRoundsTheCubicTermBeforeScaling) {
+  for (int index = -4000; index <= 4000; ++index) {
+    const float x = static_cast<float>(index) / 1000.0F;
+    const float cube = x * x * x;
+    const float expected =
+        0.5F * x * (1.0F + std::tanh(0.7978845608028654F * (x + 0.044715F * cube)));
+    std::array<float, 1> actual{x};
+    ref::gelu(actual);
+    ASSERT_EQ(actual[0], expected) << "x=" << x;
+  }
+}
+
 TEST(ReferenceOps, AttentionIncludesDiagonalAndKeepsHeadsSeparate) {
   // Zero Q/K gives a uniform average of V at positions [0, query], per head.
   std::vector<float> qkv(3 * 3 * 4), output(3 * 4);
