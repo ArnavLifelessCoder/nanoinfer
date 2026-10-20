@@ -127,4 +127,7 @@ if(BUILD_TESTING)
     --report "${CMAKE_BINARY_DIR}/golden-report.json")
   set_tests_properties(golden_tiny PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     FIXTURES_REQUIRED tiny_model)
+  add_test(NAME reference_contract COMMAND "${Python3_EXECUTABLE}" -m tests.reference_contract
+    --executable "$<TARGET_FILE:gpt2ref>" --directory "${CMAKE_BINARY_DIR}/reference-contract")
+  set_tests_properties(reference_contract PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 endif()
