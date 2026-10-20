@@ -1,0 +1,3 @@
+Test project C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug
+No tests were found!!!
+Errors while running CTest

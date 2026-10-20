@@ -1,0 +1,25 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.15, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\arnav\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime
+configfile: pyproject.toml
+collecting ... collected 16 items
+
+tests/test_model_format.py::test_binary_layout_and_checksums PASSED      [  6%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor0] PASSED  [ 12%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor1] PASSED  [ 18%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor2] PASSED  [ 25%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor3] PASSED  [ 31%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor4] PASSED  [ 37%]
+tests/test_model_format.py::test_reject_invalid_names[] PASSED           [ 43%]
+tests/test_model_format.py::test_reject_invalid_names[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] PASSED [ 50%]
+tests/test_model_format.py::test_reject_invalid_names[embedded\x00null] PASSED [ 56%]
+tests/test_model_format.py::test_reject_invalid_names[\u03bb] PASSED     [ 62%]
+tests/test_model_format.py::test_reject_invalid_config[config0] PASSED   [ 68%]
+tests/test_model_format.py::test_reject_invalid_config[config1] PASSED   [ 75%]
+tests/test_model_format.py::test_reject_invalid_config[config2] PASSED   [ 81%]
+tests/test_model_format.py::test_reject_invalid_config[config3] PASSED   [ 87%]
+tests/test_model_format.py::test_reject_invalid_config[config4] PASSED   [ 93%]
+tests/test_model_format.py::test_reject_empty_model PASSED               [100%]
+
+============================= 16 passed in 0.45s ==============================

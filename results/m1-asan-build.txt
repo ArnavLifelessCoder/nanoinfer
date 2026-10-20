@@ -1,0 +1,9 @@
+[1/9] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_main.cpp.obj
+[2/9] Building CXX object CMakeFiles\gpt2inspect.dir\src\tools\inspect.cpp.obj
+[3/9] Building CXX object CMakeFiles\nanoinfer.dir\src\platform\mapped_file_windows.cpp.obj
+[4/9] Building CXX object CMakeFiles\nanoinfer.dir\src\model\loader.cpp.obj
+[5/9] Linking CXX static library nanoinfer.lib
+[6/9] Linking CXX executable gpt2inspect.exe
+[7/9] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_mapped_file.cpp.obj
+[8/9] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_loader.cpp.obj
+[9/9] Linking CXX executable nanoinfer_tests.exe

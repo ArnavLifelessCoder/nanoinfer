@@ -1,0 +1,1 @@
+PASS repeated pinned-revision export: model SHA256 and every golden array are identical; stderr is empty

@@ -1,0 +1,427 @@
+UpdateCTestConfiguration  from :C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/DartConfiguration.tcl
+UpdateCTestConfiguration  from :C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/DartConfiguration.tcl
+Parse Config file:C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/DartConfiguration.tcl
+Test project C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+    Start 1: unit
+
+1: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\build\asan\nanoinfer_tests.exe"
+1: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan
+1: Test timeout computed to be: 1500
+1: Random seed: 42
+1: [==========] Running 12 tests from 3 test suites.
+1: [----------] Global test environment set-up.
+1: [----------] 5 tests from MappedFile
+1: [ RUN      ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths
+1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (9 ms)
+1: [ RUN      ] MappedFile.MissingFileFailsCleanly
+1: [       OK ] MappedFile.MissingFileFailsCleanly (5 ms)
+1: [ RUN      ] MappedFile.EmptyFileFailsCleanly
+1: [       OK ] MappedFile.EmptyFileFailsCleanly (7 ms)
+1: [ RUN      ] MappedFile.DirectoryFailsCleanly
+1: [       OK ] MappedFile.DirectoryFailsCleanly (6 ms)
+1: [ RUN      ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile
+1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (8 ms)
+1: [----------] 5 tests from MappedFile (38 ms total)
+1:
+1: [----------] 1 test from Checksum
+1: [ RUN      ] Checksum.MatchesStandardVectorAndChaining
+1: [       OK ] Checksum.MatchesStandardVectorAndChaining (0 ms)
+1: [----------] 1 test from Checksum (0 ms total)
+1:
+1: [----------] 6 tests from LoaderTest
+1: [ RUN      ] LoaderTest.ReadsShapesStridesAndZeroCopyValues
+1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (9 ms)
+1: [ RUN      ] LoaderTest.RejectsEveryTruncationBoundary
+1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (1071 ms)
+1: [ RUN      ] LoaderTest.RejectsBitCorruptionAtEveryByte
+1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (1141 ms)
+1: [ RUN      ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum
+1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (38 ms)
+1: [ RUN      ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData
+1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (28 ms)
+1: [ RUN      ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames
+1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (16 ms)
+1: [----------] 6 tests from LoaderTest (2305 ms total)
+1:
+1: [----------] Global test environment tear-down
+1: [==========] 12 tests from 3 test suites ran. (2346 ms total)
+1: [  PASSED  ] 12 tests.
+1/4 Test #1: unit .............................   Passed    6.37 sec
+test 2
+    Start 2: export_tiny
+
+2: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\.venv\Scripts\python.exe" "-m" "python.export" "--tiny" "--output" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/fixtures/tiny.bin" "--golden" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/fixtures/golden"
+2: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime
+2: Test timeout computed to be: 1500
+2: {
+2:   "format_version": 1,
+2:   "config": {
+2:     "layers": 2,
+2:     "d_model": 16,
+2:     "heads": 2,
+2:     "vocab": 97,
+2:     "ctx": 64
+2:   },
+2:   "tensors": [
+2:     {
+2:       "name": "wte.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         97,
+2:         16
+2:       ],
+2:       "offset": 3648,
+2:       "byte_size": 6208,
+2:       "crc32": 1708750088
+2:     },
+2:     {
+2:       "name": "wpe.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 9856,
+2:       "byte_size": 4096,
+2:       "crc32": 1388767903
+2:     },
+2:     {
+2:       "name": "h.0.ln_1.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 13952,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.0.ln_1.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 14016,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_attn.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         48
+2:       ],
+2:       "offset": 14080,
+2:       "byte_size": 3072,
+2:       "crc32": 184779411
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_attn.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         48
+2:       ],
+2:       "offset": 17152,
+2:       "byte_size": 192,
+2:       "crc32": 2348746994
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         16
+2:       ],
+2:       "offset": 17344,
+2:       "byte_size": 1024,
+2:       "crc32": 1610141689
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18368,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.ln_2.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18432,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.0.ln_2.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18496,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_fc.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         64
+2:       ],
+2:       "offset": 18560,
+2:       "byte_size": 4096,
+2:       "crc32": 768724231
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_fc.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64
+2:       ],
+2:       "offset": 22656,
+2:       "byte_size": 256,
+2:       "crc32": 227968344
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 22912,
+2:       "byte_size": 4096,
+2:       "crc32": 2981679276
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27008,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.ln_1.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27072,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.1.ln_1.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27136,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_attn.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         48
+2:       ],
+2:       "offset": 27200,
+2:       "byte_size": 3072,
+2:       "crc32": 3948583692
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_attn.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         48
+2:       ],
+2:       "offset": 30272,
+2:       "byte_size": 192,
+2:       "crc32": 2348746994
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         16
+2:       ],
+2:       "offset": 30464,
+2:       "byte_size": 1024,
+2:       "crc32": 776059860
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31488,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.ln_2.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31552,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.1.ln_2.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31616,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_fc.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         64
+2:       ],
+2:       "offset": 31680,
+2:       "byte_size": 4096,
+2:       "crc32": 4045243238
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_fc.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64
+2:       ],
+2:       "offset": 35776,
+2:       "byte_size": 256,
+2:       "crc32": 227968344
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 36032,
+2:       "byte_size": 4096,
+2:       "crc32": 320104244
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40128,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "ln_f.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40192,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "ln_f.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40256,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     }
+2:   ],
+2:   "source": {
+2:     "torch": "2.11.0+cu128",
+2:     "transformers": "4.57.1",
+2:     "revision": null,
+2:     "weight_layout": "Conv1D [in, out]; embeddings [vocab/ctx, d_model]"
+2:   }
+2: }
+2/4 Test #2: export_tiny ......................   Passed   20.64 sec
+test 3
+    Start 3: roundtrip_tiny
+
+3: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\.venv\Scripts\python.exe" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/tests/roundtrip.py" "--inspector" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/gpt2inspect.exe" "--model" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/fixtures/tiny.bin" "--manifest" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/fixtures/tiny.json"
+3: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan
+3: Test timeout computed to be: 1500
+3: PASS wte.weight shape=[97, 16] crc32=65d97508
+3: PASS wpe.weight shape=[64, 16] crc32=52c6ea9f
+3: PASS h.0.ln_1.weight shape=[16] crc32=f700a42a
+3: PASS h.0.ln_1.bias shape=[16] crc32=758d6336
+3: PASS h.0.attn.c_attn.weight shape=[16, 48] crc32=0b038293
+3: PASS h.0.attn.c_attn.bias shape=[48] crc32=8bff08f2
+3: PASS h.0.attn.c_proj.weight shape=[16, 16] crc32=5ff8cff9
+3: PASS h.0.attn.c_proj.bias shape=[16] crc32=758d6336
+3: PASS h.0.ln_2.weight shape=[16] crc32=f700a42a
+3: PASS h.0.ln_2.bias shape=[16] crc32=758d6336
+3: PASS h.0.mlp.c_fc.weight shape=[16, 64] crc32=2dd1cd07
+3: PASS h.0.mlp.c_fc.bias shape=[64] crc32=0d968558
+3: PASS h.0.mlp.c_proj.weight shape=[64, 16] crc32=b1b8d0ac
+3: PASS h.0.mlp.c_proj.bias shape=[16] crc32=758d6336
+3: PASS h.1.ln_1.weight shape=[16] crc32=f700a42a
+3: PASS h.1.ln_1.bias shape=[16] crc32=758d6336
+3: PASS h.1.attn.c_attn.weight shape=[16, 48] crc32=eb5a9b0c
+3: PASS h.1.attn.c_attn.bias shape=[48] crc32=8bff08f2
+3: PASS h.1.attn.c_proj.weight shape=[16, 16] crc32=2e41bbd4
+3: PASS h.1.attn.c_proj.bias shape=[16] crc32=758d6336
+3: PASS h.1.ln_2.weight shape=[16] crc32=f700a42a
+3: PASS h.1.ln_2.bias shape=[16] crc32=758d6336
+3: PASS h.1.mlp.c_fc.weight shape=[16, 64] crc32=f11d8366
+3: PASS h.1.mlp.c_fc.bias shape=[64] crc32=0d968558
+3: PASS h.1.mlp.c_proj.weight shape=[64, 16] crc32=13146734
+3: PASS h.1.mlp.c_proj.bias shape=[16] crc32=758d6336
+3: PASS ln_f.weight shape=[16] crc32=f700a42a
+3: PASS ln_f.bias shape=[16] crc32=758d6336
+3: PASS all 28 tensor shapes, checksums, offsets and sizes
+3/4 Test #3: roundtrip_tiny ...................   Passed    3.56 sec
+test 4
+    Start 4: loader_integration
+
+4: Test command: "C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime\.venv\Scripts\python.exe" "-m" "tests.loader_integration" "--inspector" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/gpt2inspect.exe" "--directory" "C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/asan/awkward"
+4: Working Directory: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime
+4: Test timeout computed to be: 1500
+4: Random seed: 42
+4: PASS 32 random/awkward tensors, all ranks, Unicode path and JSON escaping
+4: PASS clean error for empty: model error: model file is empty or too large
+4: PASS clean error for header: model error: truncated header
+4: PASS clean error for table: model error: invalid tensor count
+4: PASS clean error for payload: model error: file length mismatch
+4: PASS clean error for trailing: model error: file length mismatch
+4: PASS clean error for corrupt: model error: tensor checksum mismatch
+4: PASS missing CLI argument
+4/4 Test #4: loader_integration ...............   Passed    4.77 sec
+
+100% tests passed, 0 tests failed out of 4
+
+Total Test time (real) =  35.37 sec

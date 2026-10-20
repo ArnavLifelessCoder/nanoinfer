@@ -1,0 +1,33 @@
+{
+  "milestone": "M1",
+  "pretrained_tensor_count": 148,
+  "ctest_entries_per_preset": 4,
+  "cpp_unit_tests": 12,
+  "python_tests": 20,
+  "golden_files": [
+    {
+      "file": "prompt_0.npz",
+      "bytes": 200531,
+      "sha256": "269f73fef200fd72dae95d9953bb1aa3146acba54c5146b637a2858952ba3a4e",
+      "tokens": 1
+    },
+    {
+      "file": "prompt_1.npz",
+      "bytes": 399228,
+      "sha256": "c2e8105c81b363dc286e414280e49148b9a59027a6f7e177b0595ec0aaaf0cc2",
+      "tokens": 2
+    },
+    {
+      "file": "prompt_2.npz",
+      "bytes": 397623,
+      "sha256": "fcca65b1571a9de58b1f243908f54743f012da3a2987829b8d9ea133b6925135",
+      "tokens": 2
+    }
+  ],
+  "golden_npz_bytes": 997382,
+  "model_revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e",
+  "local_torch_build": "2.11.0+cu128",
+  "execution_device": "cpu",
+  "ci_status": "not run; push awaits owner approval",
+  "tsan": "not applicable; no runtime worker threads"
+}

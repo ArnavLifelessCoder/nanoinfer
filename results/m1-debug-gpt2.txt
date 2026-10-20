@@ -1,0 +1,149 @@
+PASS wte.weight shape=[50257, 768] crc32=ce20fa37
+PASS wpe.weight shape=[1024, 768] crc32=87774e0a
+PASS h.0.ln_1.weight shape=[768] crc32=a3ab5385
+PASS h.0.ln_1.bias shape=[768] crc32=5acb5896
+PASS h.0.attn.c_attn.weight shape=[768, 2304] crc32=c424d078
+PASS h.0.attn.c_attn.bias shape=[2304] crc32=86271fa1
+PASS h.0.attn.c_proj.weight shape=[768, 768] crc32=ad37c738
+PASS h.0.attn.c_proj.bias shape=[768] crc32=264b8415
+PASS h.0.ln_2.weight shape=[768] crc32=6c6a9da9
+PASS h.0.ln_2.bias shape=[768] crc32=eef867d0
+PASS h.0.mlp.c_fc.weight shape=[768, 3072] crc32=f9135263
+PASS h.0.mlp.c_fc.bias shape=[3072] crc32=b31704ba
+PASS h.0.mlp.c_proj.weight shape=[3072, 768] crc32=4d4471e5
+PASS h.0.mlp.c_proj.bias shape=[768] crc32=a1aebdff
+PASS h.1.ln_1.weight shape=[768] crc32=90c32cba
+PASS h.1.ln_1.bias shape=[768] crc32=335167ae
+PASS h.1.attn.c_attn.weight shape=[768, 2304] crc32=0482147d
+PASS h.1.attn.c_attn.bias shape=[2304] crc32=84797379
+PASS h.1.attn.c_proj.weight shape=[768, 768] crc32=fd97f472
+PASS h.1.attn.c_proj.bias shape=[768] crc32=ab0d7d64
+PASS h.1.ln_2.weight shape=[768] crc32=0391b457
+PASS h.1.ln_2.bias shape=[768] crc32=1f595699
+PASS h.1.mlp.c_fc.weight shape=[768, 3072] crc32=92b9be7b
+PASS h.1.mlp.c_fc.bias shape=[3072] crc32=af3c6a31
+PASS h.1.mlp.c_proj.weight shape=[3072, 768] crc32=166f6faa
+PASS h.1.mlp.c_proj.bias shape=[768] crc32=0727d3a7
+PASS h.2.ln_1.weight shape=[768] crc32=614e5b4c
+PASS h.2.ln_1.bias shape=[768] crc32=6f8666f8
+PASS h.2.attn.c_attn.weight shape=[768, 2304] crc32=46171872
+PASS h.2.attn.c_attn.bias shape=[2304] crc32=773d49bd
+PASS h.2.attn.c_proj.weight shape=[768, 768] crc32=20d25c19
+PASS h.2.attn.c_proj.bias shape=[768] crc32=9cb919e2
+PASS h.2.ln_2.weight shape=[768] crc32=5e4ad63e
+PASS h.2.ln_2.bias shape=[768] crc32=af72a18a
+PASS h.2.mlp.c_fc.weight shape=[768, 3072] crc32=6ac9ce3f
+PASS h.2.mlp.c_fc.bias shape=[3072] crc32=3f518ab9
+PASS h.2.mlp.c_proj.weight shape=[3072, 768] crc32=190ea8e1
+PASS h.2.mlp.c_proj.bias shape=[768] crc32=1aff4d2d
+PASS h.3.ln_1.weight shape=[768] crc32=b7ede68e
+PASS h.3.ln_1.bias shape=[768] crc32=3ad9178a
+PASS h.3.attn.c_attn.weight shape=[768, 2304] crc32=83cd7597
+PASS h.3.attn.c_attn.bias shape=[2304] crc32=c4cd1d4d
+PASS h.3.attn.c_proj.weight shape=[768, 768] crc32=a54f3ac6
+PASS h.3.attn.c_proj.bias shape=[768] crc32=b8a25d21
+PASS h.3.ln_2.weight shape=[768] crc32=ff85c704
+PASS h.3.ln_2.bias shape=[768] crc32=d609641e
+PASS h.3.mlp.c_fc.weight shape=[768, 3072] crc32=c43f7830
+PASS h.3.mlp.c_fc.bias shape=[3072] crc32=c5ac67fe
+PASS h.3.mlp.c_proj.weight shape=[3072, 768] crc32=a69e2d26
+PASS h.3.mlp.c_proj.bias shape=[768] crc32=6ecaf5ba
+PASS h.4.ln_1.weight shape=[768] crc32=3a0f6a1f
+PASS h.4.ln_1.bias shape=[768] crc32=49a72efe
+PASS h.4.attn.c_attn.weight shape=[768, 2304] crc32=574e265b
+PASS h.4.attn.c_attn.bias shape=[2304] crc32=391b6026
+PASS h.4.attn.c_proj.weight shape=[768, 768] crc32=eaea11c1
+PASS h.4.attn.c_proj.bias shape=[768] crc32=6fd56fa9
+PASS h.4.ln_2.weight shape=[768] crc32=39e05e1b
+PASS h.4.ln_2.bias shape=[768] crc32=bffa0c1a
+PASS h.4.mlp.c_fc.weight shape=[768, 3072] crc32=eec40958
+PASS h.4.mlp.c_fc.bias shape=[3072] crc32=032f5160
+PASS h.4.mlp.c_proj.weight shape=[3072, 768] crc32=cfeb2fb7
+PASS h.4.mlp.c_proj.bias shape=[768] crc32=f72470b4
+PASS h.5.ln_1.weight shape=[768] crc32=2cd9f6c5
+PASS h.5.ln_1.bias shape=[768] crc32=ee7f9d2e
+PASS h.5.attn.c_attn.weight shape=[768, 2304] crc32=b093cc4b
+PASS h.5.attn.c_attn.bias shape=[2304] crc32=94d5a1ad
+PASS h.5.attn.c_proj.weight shape=[768, 768] crc32=6a241570
+PASS h.5.attn.c_proj.bias shape=[768] crc32=69dad12f
+PASS h.5.ln_2.weight shape=[768] crc32=b3c361d2
+PASS h.5.ln_2.bias shape=[768] crc32=465a46ac
+PASS h.5.mlp.c_fc.weight shape=[768, 3072] crc32=c9c3215b
+PASS h.5.mlp.c_fc.bias shape=[3072] crc32=9f234310
+PASS h.5.mlp.c_proj.weight shape=[3072, 768] crc32=4a681c55
+PASS h.5.mlp.c_proj.bias shape=[768] crc32=9f5510b3
+PASS h.6.ln_1.weight shape=[768] crc32=3292ee8f
+PASS h.6.ln_1.bias shape=[768] crc32=59e21e2c
+PASS h.6.attn.c_attn.weight shape=[768, 2304] crc32=802505e1
+PASS h.6.attn.c_attn.bias shape=[2304] crc32=30453ea8
+PASS h.6.attn.c_proj.weight shape=[768, 768] crc32=f04fac3f
+PASS h.6.attn.c_proj.bias shape=[768] crc32=88340e3c
+PASS h.6.ln_2.weight shape=[768] crc32=7a30953d
+PASS h.6.ln_2.bias shape=[768] crc32=d3820861
+PASS h.6.mlp.c_fc.weight shape=[768, 3072] crc32=45638738
+PASS h.6.mlp.c_fc.bias shape=[3072] crc32=17f8102e
+PASS h.6.mlp.c_proj.weight shape=[3072, 768] crc32=95b16dd3
+PASS h.6.mlp.c_proj.bias shape=[768] crc32=33cb7afd
+PASS h.7.ln_1.weight shape=[768] crc32=53998f37
+PASS h.7.ln_1.bias shape=[768] crc32=cfddbdd2
+PASS h.7.attn.c_attn.weight shape=[768, 2304] crc32=5598d1ed
+PASS h.7.attn.c_attn.bias shape=[2304] crc32=d15df1eb
+PASS h.7.attn.c_proj.weight shape=[768, 768] crc32=b4c9ae4b
+PASS h.7.attn.c_proj.bias shape=[768] crc32=19adf4e3
+PASS h.7.ln_2.weight shape=[768] crc32=72b7b981
+PASS h.7.ln_2.bias shape=[768] crc32=f6dfd17e
+PASS h.7.mlp.c_fc.weight shape=[768, 3072] crc32=52fb3911
+PASS h.7.mlp.c_fc.bias shape=[3072] crc32=f373fd70
+PASS h.7.mlp.c_proj.weight shape=[3072, 768] crc32=0119b185
+PASS h.7.mlp.c_proj.bias shape=[768] crc32=4e944f13
+PASS h.8.ln_1.weight shape=[768] crc32=671c8a63
+PASS h.8.ln_1.bias shape=[768] crc32=826624ed
+PASS h.8.attn.c_attn.weight shape=[768, 2304] crc32=1f3ce922
+PASS h.8.attn.c_attn.bias shape=[2304] crc32=feb6b19f
+PASS h.8.attn.c_proj.weight shape=[768, 768] crc32=2637d846
+PASS h.8.attn.c_proj.bias shape=[768] crc32=072ff038
+PASS h.8.ln_2.weight shape=[768] crc32=cf654be1
+PASS h.8.ln_2.bias shape=[768] crc32=ff488087
+PASS h.8.mlp.c_fc.weight shape=[768, 3072] crc32=3981d65f
+PASS h.8.mlp.c_fc.bias shape=[3072] crc32=339bd418
+PASS h.8.mlp.c_proj.weight shape=[3072, 768] crc32=27a3e65a
+PASS h.8.mlp.c_proj.bias shape=[768] crc32=61227b3b
+PASS h.9.ln_1.weight shape=[768] crc32=2f03e0f7
+PASS h.9.ln_1.bias shape=[768] crc32=10d6006a
+PASS h.9.attn.c_attn.weight shape=[768, 2304] crc32=40b16e51
+PASS h.9.attn.c_attn.bias shape=[2304] crc32=efd2ece5
+PASS h.9.attn.c_proj.weight shape=[768, 768] crc32=66c74f7f
+PASS h.9.attn.c_proj.bias shape=[768] crc32=6d48b2cf
+PASS h.9.ln_2.weight shape=[768] crc32=1f25236b
+PASS h.9.ln_2.bias shape=[768] crc32=e475ece5
+PASS h.9.mlp.c_fc.weight shape=[768, 3072] crc32=ddaf6ecf
+PASS h.9.mlp.c_fc.bias shape=[3072] crc32=d680291d
+PASS h.9.mlp.c_proj.weight shape=[3072, 768] crc32=312e436e
+PASS h.9.mlp.c_proj.bias shape=[768] crc32=5c189b80
+PASS h.10.ln_1.weight shape=[768] crc32=755a3ba6
+PASS h.10.ln_1.bias shape=[768] crc32=c66d8f55
+PASS h.10.attn.c_attn.weight shape=[768, 2304] crc32=5e08bf63
+PASS h.10.attn.c_attn.bias shape=[2304] crc32=7575b548
+PASS h.10.attn.c_proj.weight shape=[768, 768] crc32=3c774cfe
+PASS h.10.attn.c_proj.bias shape=[768] crc32=f254f310
+PASS h.10.ln_2.weight shape=[768] crc32=8343c266
+PASS h.10.ln_2.bias shape=[768] crc32=eac1e8d6
+PASS h.10.mlp.c_fc.weight shape=[768, 3072] crc32=702857b0
+PASS h.10.mlp.c_fc.bias shape=[3072] crc32=761e513e
+PASS h.10.mlp.c_proj.weight shape=[3072, 768] crc32=d34573a8
+PASS h.10.mlp.c_proj.bias shape=[768] crc32=4af7f176
+PASS h.11.ln_1.weight shape=[768] crc32=d265810e
+PASS h.11.ln_1.bias shape=[768] crc32=64a76217
+PASS h.11.attn.c_attn.weight shape=[768, 2304] crc32=011a3c30
+PASS h.11.attn.c_attn.bias shape=[2304] crc32=95e9105c
+PASS h.11.attn.c_proj.weight shape=[768, 768] crc32=0693462e
+PASS h.11.attn.c_proj.bias shape=[768] crc32=1ca96691
+PASS h.11.ln_2.weight shape=[768] crc32=5894078f
+PASS h.11.ln_2.bias shape=[768] crc32=3e3eca73
+PASS h.11.mlp.c_fc.weight shape=[768, 3072] crc32=ad288899
+PASS h.11.mlp.c_fc.bias shape=[3072] crc32=a858a7e8
+PASS h.11.mlp.c_proj.weight shape=[3072, 768] crc32=b41639c2
+PASS h.11.mlp.c_proj.bias shape=[768] crc32=d19c1af9
+PASS ln_f.weight shape=[768] crc32=66271b90
+PASS ln_f.bias shape=[768] crc32=71261dab
+PASS all 148 tensor shapes, checksums, offsets and sizes

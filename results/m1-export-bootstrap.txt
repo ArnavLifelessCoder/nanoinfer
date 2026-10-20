@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.15, pytest-9.1.1, pluggy-1.7.0 -- C:\Users\arnav\AppData\Local\Programs\Python\Python313\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\arnav\Downloads\SDE PROJs\cpu-inference-runtime
+configfile: pyproject.toml
+collecting ... collected 4 items
+
+tests/test_export.py::test_conv1d_orientation_and_tied_embedding PASSED  [ 25%]
+tests/test_export.py::test_untied_output_is_rejected PASSED              [ 50%]
+tests/test_export.py::test_unsupported_activation_is_rejected PASSED     [ 75%]
+tests/test_export.py::test_golden_matches_direct_pytorch PASSED          [100%]
+
+============================= 4 passed in 27.01s ==============================

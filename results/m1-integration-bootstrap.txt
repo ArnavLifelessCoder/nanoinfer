@@ -1,0 +1,9 @@
+Random seed: 42
+PASS 32 random/awkward tensors, all ranks, Unicode path and JSON escaping
+PASS clean error for empty: model error: model file is empty or too large
+PASS clean error for header: model error: truncated header
+PASS clean error for table: model error: invalid tensor count
+PASS clean error for payload: model error: file length mismatch
+PASS clean error for trailing: model error: file length mismatch
+PASS clean error for corrupt: model error: tensor checksum mismatch
+PASS missing CLI argument

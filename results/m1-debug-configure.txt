@@ -1,0 +1,7 @@
+Preset CMake variables:
+
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (15.2s)
+-- Generating done (1.1s)
+-- Build files have been written to: C:/Users/arnav/Downloads/SDE PROJs/cpu-inference-runtime/build/debug
