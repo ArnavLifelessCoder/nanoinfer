@@ -1,0 +1,24 @@
+Random seed: 1234
+Note: Google Test filter = ReferenceOps.*
+[==========] Running 7 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 7 tests from ReferenceOps
+[ RUN      ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage
+[       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (21 ms)
+[ RUN      ] ReferenceOps.EmbeddingsBiasAndResidual
+[       OK ] ReferenceOps.EmbeddingsBiasAndResidual (0 ms)
+[ RUN      ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon
+[       OK ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon (1 ms)
+[ RUN      ] ReferenceOps.GeluUsesTanhApproximation
+[       OK ] ReferenceOps.GeluUsesTanhApproximation (0 ms)
+[ RUN      ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues
+[       OK ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues (0 ms)
+[ RUN      ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate
+[       OK ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate (0 ms)
+[ RUN      ] ReferenceOps.InvalidShapesFailBeforeIndexing
+[       OK ] ReferenceOps.InvalidShapesFailBeforeIndexing (0 ms)
+[----------] 7 tests from ReferenceOps (23 ms total)
+
+[----------] Global test environment tear-down
+[==========] 7 tests from 1 test suite ran. (23 ms total)
+[  PASSED  ] 7 tests.
