@@ -132,6 +132,15 @@ if(BUILD_TESTING)
     --golden "${CMAKE_BINARY_DIR}/fixtures/golden" --directory "${CMAKE_BINARY_DIR}/generation")
   set_tests_properties(generation_cli PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     FIXTURES_REQUIRED tiny_model)
+  add_executable(gpt2cachecheck tests/cache_check.cpp ${REFERENCE_MAIN})
+  target_include_directories(gpt2cachecheck PRIVATE src)
+  target_link_libraries(gpt2cachecheck PRIVATE nanoinfer project_options)
+  add_test(NAME golden_cached COMMAND "${Python3_EXECUTABLE}" -m tests.golden_cached
+    --executable "$<TARGET_FILE:gpt2cachecheck>" --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin"
+    --golden "${CMAKE_BINARY_DIR}/fixtures/golden" --directory "${CMAKE_BINARY_DIR}/cached-golden"
+    --report "${CMAKE_BINARY_DIR}/cached-golden-report.json")
+  set_tests_properties(golden_cached PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED tiny_model)
   add_test(NAME loader_integration COMMAND "${Python3_EXECUTABLE}" -m tests.loader_integration
     --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/awkward")
   set_tests_properties(loader_integration PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
