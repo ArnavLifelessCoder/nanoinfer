@@ -79,6 +79,8 @@ endif()
 set(NANOINFER_SOURCES ${MAPPING_SOURCE} src/model/loader.cpp src/ops/ref/ops.cpp
   src/runtime/reference.cpp)
 add_library(nanoinfer STATIC ${NANOINFER_SOURCES})
+target_sources(nanoinfer PRIVATE src/runtime/kv_cache.cpp src/ops/ref/cached_attention.cpp
+  src/runtime/cached.cpp)
 target_include_directories(nanoinfer PUBLIC include)
 target_link_libraries(nanoinfer PRIVATE project_options)
 add_executable(gpt2inspect src/tools/inspect.cpp ${INSPECT_MAIN})
@@ -89,7 +91,7 @@ target_include_directories(gpt2ref PRIVATE src)
 target_link_libraries(gpt2ref PRIVATE nanoinfer project_options)
 if(BUILD_TESTING)
   add_executable(nanoinfer_tests tests/test_main.cpp tests/test_mapped_file.cpp tests/test_loader.cpp
-    tests/test_ref_ops.cpp)
+    tests/test_ref_ops.cpp tests/test_kv_cache.cpp)
   target_link_libraries(nanoinfer_tests PRIVATE nanoinfer project_options GTest::gtest)
   add_test(NAME unit COMMAND nanoinfer_tests)
   if(NANOINFER_ASAN AND NOT MSVC)
@@ -116,6 +118,10 @@ if(BUILD_TESTING)
     --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin"
     --manifest "${CMAKE_BINARY_DIR}/fixtures/tiny.json")
   set_tests_properties(roundtrip_tiny PROPERTIES FIXTURES_REQUIRED tiny_model)
+  add_executable(nanoinfer_cache_tests tests/test_main.cpp tests/test_cached_forward.cpp)
+  target_link_libraries(nanoinfer_cache_tests PRIVATE nanoinfer project_options GTest::gtest)
+  add_test(NAME cached_forward COMMAND nanoinfer_cache_tests)
+  set_tests_properties(cached_forward PROPERTIES FIXTURES_REQUIRED tiny_model)
   add_test(NAME loader_integration COMMAND "${Python3_EXECUTABLE}" -m tests.loader_integration
     --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/awkward")
   set_tests_properties(loader_integration PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
