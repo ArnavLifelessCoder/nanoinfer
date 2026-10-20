@@ -23,6 +23,9 @@ try {
             --jobs 3 --report "results/m2-$Preset-pretrained.json" 2>&1 |
             Tee-Object "results/m2-$Preset-pretrained.txt"
         if ($LASTEXITCODE -ne 0) { throw 'Pretrained golden comparison failed' }
+        & python scripts/hidden_error_stats.py --golden golden `
+            --captures "build/$Preset/pretrained" --output "results/m2-$Preset-hidden-stats.json"
+        if ($LASTEXITCODE -ne 0) { throw 'Hidden-state statistics failed' }
     }
 }
 finally {
