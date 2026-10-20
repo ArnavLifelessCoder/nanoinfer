@@ -3,6 +3,8 @@ $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $env:UV_CACHE_DIR = Join-Path $projectRoot '.cache\uv'
 $env:HF_HOME = Join-Path $projectRoot '.cache\huggingface'
+# Hugging Face supports copied cache files without Windows symlink privileges.
+$env:HF_HUB_DISABLE_SYMLINKS_WARNING = '1'
 $env:TIKTOKEN_CACHE_DIR = Join-Path $projectRoot '.cache\tiktoken'
 $env:TEMP = Join-Path $projectRoot '.tmp'
 $env:TMP = $env:TEMP
