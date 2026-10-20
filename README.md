@@ -94,10 +94,12 @@ round-trip and saves a separate `results/m1-<preset>-gpt2.txt` log. The test bin
 accepts `--seed=N`; random integration tests accept the same option.
 
 Debug uses unoptimized code with symbols. ASan uses MSVC AddressSanitizer on
-Windows and address plus undefined-behavior sanitizers on Linux. `release` uses
-the compiler's release optimization; architecture-specific flags will be confined
-to optimized kernel translation units when those exist, preserving scalar
-portability. `tsan` is a Linux preset reserved for the threaded milestone.
+Windows and address plus undefined-behavior sanitizers on Linux. The local
+benchmark-only `release` preset enables `-O3 -march=native` on GCC/Clang and
+`/O2 /arch:AVX2` on MSVC. These binaries require the corresponding CPU features.
+Set `NANOINFER_NATIVE_RELEASE=OFF` for a portable Release build. Debug and sanitizer
+presets keep the baseline ISA; M4's dispatched AVX2 kernels will have separate
+translation units. `tsan` is a Linux preset reserved for the threaded milestone.
 
 ## Design decisions
 
