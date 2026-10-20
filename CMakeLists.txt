@@ -35,8 +35,8 @@ else()
   endif()
   if(NANOINFER_ASAN)
     target_compile_options(project_options INTERFACE
-      -O1 -g -fsanitize=address,undefined -fno-omit-frame-pointer)
-    target_link_options(project_options INTERFACE -fsanitize=address,undefined)
+      -O1 -g -fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer)
+    target_link_options(project_options INTERFACE -fsanitize=address,undefined -fno-sanitize-recover=all)
   elseif(NANOINFER_TSAN)
     target_compile_options(project_options INTERFACE
       -O1 -g -fsanitize=thread -fno-omit-frame-pointer)
