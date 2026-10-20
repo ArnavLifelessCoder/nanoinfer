@@ -1,0 +1,10 @@
+PASS forward, positions=1; generating 32 tokens by full-prefix recomputation
+PASS generated 32 tokens
+PASS prompt_0.npz: {'logits': 2.9802322387695312e-08, 'final_ln': 6.705522537231445e-08, 'layer_0': 1.862645149230957e-09, 'layer_1': 3.725290298461914e-09}; greedy_match=True
+PASS forward, positions=2; generating 32 tokens by full-prefix recomputation
+PASS generated 32 tokens
+PASS prompt_1.npz: {'logits': 5.960464477539063e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 3.725290298461914e-09}; greedy_match=True
+PASS forward, positions=3; generating 32 tokens by full-prefix recomputation
+PASS generated 32 tokens
+PASS prompt_2.npz: {'logits': 4.470348358154297e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 7.450580596923828e-09}; greedy_match=True
+PASS all golden logits, hidden states and greedy continuations

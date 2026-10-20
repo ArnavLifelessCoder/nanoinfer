@@ -1,0 +1,52 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.15, pytest-8.4.2, pluggy-1.7.0 -- <project>\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <project>
+configfile: pyproject.toml
+testpaths: tests
+collecting ... collected 42 items
+
+tests/test_export.py::test_conv1d_orientation_and_tied_embedding PASSED  [  2%]
+tests/test_export.py::test_untied_output_is_rejected PASSED              [  4%]
+tests/test_export.py::test_unsupported_activation_is_rejected PASSED     [  7%]
+tests/test_export.py::test_golden_matches_direct_pytorch PASSED          [  9%]
+tests/test_generate.py::test_wrapper_passes_ids_options_and_decodes_with_project_local_temporary_files PASSED [ 11%]
+tests/test_generate.py::test_empty_prompt_does_not_launch_runtime PASSED [ 14%]
+tests/test_generate.py::test_native_failure_propagates_and_cleans_prompt_file PASSED [ 16%]
+tests/test_golden_comparison.py::test_hidden_tolerance_is_elementwise PASSED [ 19%]
+tests/test_golden_comparison.py::test_hidden_boundary_is_inclusive PASSED [ 21%]
+tests/test_golden_comparison.py::test_logits_use_strict_absolute_bound PASSED [ 23%]
+tests/test_golden_comparison.py::test_nonfinite_values_fail[False-nan] PASSED [ 26%]
+tests/test_golden_comparison.py::test_nonfinite_values_fail[False-inf] PASSED [ 28%]
+tests/test_golden_comparison.py::test_nonfinite_values_fail[False--inf] PASSED [ 30%]
+tests/test_golden_comparison.py::test_nonfinite_values_fail[True-nan] PASSED [ 33%]
+tests/test_golden_comparison.py::test_nonfinite_values_fail[True-inf] PASSED [ 35%]
+tests/test_golden_comparison.py::test_nonfinite_values_fail[True--inf] PASSED [ 38%]
+tests/test_golden_comparison.py::test_shape_and_empty_arrays_fail PASSED [ 40%]
+tests/test_hidden_error_stats.py::test_stats_masks_counts_and_worst_coordinates PASSED [ 42%]
+tests/test_hidden_error_stats.py::test_empty_mask_is_null_and_worst_tie_uses_first_element PASSED [ 45%]
+tests/test_hidden_error_stats.py::test_nonfinite_stats_are_rejected[nan] PASSED [ 47%]
+tests/test_hidden_error_stats.py::test_nonfinite_stats_are_rejected[inf] PASSED [ 50%]
+tests/test_hidden_error_stats.py::test_nonfinite_stats_are_rejected[-inf] PASSED [ 52%]
+tests/test_hidden_error_stats.py::test_wrong_shape_is_rejected PASSED    [ 54%]
+tests/test_model_format.py::test_binary_layout_and_checksums PASSED      [ 57%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor0] PASSED  [ 59%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor1] PASSED  [ 61%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor2] PASSED  [ 64%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor3] PASSED  [ 66%]
+tests/test_model_format.py::test_reject_invalid_tensors[tensor4] PASSED  [ 69%]
+tests/test_model_format.py::test_reject_invalid_names[] PASSED           [ 71%]
+tests/test_model_format.py::test_reject_invalid_names[xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx] PASSED [ 73%]
+tests/test_model_format.py::test_reject_invalid_names[embedded\x00null] PASSED [ 76%]
+tests/test_model_format.py::test_reject_invalid_names[\u03bb] PASSED     [ 78%]
+tests/test_model_format.py::test_reject_invalid_config[config0] PASSED   [ 80%]
+tests/test_model_format.py::test_reject_invalid_config[config1] PASSED   [ 83%]
+tests/test_model_format.py::test_reject_invalid_config[config2] PASSED   [ 85%]
+tests/test_model_format.py::test_reject_invalid_config[config3] PASSED   [ 88%]
+tests/test_model_format.py::test_reject_invalid_config[config4] PASSED   [ 90%]
+tests/test_model_format.py::test_reject_empty_model PASSED               [ 92%]
+tests/test_native_process.py::test_capture_preserves_stdout_stderr_and_nonzero_exit PASSED [ 95%]
+tests/test_native_process.py::test_capture_timeout_is_an_error PASSED    [ 97%]
+tests/test_native_process.py::test_capture_does_not_wait_for_descendant_to_close_inherited_output PASSED [100%]
+
+============================= 42 passed in 33.56s =============================

@@ -1,0 +1,7 @@
+Preset CMake variables:
+
+  CMAKE_BUILD_TYPE="Debug"
+
+-- Configuring done (40.9s)
+-- Generating done (0.9s)
+-- Build files have been written to: <project>/build/debug

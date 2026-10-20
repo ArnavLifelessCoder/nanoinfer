@@ -1,0 +1,1 @@
+PASS sanitization preserves URLs, redacts paths, is idempotent and leaves original results unchanged

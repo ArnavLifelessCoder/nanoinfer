@@ -1,0 +1,46 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.15, pytest-8.4.2, pluggy-1.7.0 -- <project>\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <project>
+configfile: pyproject.toml
+collecting ... collected 3 items
+
+tests/test_native_process.py::test_capture_preserves_stdout_stderr_and_nonzero_exit PASSED [ 33%]
+tests/test_native_process.py::test_capture_timeout_is_an_error PASSED    [ 66%]
+tests/test_native_process.py::test_capture_does_not_wait_for_descendant_to_close_inherited_output FAILED [100%]
+
+================================== FAILURES ===================================
+_____ test_capture_does_not_wait_for_descendant_to_close_inherited_output _____
+
+tmp_path = WindowsPath('<project>/build/pytest-capture-before/test_capture_does_not_wait_for0')
+
+    def test_capture_does_not_wait_for_descendant_to_close_inherited_output(tmp_path):
+        release, done = tmp_path / "release", tmp_path / "done"
+        descendant = """
+    import sys, time
+    from pathlib import Path
+    release, done = map(Path, sys.argv[1:])
+    deadline = time.monotonic() + 5
+    while not release.exists() and time.monotonic() < deadline:
+        time.sleep(0.01)
+    done.write_text("done", encoding="utf-8")
+    """
+        parent = """
+    import subprocess, sys
+    subprocess.Popen([sys.executable, "-c", sys.argv[1], *sys.argv[2:]],
+                     stdout=sys.stdout, stderr=sys.stderr)
+    print("parent finished", flush=True)
+    """
+        try:
+            result = capture([sys.executable, "-c", parent, descendant, str(release), str(done)])
+            assert result.returncode == 0 and result.stdout == "parent finished\n"
+>           assert not done.exists(), "capture waited for a descendant's inherited output handle"
+E           AssertionError: capture waited for a descendant's inherited output handle
+E           assert not True
+E            +  where True = exists()
+E            +    where exists = WindowsPath('<project>/build/pytest-capture-before/test_capture_does_not_wait_for0/done').exists
+
+tests\test_native_process.py:52: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_native_process.py::test_capture_does_not_wait_for_descendant_to_close_inherited_output
+======================== 1 failed, 2 passed in 11.43s =========================

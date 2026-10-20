@@ -1,0 +1,4 @@
+All checks passed!
+26 files already formatted
+PASS clang-format for all tracked C++ sources and headers
+PASS git diff --check

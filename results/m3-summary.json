@@ -1,0 +1,42 @@
+{
+  "debug_tiny": {
+    "source": "results/m3-debug-tiny.json",
+    "prompt_count": 3,
+    "greedy_tokens_per_prompt": 32,
+    "checked_positions": 102,
+    "cache_max_abs_logit_diff": 0,
+    "cache_max_abs_hidden_diff": 0,
+    "torch_max_abs_logit_diff": 5.960464477539063e-08,
+    "torch_max_hidden_tolerance_ratio": 0.004712887855589274
+  },
+  "debug_pretrained": {
+    "source": "results/m3-debug-pretrained.json",
+    "prompt_count": 3,
+    "greedy_tokens_per_prompt": 32,
+    "checked_positions": 101,
+    "cache_max_abs_logit_diff": 0,
+    "cache_max_abs_hidden_diff": 0,
+    "torch_max_abs_logit_diff": 0.00018310546875,
+    "torch_max_hidden_tolerance_ratio": 0.943782678711196
+  },
+  "asan_tiny": {
+    "source": "results/m3-asan-tiny.json",
+    "prompt_count": 3,
+    "greedy_tokens_per_prompt": 32,
+    "checked_positions": 102,
+    "cache_max_abs_logit_diff": 0,
+    "cache_max_abs_hidden_diff": 0,
+    "torch_max_abs_logit_diff": 5.960464477539063e-08,
+    "torch_max_hidden_tolerance_ratio": 0.004712887855589274
+  },
+  "asan_pretrained": {
+    "source": "results/m3-asan-pretrained.json",
+    "prompt_count": 3,
+    "greedy_tokens_per_prompt": 32,
+    "checked_positions": 101,
+    "cache_max_abs_logit_diff": 0,
+    "cache_max_abs_hidden_diff": 0,
+    "torch_max_abs_logit_diff": 0.00018310546875,
+    "torch_max_hidden_tolerance_ratio": 0.943782678711196
+  }
+}

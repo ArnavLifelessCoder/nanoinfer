@@ -1,0 +1,88 @@
+Internal ctest changing into directory: <project>/build/asan-m3
+UpdateCTestConfiguration  from :<project>/build/asan-m3/DartConfiguration.tcl
+Parse Config file:<project>/build/asan-m3/DartConfiguration.tcl
+UpdateCTestConfiguration  from :<project>/build/asan-m3/DartConfiguration.tcl
+Parse Config file:<project>/build/asan-m3/DartConfiguration.tcl
+Test project <project>/build/asan-m3
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 8
+    Start 8: model_schema
+
+8: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.model_schema" "--inspector" "<project>/build/asan-m3/gpt2inspect.exe" "--directory" "<project>/build/asan-m3/schema"
+8: Working Directory: <project>
+8: Test timeout computed to be: 180
+8: PASS valid complete model with awkward width
+8: PASS reject wrong rank/shape: wte.weight
+8: PASS reject wrong rank/shape: wpe.weight
+8: PASS reject wrong rank/shape: ln_f.weight
+8: PASS reject wrong rank/shape: ln_f.bias
+8: PASS reject wrong rank/shape: h.0.ln_1.weight
+8: PASS reject wrong rank/shape: h.0.ln_1.bias
+8: PASS reject wrong rank/shape: h.0.ln_2.weight
+8: PASS reject wrong rank/shape: h.0.ln_2.bias
+8: PASS reject wrong rank/shape: h.0.attn.c_attn.weight
+8: PASS reject wrong rank/shape: h.0.attn.c_attn.bias
+8: PASS reject wrong rank/shape: h.0.attn.c_proj.weight
+8: PASS reject wrong rank/shape: h.0.attn.c_proj.bias
+8: PASS reject wrong rank/shape: h.0.mlp.c_fc.weight
+8: PASS reject wrong rank/shape: h.0.mlp.c_fc.bias
+8: PASS reject wrong rank/shape: h.0.mlp.c_proj.weight
+8: PASS reject wrong rank/shape: h.0.mlp.c_proj.bias
+8: PASS reject wrong rank/shape: h.1.ln_1.weight
+8: PASS reject wrong rank/shape: h.1.ln_1.bias
+8: PASS reject wrong rank/shape: h.1.ln_2.weight
+8: PASS reject wrong rank/shape: h.1.ln_2.bias
+8: PASS reject wrong rank/shape: h.1.attn.c_attn.weight
+8: PASS reject wrong rank/shape: h.1.attn.c_attn.bias
+8: PASS reject wrong rank/shape: h.1.attn.c_proj.weight
+8: PASS reject wrong rank/shape: h.1.attn.c_proj.bias
+8: PASS reject wrong rank/shape: h.1.mlp.c_fc.weight
+8: PASS reject wrong rank/shape: h.1.mlp.c_fc.bias
+8: PASS reject wrong rank/shape: h.1.mlp.c_proj.weight
+8: PASS reject wrong rank/shape: h.1.mlp.c_proj.bias
+8: PASS reject transposed embedding with same element count
+8: PASS reject missing tensor: wte.weight
+8: PASS reject missing tensor: wpe.weight
+8: PASS reject missing tensor: ln_f.weight
+8: PASS reject missing tensor: ln_f.bias
+8: PASS reject missing tensor: h.0.ln_1.weight
+8: PASS reject missing tensor: h.0.ln_1.bias
+8: PASS reject missing tensor: h.0.ln_2.weight
+8: PASS reject missing tensor: h.0.ln_2.bias
+8: PASS reject missing tensor: h.0.attn.c_attn.weight
+8: PASS reject missing tensor: h.0.attn.c_attn.bias
+8: PASS reject missing tensor: h.0.attn.c_proj.weight
+8: PASS reject missing tensor: h.0.attn.c_proj.bias
+8: PASS reject missing tensor: h.0.mlp.c_fc.weight
+8: PASS reject missing tensor: h.0.mlp.c_fc.bias
+8: PASS reject missing tensor: h.0.mlp.c_proj.weight
+8: PASS reject missing tensor: h.0.mlp.c_proj.bias
+8: PASS reject missing tensor: h.1.ln_1.weight
+8: PASS reject missing tensor: h.1.ln_1.bias
+8: PASS reject missing tensor: h.1.ln_2.weight
+8: PASS reject missing tensor: h.1.ln_2.bias
+8: PASS reject missing tensor: h.1.attn.c_attn.weight
+8: PASS reject missing tensor: h.1.attn.c_attn.bias
+8: PASS reject missing tensor: h.1.attn.c_proj.weight
+8: PASS reject missing tensor: h.1.attn.c_proj.bias
+8: PASS reject missing tensor: h.1.mlp.c_fc.weight
+8: PASS reject missing tensor: h.1.mlp.c_fc.bias
+8: PASS reject missing tensor: h.1.mlp.c_proj.weight
+8: PASS reject missing tensor: h.1.mlp.c_proj.bias
+8: PASS reject untied extra lm_head
+8: PASS reject out-of-range layer index
+8: PASS reject config width mismatch
+8: PASS reject huge header layer count
+1/1 Test #8: model_schema .....................   Passed   13.68 sec
+
+The following tests passed:
+	model_schema
+
+100% tests passed, 0 tests failed out of 1
+
+Total Test time (real) =  13.76 sec

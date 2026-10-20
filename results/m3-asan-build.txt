@@ -1,0 +1,58 @@
+[1/58] Building CXX object CMakeFiles\nanoinfer.dir\src\ops\ref\cached_attention.cpp.obj
+[2/58] Building CXX object CMakeFiles\nanoinfer_test_layernorm_eps.dir\src\ops\ref\ops.cpp.obj
+[3/58] Building CXX object CMakeFiles\nanoinfer_test_exact_gelu.dir\src\ops\ref\ops.cpp.obj
+[4/58] Building CXX object CMakeFiles\nanoinfer.dir\src\runtime\kv_cache.cpp.obj
+[5/58] Building CXX object CMakeFiles\nanoinfer.dir\src\ops\ref\ops.cpp.obj
+[6/58] Building CXX object CMakeFiles\nanoinfer.dir\src\runtime\sampling.cpp.obj
+[7/58] Building CXX object CMakeFiles\nanoinfer_cache_tests.dir\tests\test_main.cpp.obj
+[8/58] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_main.cpp.obj
+[9/58] Building CXX object CMakeFiles\gpt2ref.dir\src\platform\reference_main_windows.cpp.obj
+[10/58] Building CXX object CMakeFiles\gpt2cachecheck.dir\src\platform\reference_main_windows.cpp.obj
+[11/58] Building CXX object CMakeFiles\gpt2inspect.dir\src\tools\inspect.cpp.obj
+[12/58] Building CXX object CMakeFiles\gpt2inspect.dir\src\platform\inspect_main_windows.cpp.obj
+[13/58] Building CXX object CMakeFiles\gpt2rt.dir\src\platform\generate_main_windows.cpp.obj
+[14/58] Building CXX object CMakeFiles\gpt2ref.dir\src\tools\reference.cpp.obj
+[15/58] Building CXX object CMakeFiles\nanoinfer.dir\src\platform\mapped_file_windows.cpp.obj
+[16/58] Building CXX object CMakeFiles\nanoinfer_test_layernorm_eps.dir\src\runtime\reference.cpp.obj
+[17/58] Building CXX object CMakeFiles\nanoinfer_test_exact_gelu.dir\src\platform\mapped_file_windows.cpp.obj
+[18/58] Building CXX object CMakeFiles\nanoinfer_test_layernorm_eps.dir\src\platform\mapped_file_windows.cpp.obj
+[19/58] Building CXX object CMakeFiles\nanoinfer_test_exact_gelu.dir\src\runtime\reference.cpp.obj
+[20/58] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_sampling.cpp.obj
+[21/58] Building CXX object CMakeFiles\nanoinfer_test_layernorm_eps.dir\src\model\loader.cpp.obj
+[22/58] Building CXX object CMakeFiles\nanoinfer.dir\src\runtime\cached.cpp.obj
+[23/58] Building CXX object CMakeFiles\nanoinfer.dir\src\model\loader.cpp.obj
+[24/58] Building CXX object CMakeFiles\gpt2ref_test_exact_gelu.dir\src\tools\reference.cpp.obj
+[25/58] Building CXX object CMakeFiles\gpt2cachecheck.dir\tests\cache_check.cpp.obj
+[26/58] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_ref_ops.cpp.obj
+[27/58] Building CXX object CMakeFiles\nanoinfer.dir\src\runtime\reference.cpp.obj
+[28/58] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_kv_cache.cpp.obj
+[29/58] Building CXX object CMakeFiles\nanoinfer_test_exact_gelu.dir\src\model\loader.cpp.obj
+[30/58] Linking CXX static library nanoinfer_test_layernorm_eps.lib
+[31/58] Building CXX object CMakeFiles\gpt2rt.dir\src\tools\generate.cpp.obj
+[32/58] Linking CXX static library nanoinfer.lib
+[33/58] Linking CXX static library nanoinfer_test_exact_gelu.lib
+[34/58] Linking CXX executable gpt2inspect.exe
+[35/58] Linking CXX executable gpt2ref.exe
+[36/58] Linking CXX executable gpt2rt.exe
+[37/58] Linking CXX executable gpt2cachecheck.exe
+[38/58] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_mapped_file.cpp.obj
+[39/58] Building CXX object CMakeFiles\gpt2ref_test_exact_gelu.dir\src\platform\reference_main_windows.cpp.obj
+[40/58] Building CXX object CMakeFiles\nanoinfer_cache_tests.dir\tests\test_cached_forward.cpp.obj
+[41/58] Building CXX object CMakeFiles\gpt2ref_test_layernorm_eps.dir\src\tools\reference.cpp.obj
+[42/58] Linking CXX executable gpt2ref_test_exact_gelu.exe
+[43/58] Building CXX object CMakeFiles\gpt2ref_test_layernorm_eps.dir\src\platform\reference_main_windows.cpp.obj
+[44/58] Linking CXX executable gpt2ref_test_layernorm_eps.exe
+[45/58] Building CXX object CMakeFiles\nanoinfer_tests.dir\tests\test_loader.cpp.obj
+[46/58] Building CXX object _deps\googletest-build\googletest\CMakeFiles\gtest_main.dir\src\gtest_main.cc.obj
+[47/58] Building CXX object _deps\googletest-build\googlemock\CMakeFiles\gmock_main.dir\src\gmock_main.cc.obj
+[48/58] Building CXX object _deps\googletest-build\googlemock\CMakeFiles\gmock.dir\src\gmock-all.cc.obj
+[49/58] Building CXX object _deps\googletest-build\googletest\CMakeFiles\gtest.dir\src\gtest-all.cc.obj
+[50/58] Building CXX object _deps\googletest-build\googlemock\CMakeFiles\gmock_main.dir\src\gmock-all.cc.obj
+[51/58] Linking CXX static library lib\gtest.lib
+[52/58] Linking CXX static library lib\gtest_main.lib
+[53/58] Linking CXX executable nanoinfer_cache_tests.exe
+[54/58] Linking CXX executable nanoinfer_tests.exe
+[55/58] Building CXX object _deps\googletest-build\googlemock\CMakeFiles\gmock.dir\__\googletest\src\gtest-all.cc.obj
+[56/58] Linking CXX static library lib\gmock.lib
+[57/58] Building CXX object _deps\googletest-build\googlemock\CMakeFiles\gmock_main.dir\__\googletest\src\gtest-all.cc.obj
+[58/58] Linking CXX static library lib\gmock_main.lib

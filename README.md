@@ -1,21 +1,23 @@
 # nanoinfer
 
 A C++20 CPU inference runtime for GPT-2 small, built one milestone at a time.
-M2 adds a scalar reference forward pass and greedy generation to validated,
-read-only mapped loading. Later milestones add KV caching, hand-written GEMM
-and GEMV, a thread pool, and int8 weights. The main engineering problem is keeping
-the numerical contract intact while changing how data moves through the CPU.
+M3 adds a preallocated KV cache and seeded sampling to the scalar reference
+forward pass and validated, read-only mapped loading. Later milestones add
+hand-written GEMM and GEMV, a thread pool, and int8 weights. The main engineering
+problem is keeping the numerical contract intact while changing how data moves
+through the CPU.
 
-M2 pretrained correctness results, identical in local Debug and ASan:
+M3 pretrained cached correctness results, identical in local Debug and ASan:
 
 | Check across all three golden prompts | Measured result | Required |
 |---|---:|---:|
 | Maximum absolute logit error | 0.00018310546875 | < 0.001 |
 | Maximum elementwise hidden error / allowed bound | 0.943782678711 | <= 1 |
 | Exact greedy token agreement | 32/32 for each prompt | 32/32 |
+| Cache/full-recompute logit and hidden error | 0 across 101 positions | Exact equality |
 
-These values come from `scripts/summarize_m2.py` and
-[the saved acceptance summary](results/m2-summary.json). The hidden bound is
+These values come from `scripts/summarize_m3.py` and
+[the saved acceptance summary](results/m3-summary.json). The hidden bound is
 the owner-approved `1e-4 + 1e-6 * abs(expected)`, applied independently to each
 element. Maximum absolute hidden error is `0.00048828125`; it passes this
 combined bound, not the original absolute-only `1e-4` bound.
@@ -33,6 +35,9 @@ flowchart LR
     L --> V[Immutable tensor views]
     V --> R[Scalar reference transformer]
     R --> O[Logits and greedy tokens]
+    V --> K[Cached prefill and decode]
+    K --> S[Seeded sampler]
+    S --> O
     G --> C[Correctness comparison]
     O --> C
 ```
@@ -52,13 +57,13 @@ uv sync --locked
 New-Item -ItemType Directory -Force build | Out-Null
 python -m pytest --basetemp=build/pytest -v
 python -m python.export --tiny --output build/fixtures/tiny.bin --golden build/fixtures/golden
-.\scripts\test-m2.ps1 -Preset debug
-.\scripts\test-m2.ps1 -Preset asan
+.\scripts\test-m3.ps1 -Preset debug
+.\scripts\test-m3.ps1 -Preset asan
 ```
 
 The development shell adds the native x64 compiler and project Python environment
 to the current process's path. Caches and temporary files stay inside the project.
-`scripts/test-m2.ps1` saves complete configure, build and test logs under `results/`.
+`scripts/test-m3.ps1` saves complete configure, build and test logs under `results/`.
 
 For the recorded local validation, the venv reuses an existing PyTorch
 `2.11.0+cu128` installation through `--system-site-packages`; every operation runs
@@ -116,8 +121,8 @@ Run the reference CLI with whitespace-separated token IDs:
 ```powershell
 Set-Content -Path build/ids.txt -Value '15496' -Encoding ascii
 .\build\debug\gpt2ref.exe models/gpt2.bin build/ids.txt build/reference-output 32
-.\scripts\test-m2.ps1 -Preset debug -Pretrained
-.\scripts\test-m2.ps1 -Preset asan -Pretrained
+.\scripts\test-m3.ps1 -Preset debug -Pretrained
+.\scripts\test-m3.ps1 -Preset asan -Pretrained
 ```
 
 `gpt2ref` writes float32 logits, complete block outputs, final LayerNorm output,
@@ -142,6 +147,30 @@ benchmark-only `release` preset enables `-O3 -march=native` on GCC/Clang and
 Set `NANOINFER_NATIVE_RELEASE=OFF` for a portable Release build. Debug and sanitizer
 presets keep the baseline ISA; M4's dispatched AVX2 kernels will have separate
 translation units. `tsan` is a Linux preset reserved for the threaded milestone.
+
+## Cached generation
+
+```powershell
+.\build\debug\gpt2rt.exe --model models/gpt2.bin --prompt-ids build/ids.txt --max-new 32 --temp 0.8 --top-k 40 --top-p 0.9 --seed 42
+python -m python.generate --executable build/debug/gpt2rt.exe --model models/gpt2.bin --prompt "Hello" --max-new 32 --temp 0.8 --top-p 0.9 --seed 42
+```
+
+The runtime emits JSON token IDs. The Python wrapper only tokenizes with tiktoken,
+calls the runtime, and decodes the prompt plus continuation. Temperature zero is
+greedy; top-k zero and top-p one disable their respective filters. Generation
+emits exactly the requested number of tokens, including after EOS. Prompt plus
+continuation must fit the context. See [the runtime contract](docs/runtime.md)
+for cache ownership, validation, sampling order and reproducibility guarantees.
+
+`cached_forward` tests all tiny-model positions against full recomputation.
+`golden_cached` additionally compares cached captures and 32 generated IDs with
+PyTorch in CI, while checking all logits and hidden channels against the scalar
+reference at every prefill/decode position. `generation_cli` tests seeded replay,
+filter controls, context limits and malformed input. Use `test-m3.ps1 -Pretrained`
+to repeat the checks on the pretrained golden prompts; results stay separate from
+approved M2 evidence. The runtime remains single-threaded, so TSan starts in M5.
+The [M3 review packet](docs/m3-review.md) links the full test output and per-position
+reports.
 
 ## Design decisions
 
@@ -215,8 +244,9 @@ when runtime worker threads arrive in M5.
 
 ## Limitations
 
-M2 has no KV cache, sampling, runtime worker threads, optimized kernels or quantization.
-Naive matrix multiplication and full-prefix generation are deliberately slow.
+M3 has no runtime worker threads, optimized kernels or quantization.
+Naive matrix multiplication remains slow; the reference correctness driver
+also recomputes the full prefix.
 CRC32 detects accidental corruption but does not authenticate untrusted files.
 The file must remain unchanged throughout the mapping's lifetime. The current
 format targets little-endian IEEE-754 hosts and f32 weights.
