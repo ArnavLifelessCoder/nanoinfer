@@ -22,7 +22,7 @@ Get-ChildItem -LiteralPath (Join-Path $projectRoot 'results') -Filter '*.txt' |
                 $text = $text.Replace($prefix.Replace('\', '/'), $replacements[$prefix])
             }
         }
-        $text = $text -replace '[A-Za-z]:[\\/]', '<drive>/'
+        $text = $text -replace '(?<![\w])[A-Za-z]:[\\/]', '<drive>/'
         $text = $text.Replace("`r`n", "`n") -replace '(?m)[ \t]+$', ''
         $text = $text -replace '\n{2,}\z', "`n"
         [IO.File]::WriteAllText($_.FullName, $text)

@@ -1,0 +1,1 @@
+PASS sanitization preserves HTTP(S) URLs, redacts drive paths and is idempotent
