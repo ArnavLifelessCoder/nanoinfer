@@ -84,6 +84,12 @@ if(BUILD_TESTING)
   add_executable(nanoinfer_tests tests/test_main.cpp tests/test_mapped_file.cpp tests/test_loader.cpp)
   target_link_libraries(nanoinfer_tests PRIVATE nanoinfer project_options GTest::gtest)
   add_test(NAME unit COMMAND nanoinfer_tests)
+  if(NANOINFER_ASAN AND NOT MSVC)
+    add_executable(ubsan_probe tests/ubsan_probe.cpp)
+    target_link_libraries(ubsan_probe PRIVATE project_options)
+    add_test(NAME ubsan_fails_on_error COMMAND "${CMAKE_COMMAND}"
+      "-DPROBE=$<TARGET_FILE:ubsan_probe>" -P "${CMAKE_SOURCE_DIR}/tests/check_ubsan_exit.cmake")
+  endif()
   if(NOT DEFINED Python3_EXECUTABLE AND EXISTS "${CMAKE_SOURCE_DIR}/.venv")
     # setup-python sets Python3_ROOT_DIR, which can override virtualenv discovery.
     find_program(NANOINFER_VENV_PYTHON NAMES python python3
