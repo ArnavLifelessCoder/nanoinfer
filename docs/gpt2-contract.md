@@ -27,5 +27,19 @@ continuation token IDs, without stopping early at EOS.
 Local acceptance uses pretrained GPT-2. CI uses a reproducibly seeded tiny GPT-2
 with two blocks, width 16, two heads, vocabulary 97 and context 64. Tiny-model
 weights are regenerated, never committed. The committed golden set is from the
-pretrained model; generated tiny fixtures live in the build directory. M2 will
-add the C++ forward comparison to these fixtures.
+pretrained model; generated tiny fixtures live in the build directory. M2's
+`golden_tiny` CTest runs the native comparison, including 32 generated tokens.
+
+M2 uses scalar float32 accumulators and tanh GELU. The cubic term is evaluated
+before multiplying by `0.044715`, matching the expression in Hugging Face
+`NewGELUActivation`; changing the grouping changes float32 rounding.
+Attention includes keys 0 through the query position, with independent heads.
+Generation recomputes the prefix and its absolute positions; it projects only
+the last position to logits when selecting the next token.
+
+The owner approved an M2 numerical clarification: for every hidden-state
+element, including final LayerNorm, require
+`abs(actual - expected) <= 1e-4 + 1e-6 * abs(expected)`. Logits still require
+strict maximum absolute error below `1e-3`, and greedy IDs must match exactly.
+This addresses float32 spacing at large pretrained hidden activations; it is
+not a tensor-wide relative allowance. The written project spec is unchanged.

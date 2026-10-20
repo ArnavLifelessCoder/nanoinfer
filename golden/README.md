@@ -10,8 +10,9 @@ token IDs and execution settings. Each `prompt_N.npz` contains:
 - `greedy_ids`: exactly 32 continuation IDs, without an EOS early stop.
 
 These files contain reference outputs, not model parameters. Regenerate with
-`python -m python.export --output models/gpt2.bin --golden golden`. The C++ forward
-comparison will be added in M2. M1 tests the exporter capture against direct
+`python -m python.export --output models/gpt2.bin --golden golden`. M2 compares
+the C++ forward pass and 32 greedy tokens with these fixtures using
+`python -m tests.golden_forward`. M1 tests the exporter capture against direct
 PyTorch execution and validates every exported weight through the C++ loader.
 
 The committed fixtures were produced with PyTorch **2.11.0+cu128**, using

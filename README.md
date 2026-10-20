@@ -1,10 +1,24 @@
 # nanoinfer
 
 A C++20 CPU inference runtime for GPT-2 small, built one milestone at a time.
-The first milestone covers weight export and validated, read-only mapped loading.
-The later milestones add a reference forward pass, KV caching, hand-written GEMM
+M2 adds a scalar reference forward pass and greedy generation to validated,
+read-only mapped loading. Later milestones add KV caching, hand-written GEMM
 and GEMV, a thread pool, and int8 weights. The main engineering problem is keeping
 the numerical contract intact while changing how data moves through the CPU.
+
+M2 pretrained correctness results, identical in local Debug and ASan:
+
+| Check across all three golden prompts | Measured result | Required |
+|---|---:|---:|
+| Maximum absolute logit error | 0.00018310546875 | < 0.001 |
+| Maximum elementwise hidden error / allowed bound | 0.943782678711 | <= 1 |
+| Exact greedy token agreement | 32/32 for each prompt | 32/32 |
+
+These values come from `scripts/summarize_m2.py` and
+[the saved acceptance summary](results/m2-summary.json). The hidden bound is
+the owner-approved `1e-4 + 1e-6 * abs(expected)`, applied independently to each
+element. Maximum absolute hidden error is `0.00048828125`; it passes this
+combined bound, not the original absolute-only `1e-4` bound.
 
 No performance results have been collected yet. GEMM step measurements and the
 roofline plot belong to M4 and M7-M8 and will link to actual runs in `results/`.
@@ -17,6 +31,10 @@ flowchart LR
     W --> P[Platform read-only mapping]
     P --> L[Validated C++ loader]
     L --> V[Immutable tensor views]
+    V --> R[Scalar reference transformer]
+    R --> O[Logits and greedy tokens]
+    G --> C[Correctness comparison]
+    O --> C
 ```
 
 ## Build and export
@@ -34,13 +52,13 @@ uv sync --locked
 New-Item -ItemType Directory -Force build | Out-Null
 python -m pytest --basetemp=build/pytest -v
 python -m python.export --tiny --output build/fixtures/tiny.bin --golden build/fixtures/golden
-.\scripts\test.ps1 debug
-.\scripts\test.ps1 asan
+.\scripts\test-m2.ps1 -Preset debug
+.\scripts\test-m2.ps1 -Preset asan
 ```
 
 The development shell adds the native x64 compiler and project Python environment
 to the current process's path. Caches and temporary files stay inside the project.
-`scripts/test.ps1` saves complete configure, build and test logs under `results/`.
+`scripts/test-m2.ps1` saves complete configure, build and test logs under `results/`.
 
 For the recorded local validation, the venv reuses an existing PyTorch
 `2.11.0+cu128` installation through `--system-site-packages`; every operation runs
@@ -93,6 +111,30 @@ When `models/gpt2.bin` exists, `scripts/test.ps1` also runs the full pretrained
 round-trip and saves a separate `results/m1-<preset>-gpt2.txt` log. The test binary
 accepts `--seed=N`; random integration tests accept the same option.
 
+Run the reference CLI with whitespace-separated token IDs:
+
+```powershell
+Set-Content -Path build/ids.txt -Value '15496' -Encoding ascii
+.\build\debug\gpt2ref.exe models/gpt2.bin build/ids.txt build/reference-output 32
+.\scripts\test-m2.ps1 -Preset debug -Pretrained
+.\scripts\test-m2.ps1 -Preset asan -Pretrained
+```
+
+`gpt2ref` writes float32 logits, complete block outputs, final LayerNorm output,
+and `output.json` with the generated IDs. It recomputes the full prefix at each
+step, using absolute position embeddings and tied token embeddings for the
+output projection. Generation emits the requested count, including after EOS;
+ties choose the lowest token ID. The default continuation length is 32.
+Prompt plus continuation must fit the model context. This is a correctness
+driver; tokenization remains in Python.
+
+For Linux, run `uv run python -m tests.golden_forward --executable
+build/debug/gpt2ref --model models/gpt2.bin --golden golden --directory
+build/debug/pretrained --report results/m2-debug-pretrained.json`, then repeat
+with the ASan executable. The optional `--jobs 3` runs independent correctness
+cases in separate processes; each runtime uses one thread. These are not
+throughput measurements.
+
 Debug uses unoptimized code with symbols. ASan uses MSVC AddressSanitizer on
 Windows and address plus undefined-behavior sanitizers on Linux. The local
 benchmark-only `release` preset enables `-O3 -march=native` on GCC/Clang and
@@ -113,6 +155,8 @@ translation units. `tsan` is a Linux preset reserved for the threaded milestone.
   cannot detect changes to otherwise valid float bytes.
 - Capture complete block outputs with hooks because the final Hugging Face
   `hidden_states` entry is after `ln_f`, not before it.
+- Recompute the full sequence in M2 because it supplies the reference for M3's
+  cached decode equivalence checks.
 
 ## Testing
 
@@ -123,14 +167,36 @@ round-trip compares every shape and checksum with the independently saved Python
 manifest. See [the GPT-2 contract](docs/gpt2-contract.md) for source references and
 golden-state semantics.
 
+The loader checks every required tensor name and shape against the header
+configuration, including `wte=[vocab,d_model]`. The inspector's explicit
+`--layout-only` option supports arbitrary format fixtures; inference always
+uses the complete GPT-2 schema.
+
+Reference operations have independent analytical or double-precision checks,
+random awkward matrix shapes and explicit causal-mask, head, LayerNorm and GELU
+tests. Integration tests compare full-context logits with PyTorch, verify
+prefix invariance and absolute positions, and reject invalid token input.
+Pretrained tests compare every logit and complete block state for every golden
+prompt, then require exactly the same 32 greedy tokens.
+
+The owner-approved M2 clarification uses the **elementwise** hidden-state bound
+`abs(actual - expected) <= 1e-4 + 1e-6 * abs(expected)`, including final LayerNorm.
+The logits gate remains **strict max absolute error < 1e-3**. Dedicated tests
+guard the bounds, reject nonfinite values, and prevent the scale of a large
+hidden element from masking an error in a small element. The original spec is
+unchanged; [the M2 review packet](docs/m2-review.md) records this clarification
+and links the full validation output.
+
 CI builds Debug and ASan on Windows and Linux and runs formatting and Python lint
 checks. CI uses a seeded tiny GPT-2 so weights are neither committed nor downloaded
-for each job. C++ forward comparisons arrive in M2. Linux TSan will be required
+for each job. Its golden test compares native logits, block states and 32 greedy
+tokens against freshly generated PyTorch outputs. Linux TSan will be required
 when runtime worker threads arrive in M5.
 
 ## Limitations
 
-M1 has no C++ forward pass, token generation, optimized kernels or quantization.
+M2 has no KV cache, sampling, runtime worker threads, optimized kernels or quantization.
+Naive matrix multiplication and full-prefix generation are deliberately slow.
 CRC32 detects accidental corruption but does not authenticate untrusted files.
 The file must remain unchanged throughout the mapping's lifetime. The current
 format targets little-endian IEEE-754 hosts and f32 weights.

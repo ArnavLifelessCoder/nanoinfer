@@ -1,0 +1,8 @@
+Preset CMake variables:
+
+  CMAKE_BUILD_TYPE="Debug"
+  NANOINFER_ASAN="ON"
+
+-- Configuring done (22.0s)
+-- Generating done (0.4s)
+-- Build files have been written to: <project>/build/asan

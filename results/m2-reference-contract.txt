@@ -1,0 +1,12 @@
+Random seed: 1234
+PASS full context, absolute positions and causal prefix invariance
+PASS reject empty
+PASS reject negative
+PASS reject out-of-vocabulary
+PASS reject integer-overflow
+PASS reject non-integer
+PASS reject too-long
+PASS reject continuation-overflow
+PASS reject negative-count
+PASS reject count-overflow
+PASS greedy chooses lowest ID on ties, emits requested count and has no EOS stop

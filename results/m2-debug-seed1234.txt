@@ -1,0 +1,58 @@
+Random seed: 1234
+[==========] Running 20 tests from 4 test suites.
+[----------] Global test environment set-up.
+[----------] 5 tests from MappedFile
+[ RUN      ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths
+[       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (17 ms)
+[ RUN      ] MappedFile.MissingFileFailsCleanly
+[       OK ] MappedFile.MissingFileFailsCleanly (10 ms)
+[ RUN      ] MappedFile.EmptyFileFailsCleanly
+[       OK ] MappedFile.EmptyFileFailsCleanly (15 ms)
+[ RUN      ] MappedFile.DirectoryFailsCleanly
+[       OK ] MappedFile.DirectoryFailsCleanly (13 ms)
+[ RUN      ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile
+[       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (20 ms)
+[----------] 5 tests from MappedFile (79 ms total)
+
+[----------] 1 test from Checksum
+[ RUN      ] Checksum.MatchesStandardVectorAndChaining
+[       OK ] Checksum.MatchesStandardVectorAndChaining (0 ms)
+[----------] 1 test from Checksum (0 ms total)
+
+[----------] 6 tests from LoaderTest
+[ RUN      ] LoaderTest.ReadsShapesStridesAndZeroCopyValues
+[       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (17 ms)
+[ RUN      ] LoaderTest.RejectsEveryTruncationBoundary
+[       OK ] LoaderTest.RejectsEveryTruncationBoundary (2925 ms)
+[ RUN      ] LoaderTest.RejectsBitCorruptionAtEveryByte
+[       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (2970 ms)
+[ RUN      ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum
+[       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (114 ms)
+[ RUN      ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData
+[       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (60 ms)
+[ RUN      ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames
+[       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (35 ms)
+[----------] 6 tests from LoaderTest (6123 ms total)
+
+[----------] 8 tests from ReferenceOps
+[ RUN      ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage
+[       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (3 ms)
+[ RUN      ] ReferenceOps.EmbeddingsBiasAndResidual
+[       OK ] ReferenceOps.EmbeddingsBiasAndResidual (0 ms)
+[ RUN      ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon
+[       OK ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon (1 ms)
+[ RUN      ] ReferenceOps.GeluUsesTanhApproximation
+[       OK ] ReferenceOps.GeluUsesTanhApproximation (0 ms)
+[ RUN      ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues
+[       OK ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues (0 ms)
+[ RUN      ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling
+[       OK ] ReferenceOps.GeluRoundsTheCubicTermBeforeScaling (1 ms)
+[ RUN      ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate
+[       OK ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate (0 ms)
+[ RUN      ] ReferenceOps.InvalidShapesFailBeforeIndexing
+[       OK ] ReferenceOps.InvalidShapesFailBeforeIndexing (0 ms)
+[----------] 8 tests from ReferenceOps (8 ms total)
+
+[----------] Global test environment tear-down
+[==========] 20 tests from 4 test suites ran. (6211 ms total)
+[  PASSED  ] 20 tests.
