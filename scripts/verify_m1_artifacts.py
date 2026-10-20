@@ -51,6 +51,19 @@ def main() -> None:
         assert output.count("\nPASS ") == 148
         assert output.rstrip().endswith("PASS all 148 tensor shapes, checksums, offsets and sizes")
     assert "20 passed" in (ROOT / "results/m1-python-tests.txt").read_text(encoding="utf-8")
+    ci = json.loads((ROOT / "results/m1-ci.json").read_text(encoding="utf-8"))
+    assert ci["status"] == "completed" and ci["conclusion"] == "success"
+    required_jobs = {"lint"} | {
+        f"tests ({platform}-latest, {preset})"
+        for platform in ("windows", "ubuntu")
+        for preset in ("debug", "asan")
+    }
+    successful_jobs = {
+        job["name"]
+        for job in ci["jobs"]
+        if job["status"] == "completed" and job["conclusion"] == "success"
+    }
+    assert required_jobs <= successful_jobs
     summary = {
         "milestone": "M1",
         "pretrained_tensor_count": len(manifest["tensors"]),
@@ -62,7 +75,7 @@ def main() -> None:
         "model_revision": metadata["revision"],
         "local_torch_build": metadata["torch"],
         "execution_device": "cpu",
-        "ci_status": "not run; push awaits owner approval",
+        "ci": ci,
         "tsan": "not applicable; no runtime worker threads",
     }
     text = json.dumps(summary, indent=2) + "\n"
