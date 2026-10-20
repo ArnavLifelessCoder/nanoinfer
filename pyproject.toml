@@ -1,0 +1,31 @@
+[project]
+name = "nanoinfer-tools"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy==2.2.6",
+  "torch==2.8.0",
+  "transformers==4.57.1",
+  "tiktoken==0.12.0",
+]
+
+[dependency-groups]
+dev = ["pytest==8.4.2", "ruff==0.14.1", "clang-format==19.1.7"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cpu", marker = "sys_platform == 'win32' or sys_platform == 'linux'" },
+]
