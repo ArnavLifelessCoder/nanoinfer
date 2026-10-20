@@ -23,7 +23,9 @@ jobs:
       - name: Check log sanitization
         if: runner.os == 'Windows' && matrix.preset == 'debug'
         shell: pwsh
-        run: ./tests/test_sanitize_results.ps1
+        run: |
+          ./tests/test_sanitize_results.ps1
+          ./tests/test_diagnostic_process.ps1
       - run: uv run python -m pytest --basetemp="${{ runner.temp }}/pytest" -v
       - run: cmake --preset ${{ matrix.preset }}
       - run: cmake --build --preset ${{ matrix.preset }}

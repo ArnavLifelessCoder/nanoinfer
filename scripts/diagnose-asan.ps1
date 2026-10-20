@@ -6,6 +6,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'dev-shell.ps1')
+. (Join-Path $PSScriptRoot 'diagnostic-process.ps1')
 $build = [IO.Path]::GetFullPath((Join-Path $projectRoot $BuildDirectory))
 $output = Join-Path $projectRoot 'build/diagnostics'
 $procdump = Join-Path $output 'tools/procdump/procdump64.exe'
@@ -22,9 +23,9 @@ $seen = @{}
 $captures = [System.Collections.Generic.List[object]]::new()
 while (-not $test.HasExited) {
     foreach ($native in @(Get-Process -Name 'gpt2*' -ErrorAction SilentlyContinue)) {
-        if (-not $native.Path -or
-            -not $native.Path.StartsWith($build + [IO.Path]::DirectorySeparatorChar,
-                [StringComparison]::OrdinalIgnoreCase)) { continue }
+        if (-not (Get-DiagnosticProcessPath -NativeProcess $native -BuildDirectory $build)) {
+            continue
+        }
         $key = $native.Id
         if (-not $seen.ContainsKey($key)) {
             $seen[$key] = @{ CPU = $native.CPU; Changed = [DateTime]::UtcNow; Captured = $false }
