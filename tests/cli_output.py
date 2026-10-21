@@ -24,7 +24,7 @@ def main():
         assert manifest["config"]["vocab"] == 97 and manifest["tensors"], index
         help_text = capture([str(args.generator.resolve()), "--help"])
         assert help_text.returncode == 0 and not help_text.stderr, (index, help_text)
-        assert help_text.stdout.endswith("temp=0 selects greedy.\n"), (index, help_text)
+        assert help_text.stdout.endswith("packed or avx2.\n"), (index, help_text)
     print(f"PASS complete JSON and help output in {args.count * 2} launches", flush=True)
 
 

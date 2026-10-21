@@ -3,11 +3,13 @@
 #include <charconv>
 #include <fstream>
 #include <iostream>
+#include <optional>
 #include <set>
 #include <stdexcept>
 #include <string>
 
 #include "nanoinfer/cached.hpp"
+#include "nanoinfer/fp_env.hpp"
 #include "nanoinfer/sampling.hpp"
 
 namespace nanoinfer {
@@ -21,13 +23,26 @@ T number(const std::string& text) {
   }
   return value;
 }
+
+// "reference" selects the scalar reference products; "auto" the fastest kernel.
+std::optional<kernels::GemmStep> gemm_option(const std::string& text) {
+  if (text == "reference") return std::nullopt;
+  if (text == "auto") return kernels::best_step();
+  for (const auto step :
+       {kernels::GemmStep::naive, kernels::GemmStep::reordered, kernels::GemmStep::blocked,
+        kernels::GemmStep::packed, kernels::GemmStep::avx2}) {
+    if (text == kernels::name(step)) return step;
+  }
+  throw std::invalid_argument("unknown GEMM kernel: " + text);
+}
 }  // namespace
 
 int generate_main(std::span<const std::filesystem::path> arguments) {
   if (arguments.size() == 1 && arguments[0] == "--help") {
     std::cout << "gpt2rt --model MODEL --prompt-ids IDS [--max-new 128] [--temp 0]\n"
-                 "       [--top-k 0] [--top-p 1] [--seed 42]\n"
+                 "       [--top-k 0] [--top-p 1] [--seed 42] [--gemm auto]\n"
                  "stdout: JSON prompt_ids and generated_ids; temp=0 selects greedy.\n"
+                 "--gemm: auto, reference, naive, reordered, blocked, packed or avx2.\n"
               << std::flush;
     return 0;
   }
@@ -36,6 +51,7 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
     std::size_t new_tokens = 128;
     std::uint64_t seed = 42;
     SamplingOptions options;
+    std::optional<kernels::GemmStep> gemm = kernels::best_step();
     std::set<std::string> seen;
     if (arguments.size() % 2 != 0) throw std::invalid_argument("options require values");
     for (std::size_t i = 0; i < arguments.size(); i += 2) {
@@ -56,12 +72,15 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
         options.top_k = number<std::size_t>(value.string());
       else if (name == "--top-p")
         options.top_p = number<double>(value.string());
+      else if (name == "--gemm")
+        gemm = gemm_option(value.string());
       else
         throw std::invalid_argument("unknown option: " + name);
     }
     if (model_path.empty() || ids_path.empty()) {
       throw std::invalid_argument("--model and --prompt-ids are required");
     }
+    enable_flush_to_zero();
     Sampler sampler(options, seed);
     std::ifstream input(ids_path);
     if (!input) throw std::runtime_error("cannot open prompt IDs");
@@ -69,7 +88,7 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
     std::string token;
     while (input >> token) ids.push_back(number<std::uint32_t>(token));
     if (!input.eof()) throw std::runtime_error("cannot read prompt IDs");
-    CachedTransformer transformer(model_path);
+    CachedTransformer transformer(model_path, gemm);
     if (ids.size() > transformer.config().ctx ||
         new_tokens > transformer.config().ctx - ids.size()) {
       throw std::invalid_argument("prompt and continuation exceed model context");

@@ -10,9 +10,25 @@
 namespace nanoinfer {
 namespace ref = ops::ref;
 
-CachedTransformer::CachedTransformer(const std::filesystem::path& path)
+CachedTransformer::CachedTransformer(const std::filesystem::path& path,
+                                     std::optional<kernels::GemmStep> gemm)
     : model_(path),
-      cache_(config().layers, config().ctx, config().heads, config().d_model / config().heads) {}
+      cache_(config().layers, config().ctx, config().heads, config().d_model / config().heads),
+      gemm_(gemm) {
+  if (gemm_ && !kernels::available(*gemm_)) {
+    throw std::invalid_argument("requested GEMM kernel is not supported on this CPU");
+  }
+}
+
+void CachedTransformer::matmul(std::span<const float> a, std::span<const float> b, std::size_t rows,
+                               std::size_t columns, std::size_t inner, std::span<float> output,
+                               bool transpose_b) const {
+  if (gemm_) {
+    kernels::gemm(*gemm_, a, b, rows, columns, inner, output, transpose_b);
+  } else {
+    ref::matmul(a, b, rows, columns, inner, output, transpose_b);
+  }
+}
 
 void CachedTransformer::validate_tokens(std::span<const std::uint32_t> tokens) const {
   if (tokens.empty() || tokens.size() > config().ctx) {
@@ -62,22 +78,22 @@ ForwardResult CachedTransformer::append(std::span<const std::uint32_t> tokens,
       const auto prefix = "h." + std::to_string(layer) + ".";
       ref::layer_norm(hidden, weight(prefix + "ln_1.weight"), weight(prefix + "ln_1.bias"),
                       normalized);
-      ref::matmul(normalized, weight(prefix + "attn.c_attn.weight"), n, three_d, d, qkv);
+      matmul(normalized, weight(prefix + "attn.c_attn.weight"), n, three_d, d, qkv);
       ref::bias(qkv, weight(prefix + "attn.c_attn.bias"));
       cache_.store(layer, position_, qkv);
       ref::cached_attention(qkv, cache_.keys(layer).first(valid_elements),
                             cache_.values(layer).first(valid_elements), position_, d,
                             config().heads, attended);
-      ref::matmul(attended, weight(prefix + "attn.c_proj.weight"), n, d, d, projected);
+      matmul(attended, weight(prefix + "attn.c_proj.weight"), n, d, d, projected);
       ref::bias(projected, weight(prefix + "attn.c_proj.bias"));
       ref::residual(hidden, projected);
 
       ref::layer_norm(hidden, weight(prefix + "ln_2.weight"), weight(prefix + "ln_2.bias"),
                       normalized);
-      ref::matmul(normalized, weight(prefix + "mlp.c_fc.weight"), n, four_d, d, expanded);
+      matmul(normalized, weight(prefix + "mlp.c_fc.weight"), n, four_d, d, expanded);
       ref::bias(expanded, weight(prefix + "mlp.c_fc.bias"));
       ref::gelu(expanded);
-      ref::matmul(expanded, weight(prefix + "mlp.c_proj.weight"), n, d, four_d, projected);
+      matmul(expanded, weight(prefix + "mlp.c_proj.weight"), n, d, four_d, projected);
       ref::bias(projected, weight(prefix + "mlp.c_proj.bias"));
       ref::residual(hidden, projected);
       if (capture_hidden) result.hidden_states.push_back(hidden);
@@ -85,7 +101,7 @@ ForwardResult CachedTransformer::append(std::span<const std::uint32_t> tokens,
     ref::layer_norm(hidden, weight("ln_f.weight"), weight("ln_f.bias"), normalized);
     result.positions = n;
     result.logits.resize(ref::elements(n, config().vocab));
-    ref::matmul(normalized, weight("wte.weight"), n, config().vocab, d, result.logits, true);
+    matmul(normalized, weight("wte.weight"), n, config().vocab, d, result.logits, true);
     if (capture_hidden) result.final_ln = std::move(normalized);
     position_ += n;
     return result;
