@@ -1,0 +1,22 @@
+Random seed: 1234
+Note: Google Test filter = Sampling.*
+[==========] Running 6 tests from 1 test suite.
+[----------] Global test environment set-up.
+[----------] 6 tests from Sampling
+[ RUN      ] Sampling.GreedyChoosesLowestIdOnTies
+[       OK ] Sampling.GreedyChoosesLowestIdOnTies (0 ms)
+[ RUN      ] Sampling.SameSeedReproducesSequenceAndDifferentSeedChangesIt
+[       OK ] Sampling.SameSeedReproducesSequenceAndDifferentSeedChangesIt (2 ms)
+[ RUN      ] Sampling.FixedSeedPinsUniformTokenSequence
+[       OK ] Sampling.FixedSeedPinsUniformTokenSequence (0 ms)
+[ RUN      ] Sampling.TopKAndNucleusKeepOnlyAllowedSupportIncludingCrossingToken
+[       OK ] Sampling.TopKAndNucleusKeepOnlyAllowedSupportIncludingCrossingToken (1 ms)
+[ RUN      ] Sampling.StableTemperatureScalingChangesDistribution
+[       OK ] Sampling.StableTemperatureScalingChangesDistribution (5 ms)
+[ RUN      ] Sampling.RejectsInvalidOptionsAndLogitsWithoutAdvancingRandomState
+[       OK ] Sampling.RejectsInvalidOptionsAndLogitsWithoutAdvancingRandomState (0 ms)
+[----------] 6 tests from Sampling (9 ms total)
+
+[----------] Global test environment tear-down
+[==========] 6 tests from 1 test suite ran. (9 ms total)
+[  PASSED  ] 6 tests.

@@ -28,6 +28,18 @@ TEST(Sampling, SameSeedReproducesSequenceAndDifferentSeedChangesIt) {
   EXPECT_NE(a, b);
 }
 
+TEST(Sampling, FixedSeedPinsUniformTokenSequence) {
+  // Eight equal probabilities reduce sampling to the top three RNG bits.
+  // This oracle has no exp rounding or distribution-library dependency.
+  const std::array<float, 8> logits{};
+  const std::array<std::uint32_t, 32> expected{7, 0, 7, 7, 1, 7, 7, 7, 0, 6, 7, 0, 3, 7, 1, 6,
+                                               0, 0, 1, 5, 1, 7, 2, 7, 0, 5, 5, 0, 1, 6, 6, 0};
+  Sampler sampler({1, 0, 1}, 1234);
+  for (std::size_t i = 0; i < expected.size(); ++i) {
+    EXPECT_EQ(sampler.sample(logits), expected[i]) << "draw=" << i;
+  }
+}
+
 TEST(Sampling, TopKAndNucleusKeepOnlyAllowedSupportIncludingCrossingToken) {
   const std::array<float, 4> logits{0, 0, 0, 0};
   Sampler top_k({1, 2, 1}, 1234), nucleus({1, 0, 0.3}, 1234);

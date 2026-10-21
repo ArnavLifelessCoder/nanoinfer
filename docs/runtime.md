@@ -59,6 +59,11 @@ The correctness driver separately decodes it and checks that final position too.
   boundaries differently; cross-platform bitwise stochastic output is not a
   promised contract. Invalid calls and greedy calls consume no random draws.
 
+A fixed-seed regression pins 32 sampled token IDs for eight equal logits with
+seed 1234. Equal weights make the expected IDs the high three bits of each
+standard `mt19937_64` draw, avoiding platform-dependent softmax rounding.
+The fixed sequence supplements the general same-seed replay tests and runs in CI.
+
 ## Correctness
 
 The original `ReferenceTransformer` remains the full-prefix reference. Cache
