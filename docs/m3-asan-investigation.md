@@ -297,14 +297,14 @@ The current ordinary `/MDd` Debug validation passed all 12 CTest cases and all
 [CTest](../results/m3-current-debug-tests.txt),
 [pytest](../results/m3-current-python.txt).
 
-## Proposed compatibility-environment control
+## Owner-approved compatibility-environment control
 
 The invoking process inherits `__COMPAT_LAYER=DetectorsAppHealth`, and the
 captured process loads `apphelp.dll`. Neither observation proves that Windows
 compatibility processing caused the ASan wait. The captured lock owner remains
 unknown; changing more allocator hooks would not directly test this hypothesis.
 
-Proposed next control, pending owner approval: omit `__COMPAT_LAYER` only from
+The owner approved this control: omit `__COMPAT_LAYER` only from
 the local diagnostic child-process environment. Return to the default `/MDd`
 build and retain the two already-approved ASan options initially. Do not alter
 registry settings, system/user environment variables, installed software, or
@@ -315,4 +315,6 @@ checks, fatal exits, and debug CRT checks remain enabled.
 Run the error probes and repeated model-free CLI check first, then use a fresh
 build for five complete suites with stop-on-first-failure. Record the inherited
 and effective compatibility values. Any failure still requires capture and
-investigation. This control has not been run and is not a claimed workaround.
+investigation. The opt-in `-ClearCompatibilityLayer` switch records both values
+and restores the caller's process environment in `finally`. The trial is in
+progress; it is not yet an adopted workaround.

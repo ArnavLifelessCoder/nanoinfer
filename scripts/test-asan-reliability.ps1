@@ -1,17 +1,20 @@
 param(
     [string]$BuildDirectory = 'build/asan-m3-reliability',
     [string]$Label = 'm3-reliability',
-    [switch]$ReleaseCrt
+    [switch]$ReleaseCrt,
+    [switch]$ClearCompatibilityLayer
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'dev-shell.ps1')
 Push-Location $projectRoot
 $previousOptions = $env:ASAN_OPTIONS
+$previousCompatibilityLayer = $env:__COMPAT_LAYER
 try {
     if (Test-Path -LiteralPath $BuildDirectory) { throw 'A fresh build directory is required.' }
     # Owner-approved local trial. Do not put these options in CI or persistent settings.
     $env:ASAN_OPTIONS = 'windows_hook_legacy_allocators=false:symbolize=false'
+    if ($ClearCompatibilityLayer) { $env:__COMPAT_LAYER = $null }
     $crtOptions = @()
     if ($ReleaseCrt) { $crtOptions += '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL' }
     & cmake --preset asan -B $BuildDirectory `
@@ -32,6 +35,8 @@ try {
         $runs += $report
         $summary = [ordered]@{
             asan_options = $env:ASAN_OPTIONS
+            inherited_compatibility_layer = $previousCompatibilityLayer
+            effective_compatibility_layer = $env:__COMPAT_LAYER
             crt_selection = $(if ($ReleaseCrt) { '/MD' } else { '/MDd (CMake Debug default)' })
             fresh_build = $BuildDirectory
             requested_suites = 5
@@ -49,5 +54,6 @@ try {
 }
 finally {
     $env:ASAN_OPTIONS = $previousOptions
+    $env:__COMPAT_LAYER = $previousCompatibilityLayer
     Pop-Location
 }

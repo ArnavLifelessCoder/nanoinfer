@@ -64,6 +64,7 @@ $report = [ordered]@{
     build_directory = $BuildDirectory
     git_head = (git -C $projectRoot rev-parse HEAD)
     asan_options = $env:ASAN_OPTIONS
+    compatibility_layer = $env:__COMPAT_LAYER
     ctest_exit_code = $test.ExitCode
     idle_seconds = $IdleSeconds
     captures = @($captures.ToArray())
