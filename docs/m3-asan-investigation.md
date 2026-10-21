@@ -1,6 +1,8 @@
 # M3 local ASan investigation
 
-M3 remains pending validation. A passing retry is not acceptance evidence.
+M3 remains blocked on local ASan reliability. The owner stopped further
+runtime-option trials after the compatibility control failed. No workaround
+has been adopted. A passing retry is not acceptance evidence.
 The five consecutive full-suite runs use a fresh build and stop at the first
 failure.
 
@@ -333,13 +335,15 @@ cleanup. `apphelp.dll` is absent from the module list. Removing the inherited
 compatibility setting therefore did not prevent the failure. The lock owner
 remains unknown. **The compatibility control failed and is not adopted.**
 
-## Proposed RTL allocator control
+## Unexecuted RTL allocator proposal
 
 The latest stack shows that disabling legacy allocator hooks does not prevent
 the RTL free interceptor from entering the ownership map. The next proposed
 local control is to add `windows_hook_rtl_allocators=false`, retaining `/MDd`,
 `windows_hook_legacy_allocators=false`, and `symbolize=false`, and restoring the
-ordinary inherited compatibility environment. This proposal awaits approval.
+ordinary inherited compatibility environment. The owner declined further
+runtime-option trials. This control has not been executed and will not be
+adopted under the current authorization.
 
 [Microsoft documents the RTL allocator option](https://learn.microsoft.com/en-us/cpp/sanitizers/asan-runtime?view=msvc-170).
 The tradeoff is loss of ASan allocation tracking for Windows heap APIs such as

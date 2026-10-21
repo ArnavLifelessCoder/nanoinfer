@@ -9,6 +9,17 @@ See the [investigation and captured stacks](m3-asan-investigation.md).
 The approved `/MD` trial failed in its first full suite (11/12 passed), so it is
 not adopted. Current ordinary Debug validation passes 12/12 CTest cases and
 43/43 Python tests; the full logs are linked in the investigation.
+The subsequent compatibility-environment control also timed out. The owner
+stopped further runtime-option trials; no proposed workaround is adopted.
+The five consecutive local ASan suite requirement remains unmet.
+
+After adding the fixed-seed sequence regression, ordinary Debug again passed
+12/12 CTest cases ([full output](../results/m3-sequence-debug-tests.txt)) and
+30/30 unit tests with seed 1234
+([full output](../results/m3-sequence-debug-seed1234.txt)).
+[Run 39554479932](https://github.com/ArnavLifelessCoder/nanoinfer/actions/runs/39554479932)
+on `60b210b` passed all five CI jobs, with TSan skipped. This is CI evidence for
+the code and diagnostic controls, not satisfaction of the local reliability gate.
 
 ## What was built
 

@@ -1,0 +1,763 @@
+Internal ctest changing into directory: <project>/build/debug
+UpdateCTestConfiguration  from :<project>/build/debug/DartConfiguration.tcl
+Parse Config file:<project>/build/debug/DartConfiguration.tcl
+UpdateCTestConfiguration  from :<project>/build/debug/DartConfiguration.tcl
+Parse Config file:<project>/build/debug/DartConfiguration.tcl
+Test project <project>/build/debug
+Constructing a list of tests
+Done constructing a list of tests
+Updating test list for fixtures
+Added 0 tests to meet fixture requirements
+Checking test dependency graph...
+Checking test dependency graph end
+test 1
+      Start  1: unit
+
+1: Test command: "<project>\build\debug\nanoinfer_tests.exe"
+1: Working Directory: <project>/build/debug
+1: Test timeout computed to be: 180
+1: Random seed: 42
+1: [==========] Running 30 tests from 6 test suites.
+1: [----------] Global test environment set-up.
+1: [----------] 5 tests from MappedFile
+1: [ RUN      ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths
+1: [       OK ] MappedFile.ReadsExactBytesAndSupportsUnicodePaths (214 ms)
+1: [ RUN      ] MappedFile.MissingFileFailsCleanly
+1: [       OK ] MappedFile.MissingFileFailsCleanly (175 ms)
+1: [ RUN      ] MappedFile.EmptyFileFailsCleanly
+1: [       OK ] MappedFile.EmptyFileFailsCleanly (183 ms)
+1: [ RUN      ] MappedFile.DirectoryFailsCleanly
+1: [       OK ] MappedFile.DirectoryFailsCleanly (168 ms)
+1: [ RUN      ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile
+1: [       OK ] MappedFile.MoveTransfersMappingAndAssignmentReleasesPreviousFile (259 ms)
+1: [----------] 5 tests from MappedFile (1001 ms total)
+1:
+1: [----------] 1 test from Checksum
+1: [ RUN      ] Checksum.MatchesStandardVectorAndChaining
+1: [       OK ] Checksum.MatchesStandardVectorAndChaining (0 ms)
+1: [----------] 1 test from Checksum (0 ms total)
+1:
+1: [----------] 6 tests from LoaderTest
+1: [ RUN      ] LoaderTest.ReadsShapesStridesAndZeroCopyValues
+1: [       OK ] LoaderTest.ReadsShapesStridesAndZeroCopyValues (220 ms)
+1: [ RUN      ] LoaderTest.RejectsEveryTruncationBoundary
+1: [       OK ] LoaderTest.RejectsEveryTruncationBoundary (21094 ms)
+1: [ RUN      ] LoaderTest.RejectsBitCorruptionAtEveryByte
+1: [       OK ] LoaderTest.RejectsBitCorruptionAtEveryByte (21405 ms)
+1: [ RUN      ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum
+1: [       OK ] LoaderTest.RejectsInvalidMetadataEvenWithCorrectChecksum (743 ms)
+1: [ RUN      ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData
+1: [       OK ] LoaderTest.RejectsOverflowOverlapsOffsetsAndTrailingData (670 ms)
+1: [ RUN      ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames
+1: [       OK ] LoaderTest.RejectsDuplicateUnterminatedAndInvalidNames (298 ms)
+1: [----------] 6 tests from LoaderTest (44435 ms total)
+1:
+1: [----------] 9 tests from ReferenceOps
+1: [ RUN      ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage
+1: [       OK ] ReferenceOps.MatmulRandomAwkwardShapesAndTransposedStorage (2 ms)
+1: [ RUN      ] ReferenceOps.EmbeddingsBiasAndResidual
+1: [       OK ] ReferenceOps.EmbeddingsBiasAndResidual (0 ms)
+1: [ RUN      ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon
+1: [       OK ] ReferenceOps.LayerNormRandomWidthsPopulationVarianceAndEpsilon (1 ms)
+1: [ RUN      ] ReferenceOps.GeluUsesTanhApproximation
+1: [       OK ] ReferenceOps.GeluUsesTanhApproximation (0 ms)
+1: [ RUN      ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues
+1: [       OK ] ReferenceOps.StableSoftmaxWithLargeAndNegativeValues (0 ms)
+1: [ RUN      ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange
+1: [       OK ] ReferenceOps.GeluMatchesFloat64OracleAcrossActivationRange (2 ms)
+1: [ RUN      ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead
+1: [       OK ] ReferenceOps.AttentionScalesNonzeroQueriesAndKeysPerHead (0 ms)
+1: [ RUN      ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate
+1: [       OK ] ReferenceOps.AttentionIncludesDiagonalAndKeepsHeadsSeparate (0 ms)
+1: [ RUN      ] ReferenceOps.InvalidShapesFailBeforeIndexing
+1: [       OK ] ReferenceOps.InvalidShapesFailBeforeIndexing (0 ms)
+1: [----------] 9 tests from ReferenceOps (7 ms total)
+1:
+1: [----------] 3 tests from KVCache
+1: [ RUN      ] KVCache.StoresFusedRowsInSeparateStableLayerBuffers
+1: [       OK ] KVCache.StoresFusedRowsInSeparateStableLayerBuffers (0 ms)
+1: [ RUN      ] KVCache.CachedAttentionExactlyMatchesFullCausalAttentionAtEveryPosition
+1: [       OK ] KVCache.CachedAttentionExactlyMatchesFullCausalAttentionAtEveryPosition (113 ms)
+1: [ RUN      ] KVCache.CachedAttentionRejectsInvalidPrefixBeforeIndexing
+1: [       OK ] KVCache.CachedAttentionRejectsInvalidPrefixBeforeIndexing (0 ms)
+1: [----------] 3 tests from KVCache (114 ms total)
+1:
+1: [----------] 6 tests from Sampling
+1: [ RUN      ] Sampling.GreedyChoosesLowestIdOnTies
+1: [       OK ] Sampling.GreedyChoosesLowestIdOnTies (0 ms)
+1: [ RUN      ] Sampling.SameSeedReproducesSequenceAndDifferentSeedChangesIt
+1: [       OK ] Sampling.SameSeedReproducesSequenceAndDifferentSeedChangesIt (4 ms)
+1: [ RUN      ] Sampling.FixedSeedPinsUniformTokenSequence
+1: [       OK ] Sampling.FixedSeedPinsUniformTokenSequence (0 ms)
+1: [ RUN      ] Sampling.TopKAndNucleusKeepOnlyAllowedSupportIncludingCrossingToken
+1: [       OK ] Sampling.TopKAndNucleusKeepOnlyAllowedSupportIncludingCrossingToken (2 ms)
+1: [ RUN      ] Sampling.StableTemperatureScalingChangesDistribution
+1: [       OK ] Sampling.StableTemperatureScalingChangesDistribution (10 ms)
+1: [ RUN      ] Sampling.RejectsInvalidOptionsAndLogitsWithoutAdvancingRandomState
+1: [       OK ] Sampling.RejectsInvalidOptionsAndLogitsWithoutAdvancingRandomState (0 ms)
+1: [----------] 6 tests from Sampling (18 ms total)
+1:
+1: [----------] Global test environment tear-down
+1: [==========] 30 tests from 6 test suites ran. (45578 ms total)
+1: [  PASSED  ] 30 tests.
+ 1/12 Test  #1: unit .............................   Passed   46.04 sec
+test 2
+      Start  2: export_tiny
+
+2: Test command: "<project>\.venv\Scripts\python.exe" "-m" "python.export" "--tiny" "--output" "<project>/build/debug/fixtures/tiny.bin" "--golden" "<project>/build/debug/fixtures/golden"
+2: Working Directory: <project>
+2: Test timeout computed to be: 180
+2: {
+2:   "format_version": 1,
+2:   "config": {
+2:     "layers": 2,
+2:     "d_model": 16,
+2:     "heads": 2,
+2:     "vocab": 97,
+2:     "ctx": 64
+2:   },
+2:   "tensors": [
+2:     {
+2:       "name": "wte.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         97,
+2:         16
+2:       ],
+2:       "offset": 3648,
+2:       "byte_size": 6208,
+2:       "crc32": 1708750088
+2:     },
+2:     {
+2:       "name": "wpe.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 9856,
+2:       "byte_size": 4096,
+2:       "crc32": 1388767903
+2:     },
+2:     {
+2:       "name": "h.0.ln_1.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 13952,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.0.ln_1.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 14016,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_attn.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         48
+2:       ],
+2:       "offset": 14080,
+2:       "byte_size": 3072,
+2:       "crc32": 184779411
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_attn.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         48
+2:       ],
+2:       "offset": 17152,
+2:       "byte_size": 192,
+2:       "crc32": 2348746994
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         16
+2:       ],
+2:       "offset": 17344,
+2:       "byte_size": 1024,
+2:       "crc32": 1610141689
+2:     },
+2:     {
+2:       "name": "h.0.attn.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18368,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.ln_2.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18432,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.0.ln_2.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 18496,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_fc.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         64
+2:       ],
+2:       "offset": 18560,
+2:       "byte_size": 4096,
+2:       "crc32": 768724231
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_fc.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64
+2:       ],
+2:       "offset": 22656,
+2:       "byte_size": 256,
+2:       "crc32": 227968344
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 22912,
+2:       "byte_size": 4096,
+2:       "crc32": 2981679276
+2:     },
+2:     {
+2:       "name": "h.0.mlp.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27008,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.ln_1.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27072,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.1.ln_1.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 27136,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_attn.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         48
+2:       ],
+2:       "offset": 27200,
+2:       "byte_size": 3072,
+2:       "crc32": 3948583692
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_attn.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         48
+2:       ],
+2:       "offset": 30272,
+2:       "byte_size": 192,
+2:       "crc32": 2348746994
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         16
+2:       ],
+2:       "offset": 30464,
+2:       "byte_size": 1024,
+2:       "crc32": 776059860
+2:     },
+2:     {
+2:       "name": "h.1.attn.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31488,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.ln_2.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31552,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "h.1.ln_2.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 31616,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_fc.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16,
+2:         64
+2:       ],
+2:       "offset": 31680,
+2:       "byte_size": 4096,
+2:       "crc32": 4045243238
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_fc.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64
+2:       ],
+2:       "offset": 35776,
+2:       "byte_size": 256,
+2:       "crc32": 227968344
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_proj.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         64,
+2:         16
+2:       ],
+2:       "offset": 36032,
+2:       "byte_size": 4096,
+2:       "crc32": 320104244
+2:     },
+2:     {
+2:       "name": "h.1.mlp.c_proj.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40128,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     },
+2:     {
+2:       "name": "ln_f.weight",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40192,
+2:       "byte_size": 64,
+2:       "crc32": 4144014378
+2:     },
+2:     {
+2:       "name": "ln_f.bias",
+2:       "dtype": "f32",
+2:       "shape": [
+2:         16
+2:       ],
+2:       "offset": 40256,
+2:       "byte_size": 64,
+2:       "crc32": 1972200246
+2:     }
+2:   ],
+2:   "source": {
+2:     "torch": "2.11.0+cu128",
+2:     "transformers": "4.57.1",
+2:     "revision": null,
+2:     "weight_layout": "Conv1D [in, out]; embeddings [vocab/ctx, d_model]"
+2:   }
+2: }
+ 2/12 Test  #2: export_tiny ......................   Passed   38.02 sec
+test 3
+      Start  3: roundtrip_tiny
+
+3: Test command: "<project>\.venv\Scripts\python.exe" "<project>/tests/roundtrip.py" "--inspector" "<project>/build/debug/gpt2inspect.exe" "--model" "<project>/build/debug/fixtures/tiny.bin" "--manifest" "<project>/build/debug/fixtures/tiny.json"
+3: Working Directory: <project>/build/debug
+3: Test timeout computed to be: 180
+3: PASS wte.weight shape=[97, 16] crc32=65d97508
+3: PASS wpe.weight shape=[64, 16] crc32=52c6ea9f
+3: PASS h.0.ln_1.weight shape=[16] crc32=f700a42a
+3: PASS h.0.ln_1.bias shape=[16] crc32=758d6336
+3: PASS h.0.attn.c_attn.weight shape=[16, 48] crc32=0b038293
+3: PASS h.0.attn.c_attn.bias shape=[48] crc32=8bff08f2
+3: PASS h.0.attn.c_proj.weight shape=[16, 16] crc32=5ff8cff9
+3: PASS h.0.attn.c_proj.bias shape=[16] crc32=758d6336
+3: PASS h.0.ln_2.weight shape=[16] crc32=f700a42a
+3: PASS h.0.ln_2.bias shape=[16] crc32=758d6336
+3: PASS h.0.mlp.c_fc.weight shape=[16, 64] crc32=2dd1cd07
+3: PASS h.0.mlp.c_fc.bias shape=[64] crc32=0d968558
+3: PASS h.0.mlp.c_proj.weight shape=[64, 16] crc32=b1b8d0ac
+3: PASS h.0.mlp.c_proj.bias shape=[16] crc32=758d6336
+3: PASS h.1.ln_1.weight shape=[16] crc32=f700a42a
+3: PASS h.1.ln_1.bias shape=[16] crc32=758d6336
+3: PASS h.1.attn.c_attn.weight shape=[16, 48] crc32=eb5a9b0c
+3: PASS h.1.attn.c_attn.bias shape=[48] crc32=8bff08f2
+3: PASS h.1.attn.c_proj.weight shape=[16, 16] crc32=2e41bbd4
+3: PASS h.1.attn.c_proj.bias shape=[16] crc32=758d6336
+3: PASS h.1.ln_2.weight shape=[16] crc32=f700a42a
+3: PASS h.1.ln_2.bias shape=[16] crc32=758d6336
+3: PASS h.1.mlp.c_fc.weight shape=[16, 64] crc32=f11d8366
+3: PASS h.1.mlp.c_fc.bias shape=[64] crc32=0d968558
+3: PASS h.1.mlp.c_proj.weight shape=[64, 16] crc32=13146734
+3: PASS h.1.mlp.c_proj.bias shape=[16] crc32=758d6336
+3: PASS ln_f.weight shape=[16] crc32=f700a42a
+3: PASS ln_f.bias shape=[16] crc32=758d6336
+3: PASS all 28 tensor shapes, checksums, offsets and sizes
+ 3/12 Test  #3: roundtrip_tiny ...................   Passed    4.96 sec
+test 4
+      Start  4: cached_forward
+
+4: Test command: "<project>\build\debug\nanoinfer_cache_tests.exe"
+4: Working Directory: <project>/build/debug
+4: Test timeout computed to be: 180
+4: Random seed: 42
+4: [==========] Running 2 tests from 1 test suite.
+4: [----------] Global test environment set-up.
+4: [----------] 2 tests from CachedForward
+4: [ RUN      ] CachedForward.EveryPositionMatchesFullRecomputeIncludingAllHiddenStates
+4: [       OK ] CachedForward.EveryPositionMatchesFullRecomputeIncludingAllHiddenStates (413 ms)
+4: [ RUN      ] CachedForward.ResetShorterPrefillIndependentInstancesAndInvalidCalls
+4: [       OK ] CachedForward.ResetShorterPrefillIndependentInstancesAndInvalidCalls (56 ms)
+4: [----------] 2 tests from CachedForward (470 ms total)
+4:
+4: [----------] Global test environment tear-down
+4: [==========] 2 tests from 1 test suite ran. (470 ms total)
+4: [  PASSED  ] 2 tests.
+ 4/12 Test  #4: cached_forward ...................   Passed    3.13 sec
+test 5
+      Start  5: generation_cli
+
+5: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.generation_cli" "--executable" "<project>/build/debug/gpt2rt.exe" "--model" "<project>/build/debug/fixtures/tiny.bin" "--golden" "<project>/build/debug/fixtures/golden" "--directory" "<project>/build/debug/generation"
+5: Working Directory: <project>
+5: Test timeout computed to be: 180
+5: PASS cached greedy matches all three PyTorch golden continuations
+5: PASS seeded replay, different seeds and top-k=1 greedy equivalence
+5: PASS context boundaries, numeric validation, option errors and help
+ 5/12 Test  #5: generation_cli ...................   Passed   29.75 sec
+test 6
+      Start  6: cli_output
+
+6: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.cli_output" "--inspector" "<project>/build/debug/gpt2inspect.exe" "--generator" "<project>/build/debug/gpt2rt.exe" "--model" "<project>/build/debug/fixtures/tiny.bin"
+6: Working Directory: <project>
+6: Test timeout computed to be: 180
+6: Checking output pair 1/100
+6: Checking output pair 26/100
+6: Checking output pair 51/100
+6: Checking output pair 76/100
+6: PASS complete JSON and help output in 200 launches
+ 6/12 Test  #6: cli_output .......................   Passed  141.10 sec
+test 7
+      Start  7: golden_cached
+
+7: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.golden_cached" "--executable" "<project>/build/debug/gpt2cachecheck.exe" "--model" "<project>/build/debug/fixtures/tiny.bin" "--golden" "<project>/build/debug/fixtures/golden" "--directory" "<project>/build/debug/cached-golden" "--report" "<project>/build/debug/cached-golden-report.json"
+7: Working Directory: <project>
+7: Test timeout computed to be: 180
+7: PASS absolute position 1: all logits and hidden states equal full recomputation
+7: PASS absolute position 2: all logits and hidden states equal full recomputation
+7: PASS absolute position 3: all logits and hidden states equal full recomputation
+7: PASS absolute position 4: all logits and hidden states equal full recomputation
+7: PASS absolute position 5: all logits and hidden states equal full recomputation
+7: PASS absolute position 6: all logits and hidden states equal full recomputation
+7: PASS absolute position 7: all logits and hidden states equal full recomputation
+7: PASS absolute position 8: all logits and hidden states equal full recomputation
+7: PASS absolute position 9: all logits and hidden states equal full recomputation
+7: PASS absolute position 10: all logits and hidden states equal full recomputation
+7: PASS absolute position 11: all logits and hidden states equal full recomputation
+7: PASS absolute position 12: all logits and hidden states equal full recomputation
+7: PASS absolute position 13: all logits and hidden states equal full recomputation
+7: PASS absolute position 14: all logits and hidden states equal full recomputation
+7: PASS absolute position 15: all logits and hidden states equal full recomputation
+7: PASS absolute position 16: all logits and hidden states equal full recomputation
+7: PASS absolute position 17: all logits and hidden states equal full recomputation
+7: PASS absolute position 18: all logits and hidden states equal full recomputation
+7: PASS absolute position 19: all logits and hidden states equal full recomputation
+7: PASS absolute position 20: all logits and hidden states equal full recomputation
+7: PASS absolute position 21: all logits and hidden states equal full recomputation
+7: PASS absolute position 22: all logits and hidden states equal full recomputation
+7: PASS absolute position 23: all logits and hidden states equal full recomputation
+7: PASS absolute position 24: all logits and hidden states equal full recomputation
+7: PASS absolute position 25: all logits and hidden states equal full recomputation
+7: PASS absolute position 26: all logits and hidden states equal full recomputation
+7: PASS absolute position 27: all logits and hidden states equal full recomputation
+7: PASS absolute position 28: all logits and hidden states equal full recomputation
+7: PASS absolute position 29: all logits and hidden states equal full recomputation
+7: PASS absolute position 30: all logits and hidden states equal full recomputation
+7: PASS absolute position 31: all logits and hidden states equal full recomputation
+7: PASS absolute position 32: all logits and hidden states equal full recomputation
+7: PASS prompt_0.npz: {'logits': 2.9802322387695312e-08, 'final_ln': 6.705522537231445e-08, 'layer_0': 1.862645149230957e-09, 'layer_1': 3.725290298461914e-09}; greedy_match=True
+7: PASS absolute position 2: all logits and hidden states equal full recomputation
+7: PASS absolute position 3: all logits and hidden states equal full recomputation
+7: PASS absolute position 4: all logits and hidden states equal full recomputation
+7: PASS absolute position 5: all logits and hidden states equal full recomputation
+7: PASS absolute position 6: all logits and hidden states equal full recomputation
+7: PASS absolute position 7: all logits and hidden states equal full recomputation
+7: PASS absolute position 8: all logits and hidden states equal full recomputation
+7: PASS absolute position 9: all logits and hidden states equal full recomputation
+7: PASS absolute position 10: all logits and hidden states equal full recomputation
+7: PASS absolute position 11: all logits and hidden states equal full recomputation
+7: PASS absolute position 12: all logits and hidden states equal full recomputation
+7: PASS absolute position 13: all logits and hidden states equal full recomputation
+7: PASS absolute position 14: all logits and hidden states equal full recomputation
+7: PASS absolute position 15: all logits and hidden states equal full recomputation
+7: PASS absolute position 16: all logits and hidden states equal full recomputation
+7: PASS absolute position 17: all logits and hidden states equal full recomputation
+7: PASS absolute position 18: all logits and hidden states equal full recomputation
+7: PASS absolute position 19: all logits and hidden states equal full recomputation
+7: PASS absolute position 20: all logits and hidden states equal full recomputation
+7: PASS absolute position 21: all logits and hidden states equal full recomputation
+7: PASS absolute position 22: all logits and hidden states equal full recomputation
+7: PASS absolute position 23: all logits and hidden states equal full recomputation
+7: PASS absolute position 24: all logits and hidden states equal full recomputation
+7: PASS absolute position 25: all logits and hidden states equal full recomputation
+7: PASS absolute position 26: all logits and hidden states equal full recomputation
+7: PASS absolute position 27: all logits and hidden states equal full recomputation
+7: PASS absolute position 28: all logits and hidden states equal full recomputation
+7: PASS absolute position 29: all logits and hidden states equal full recomputation
+7: PASS absolute position 30: all logits and hidden states equal full recomputation
+7: PASS absolute position 31: all logits and hidden states equal full recomputation
+7: PASS absolute position 32: all logits and hidden states equal full recomputation
+7: PASS absolute position 33: all logits and hidden states equal full recomputation
+7: PASS prompt_1.npz: {'logits': 5.960464477539063e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 3.725290298461914e-09}; greedy_match=True
+7: PASS absolute position 3: all logits and hidden states equal full recomputation
+7: PASS absolute position 4: all logits and hidden states equal full recomputation
+7: PASS absolute position 5: all logits and hidden states equal full recomputation
+7: PASS absolute position 6: all logits and hidden states equal full recomputation
+7: PASS absolute position 7: all logits and hidden states equal full recomputation
+7: PASS absolute position 8: all logits and hidden states equal full recomputation
+7: PASS absolute position 9: all logits and hidden states equal full recomputation
+7: PASS absolute position 10: all logits and hidden states equal full recomputation
+7: PASS absolute position 11: all logits and hidden states equal full recomputation
+7: PASS absolute position 12: all logits and hidden states equal full recomputation
+7: PASS absolute position 13: all logits and hidden states equal full recomputation
+7: PASS absolute position 14: all logits and hidden states equal full recomputation
+7: PASS absolute position 15: all logits and hidden states equal full recomputation
+7: PASS absolute position 16: all logits and hidden states equal full recomputation
+7: PASS absolute position 17: all logits and hidden states equal full recomputation
+7: PASS absolute position 18: all logits and hidden states equal full recomputation
+7: PASS absolute position 19: all logits and hidden states equal full recomputation
+7: PASS absolute position 20: all logits and hidden states equal full recomputation
+7: PASS absolute position 21: all logits and hidden states equal full recomputation
+7: PASS absolute position 22: all logits and hidden states equal full recomputation
+7: PASS absolute position 23: all logits and hidden states equal full recomputation
+7: PASS absolute position 24: all logits and hidden states equal full recomputation
+7: PASS absolute position 25: all logits and hidden states equal full recomputation
+7: PASS absolute position 26: all logits and hidden states equal full recomputation
+7: PASS absolute position 27: all logits and hidden states equal full recomputation
+7: PASS absolute position 28: all logits and hidden states equal full recomputation
+7: PASS absolute position 29: all logits and hidden states equal full recomputation
+7: PASS absolute position 30: all logits and hidden states equal full recomputation
+7: PASS absolute position 31: all logits and hidden states equal full recomputation
+7: PASS absolute position 32: all logits and hidden states equal full recomputation
+7: PASS absolute position 33: all logits and hidden states equal full recomputation
+7: PASS absolute position 34: all logits and hidden states equal full recomputation
+7: PASS prompt_2.npz: {'logits': 4.470348358154297e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 7.450580596923828e-09}; greedy_match=True
+7: PASS cached PyTorch golden checks and exact cache/full-prefix equivalence
+ 7/12 Test  #7: golden_cached ....................   Passed    6.71 sec
+test 8
+      Start  8: loader_integration
+
+8: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.loader_integration" "--inspector" "<project>/build/debug/gpt2inspect.exe" "--directory" "<project>/build/debug/awkward"
+8: Working Directory: <project>
+8: Test timeout computed to be: 180
+8: Random seed: 42
+8: PASS 32 random/awkward tensors, all ranks, Unicode path and JSON escaping
+8: PASS clean error for empty: model error: model file is empty or too large
+8: PASS clean error for header: model error: truncated header
+8: PASS clean error for table: model error: invalid tensor count
+8: PASS clean error for payload: model error: file length mismatch
+8: PASS clean error for trailing: model error: file length mismatch
+8: PASS clean error for corrupt: model error: tensor checksum mismatch
+8: PASS missing CLI argument
+ 8/12 Test  #8: loader_integration ...............   Passed   15.60 sec
+test 9
+      Start  9: model_schema
+
+9: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.model_schema" "--inspector" "<project>/build/debug/gpt2inspect.exe" "--directory" "<project>/build/debug/schema"
+9: Working Directory: <project>
+9: Test timeout computed to be: 180
+9: PASS valid complete model with awkward width
+9: PASS reject wrong rank/shape: wte.weight
+9: PASS reject wrong rank/shape: wpe.weight
+9: PASS reject wrong rank/shape: ln_f.weight
+9: PASS reject wrong rank/shape: ln_f.bias
+9: PASS reject wrong rank/shape: h.0.ln_1.weight
+9: PASS reject wrong rank/shape: h.0.ln_1.bias
+9: PASS reject wrong rank/shape: h.0.ln_2.weight
+9: PASS reject wrong rank/shape: h.0.ln_2.bias
+9: PASS reject wrong rank/shape: h.0.attn.c_attn.weight
+9: PASS reject wrong rank/shape: h.0.attn.c_attn.bias
+9: PASS reject wrong rank/shape: h.0.attn.c_proj.weight
+9: PASS reject wrong rank/shape: h.0.attn.c_proj.bias
+9: PASS reject wrong rank/shape: h.0.mlp.c_fc.weight
+9: PASS reject wrong rank/shape: h.0.mlp.c_fc.bias
+9: PASS reject wrong rank/shape: h.0.mlp.c_proj.weight
+9: PASS reject wrong rank/shape: h.0.mlp.c_proj.bias
+9: PASS reject wrong rank/shape: h.1.ln_1.weight
+9: PASS reject wrong rank/shape: h.1.ln_1.bias
+9: PASS reject wrong rank/shape: h.1.ln_2.weight
+9: PASS reject wrong rank/shape: h.1.ln_2.bias
+9: PASS reject wrong rank/shape: h.1.attn.c_attn.weight
+9: PASS reject wrong rank/shape: h.1.attn.c_attn.bias
+9: PASS reject wrong rank/shape: h.1.attn.c_proj.weight
+9: PASS reject wrong rank/shape: h.1.attn.c_proj.bias
+9: PASS reject wrong rank/shape: h.1.mlp.c_fc.weight
+9: PASS reject wrong rank/shape: h.1.mlp.c_fc.bias
+9: PASS reject wrong rank/shape: h.1.mlp.c_proj.weight
+9: PASS reject wrong rank/shape: h.1.mlp.c_proj.bias
+9: PASS reject transposed embedding with same element count
+9: PASS reject missing tensor: wte.weight
+9: PASS reject missing tensor: wpe.weight
+9: PASS reject missing tensor: ln_f.weight
+9: PASS reject missing tensor: ln_f.bias
+9: PASS reject missing tensor: h.0.ln_1.weight
+9: PASS reject missing tensor: h.0.ln_1.bias
+9: PASS reject missing tensor: h.0.ln_2.weight
+9: PASS reject missing tensor: h.0.ln_2.bias
+9: PASS reject missing tensor: h.0.attn.c_attn.weight
+9: PASS reject missing tensor: h.0.attn.c_attn.bias
+9: PASS reject missing tensor: h.0.attn.c_proj.weight
+9: PASS reject missing tensor: h.0.attn.c_proj.bias
+9: PASS reject missing tensor: h.0.mlp.c_fc.weight
+9: PASS reject missing tensor: h.0.mlp.c_fc.bias
+9: PASS reject missing tensor: h.0.mlp.c_proj.weight
+9: PASS reject missing tensor: h.0.mlp.c_proj.bias
+9: PASS reject missing tensor: h.1.ln_1.weight
+9: PASS reject missing tensor: h.1.ln_1.bias
+9: PASS reject missing tensor: h.1.ln_2.weight
+9: PASS reject missing tensor: h.1.ln_2.bias
+9: PASS reject missing tensor: h.1.attn.c_attn.weight
+9: PASS reject missing tensor: h.1.attn.c_attn.bias
+9: PASS reject missing tensor: h.1.attn.c_proj.weight
+9: PASS reject missing tensor: h.1.attn.c_proj.bias
+9: PASS reject missing tensor: h.1.mlp.c_fc.weight
+9: PASS reject missing tensor: h.1.mlp.c_fc.bias
+9: PASS reject missing tensor: h.1.mlp.c_proj.weight
+9: PASS reject missing tensor: h.1.mlp.c_proj.bias
+9: PASS reject untied extra lm_head
+9: PASS reject out-of-range layer index
+9: PASS reject config width mismatch
+9: PASS reject huge header layer count
+ 9/12 Test  #9: model_schema .....................   Passed   43.42 sec
+test 10
+      Start 10: golden_tiny
+
+10: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.golden_forward" "--executable" "<project>/build/debug/gpt2ref.exe" "--model" "<project>/build/debug/fixtures/tiny.bin" "--golden" "<project>/build/debug/fixtures/golden" "--directory" "<project>/build/debug/golden-check" "--report" "<project>/build/debug/golden-report.json"
+10: Working Directory: <project>
+10: Test timeout computed to be: 180
+10: PASS forward, positions=1; generating 32 tokens by full-prefix recomputation
+10: PASS generated 32 tokens
+10: PASS prompt_0.npz: {'logits': 2.9802322387695312e-08, 'final_ln': 6.705522537231445e-08, 'layer_0': 1.862645149230957e-09, 'layer_1': 3.725290298461914e-09}; greedy_match=True
+10: PASS forward, positions=2; generating 32 tokens by full-prefix recomputation
+10: PASS generated 32 tokens
+10: PASS prompt_1.npz: {'logits': 5.960464477539063e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 3.725290298461914e-09}; greedy_match=True
+10: PASS forward, positions=3; generating 32 tokens by full-prefix recomputation
+10: PASS generated 32 tokens
+10: PASS prompt_2.npz: {'logits': 4.470348358154297e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 3.725290298461914e-09, 'layer_1': 7.450580596923828e-09}; greedy_match=True
+10: PASS all golden logits, hidden states and greedy continuations
+10/12 Test #10: golden_tiny ......................   Passed    7.26 sec
+test 11
+      Start 11: reference_contract
+
+11: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.reference_contract" "--executable" "<project>/build/debug/gpt2ref.exe" "--directory" "<project>/build/debug/reference-contract"
+11: Working Directory: <project>
+11: Test timeout computed to be: 180
+11: Random seed: 42
+11: PASS full context, absolute positions and causal prefix invariance
+11: PASS reject empty
+11: PASS reject negative
+11: PASS reject out-of-vocabulary
+11: PASS reject integer-overflow
+11: PASS reject non-integer
+11: PASS reject too-long
+11: PASS reject continuation-overflow
+11: PASS reject negative-count
+11: PASS reject count-overflow
+11: PASS greedy chooses lowest ID on ties, emits requested count and has no EOS stop
+11/12 Test #11: reference_contract ...............   Passed   39.90 sec
+test 12
+      Start 12: golden_negative
+
+12: Test command: "<project>\.venv\Scripts\python.exe" "-m" "tests.golden_negative" "--executable" "<project>/build/debug/gpt2ref.exe" "--erf-executable" "<project>/build/debug/gpt2ref_test_exact_gelu.exe" "--epsilon-executable" "<project>/build/debug/gpt2ref_test_layernorm_eps.exe" "--directory" "<project>/build/debug/negative-golden" "--report" "<project>/build/debug/negative-report.json"
+12: Working Directory: <project>
+12: Test timeout computed to be: 180
+12: PASS forward, positions=1; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: PASS prompt_0.npz: {'logits': 4.470348358154297e-08, 'final_ln': 4.470348358154297e-07, 'layer_0': 1.341104507446289e-07, 'layer_1': 2.384185791015625e-07}; greedy_match=True
+12: PASS forward, positions=2; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: PASS prompt_1.npz: {'logits': 5.960464477539063e-08, 'final_ln': 4.76837158203125e-07, 'layer_0': 2.980232238769531e-07, 'layer_1': 3.5762786865234375e-07}; greedy_match=True
+12: PASS forward, positions=3; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: PASS prompt_2.npz: {'logits': 6.705522537231445e-08, 'final_ln': 7.152557373046875e-07, 'layer_0': 2.384185791015625e-07, 'layer_1': 3.5762786865234375e-07}; greedy_match=True
+12: PASS forward, positions=1; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: FAIL prompt_0.npz: {'logits': 5.196034908294678e-05, 'final_ln': 0.00042557716369628906, 'layer_0': 0.00012689828872680664, 'layer_1': 0.0002027750015258789}; greedy_match=True
+12: PASS forward, positions=2; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: FAIL prompt_1.npz: {'logits': 8.836761116981506e-05, 'final_ln': 0.0007026195526123047, 'layer_0': 0.00017392635345458984, 'layer_1': 0.0005272030830383301}; greedy_match=True
+12: PASS forward, positions=3; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: FAIL prompt_2.npz: {'logits': 4.2982399463653564e-05, 'final_ln': 0.00029850006103515625, 'layer_0': 0.00017654895782470703, 'layer_1': 0.00034880638122558594}; greedy_match=True
+12: PASS forward, positions=1; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: FAIL prompt_0.npz: {'logits': 0.0005234293639659882, 'final_ln': 0.0034945979714393616, 'layer_0': 0.003926396369934082, 'layer_1': 0.004076361656188965}; greedy_match=True
+12: PASS forward, positions=2; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: FAIL prompt_1.npz: {'logits': 0.001355990068987012, 'final_ln': 0.01858454942703247, 'layer_0': 0.011838257312774658, 'layer_1': 0.014262378215789795}; greedy_match=True
+12: PASS forward, positions=3; generating 0 tokens by full-prefix recomputation
+12: PASS generated 0 tokens
+12: FAIL prompt_2.npz: {'logits': 0.0018432000651955605, 'final_ln': 0.017105072736740112, 'layer_0': 0.012513160705566406, 'layer_1': 0.01068204641342163}; greedy_match=True
+12: PASS default forward; golden comparison rejects exact erf GELU and LayerNorm eps 1e-6
+12/12 Test #12: golden_negative ..................   Passed   42.74 sec
+
+100% tests passed, 0 tests failed out of 12
+
+Total Test time (real) = 419.06 sec
