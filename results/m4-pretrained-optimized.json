@@ -1,0 +1,2094 @@
+{
+  "model": "gpt2",
+  "reference_torch": "2.11.0+cu128",
+  "rule": "Compare every optimized GEMM forward with PyTorch and with the scalar reference.\n\nLogits must stay within 1e-3 of PyTorch float32 and greedy tokens must match\nexactly. A hidden state passes the approved fp32 bound, or, when a different\nsummation order moves it outside that bound, it must be at least as accurate\nas PyTorch float32 against the float64 oracle (python/oracle.py), within the\napproved 1e-4 absolute slack. Owner decision for M4.",
+  "tolerance": {
+    "logits_max_abs_exclusive": 0.001,
+    "hidden_atol": 0.0001,
+    "hidden_rtol": 1e-06
+  },
+  "kernels": [
+    "naive",
+    "reordered",
+    "blocked",
+    "packed",
+    "avx2"
+  ],
+  "extra_arguments": [],
+  "results": {
+    "reference": [
+      {
+        "file": "prompt_0.npz",
+        "max_abs_diff": {
+          "logits": 4.9591064453125e-05,
+          "final_ln": 2.288818359375e-05,
+          "layer_0": 3.0517578125e-05,
+          "layer_1": 6.103515625e-05,
+          "layer_2": 6.103515625e-05,
+          "layer_3": 0.000244140625,
+          "layer_4": 0.00048828125,
+          "layer_5": 0.00048828125,
+          "layer_6": 0.00048828125,
+          "layer_7": 0.00048828125,
+          "layer_8": 0.00048828125,
+          "layer_9": 0.00048828125,
+          "layer_10": 0.00048828125,
+          "layer_11": 0.00042724609375
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 0.15899442597341423,
+          "layer_0": 0.17740683978765287,
+          "layer_1": 0.13329284785234566,
+          "layer_2": 0.14603499943518816,
+          "layer_3": 0.1432864495294258,
+          "layer_4": 0.16972674079595224,
+          "layer_5": 0.18975194045078103,
+          "layer_6": 0.16128250558178595,
+          "layer_7": 0.1668416249903605,
+          "layer_8": 0.15838849212571612,
+          "layer_9": 0.2753675089194978,
+          "layer_10": 0.2551747717529213,
+          "layer_11": 0.930407264513589
+        },
+        "greedy_tokens": 32,
+        "greedy_match": true,
+        "failures": []
+      },
+      {
+        "file": "prompt_1.npz",
+        "max_abs_diff": {
+          "logits": 9.1552734375e-05,
+          "final_ln": 9.1552734375e-05,
+          "layer_0": 3.814697265625e-05,
+          "layer_1": 0.000244140625,
+          "layer_2": 0.000244140625,
+          "layer_3": 0.00048828125,
+          "layer_4": 0.00048828125,
+          "layer_5": 0.00048828125,
+          "layer_6": 0.00048828125,
+          "layer_7": 0.00048828125,
+          "layer_8": 0.00048828125,
+          "layer_9": 0.00048828125,
+          "layer_10": 0.00048828125,
+          "layer_11": 0.00042724609375
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 0.5779860989526651,
+          "layer_0": 0.22824067522721359,
+          "layer_1": 0.3417809624927863,
+          "layer_2": 0.3060318260857856,
+          "layer_3": 0.2822125918743093,
+          "layer_4": 0.2730185152283926,
+          "layer_5": 0.27348716302535603,
+          "layer_6": 0.2741133956406787,
+          "layer_7": 0.2748333015786356,
+          "layer_8": 0.2755375996886425,
+          "layer_9": 0.2766892106886887,
+          "layer_10": 0.3792092267258527,
+          "layer_11": 0.943782678711196
+        },
+        "greedy_tokens": 32,
+        "greedy_match": true,
+        "failures": []
+      },
+      {
+        "file": "prompt_2.npz",
+        "max_abs_diff": {
+          "logits": 0.00018310546875,
+          "final_ln": 9.1552734375e-05,
+          "layer_0": 7.62939453125e-05,
+          "layer_1": 6.103515625e-05,
+          "layer_2": 6.103515625e-05,
+          "layer_3": 0.000244140625,
+          "layer_4": 0.00048828125,
+          "layer_5": 0.00048828125,
+          "layer_6": 0.00048828125,
+          "layer_7": 0.00048828125,
+          "layer_8": 0.00048828125,
+          "layer_9": 0.00048828125,
+          "layer_10": 0.00048828125,
+          "layer_11": 0.00042724609375
+        },
+        "max_hidden_tolerance_ratio": {
+          "final_ln": 0.4033037297192838,
+          "layer_0": 0.5117594255787034,
+          "layer_1": 0.2604886741478145,
+          "layer_2": 0.22274554697444246,
+          "layer_3": 0.29581344111197455,
+          "layer_4": 0.18139606492981447,
+          "layer_5": 0.16869806560722309,
+          "layer_6": 0.2826768749680864,
+          "layer_7": 0.30748529124891477,
+          "layer_8": 0.30989610337156115,
+          "layer_9": 0.2509380832306416,
+          "layer_10": 0.24362283725348874,
+          "layer_11": 0.9400929778814924
+        },
+        "greedy_tokens": 32,
+        "greedy_match": true,
+        "failures": []
+      }
+    ],
+    "naive": [
+      {
+        "file": "prompt_0.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 4.9591064453125e-05,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 2.288818359375e-05,
+            "tolerance_ratio_vs_torch": 0.15899442597341423,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00035310322785875314,
+            "torch_float32_error_vs_float64": 0.00037217671418687814,
+            "reference_error_vs_float64": 0.00035310322785875314
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 3.0517578125e-05,
+            "tolerance_ratio_vs_torch": 0.17740683978765287,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 3.584694276526079e-05,
+            "torch_float32_error_vs_float64": 4.140699615362564e-05,
+            "reference_error_vs_float64": 3.584694276526079e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.13329284785234566,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006910373955406612,
+            "torch_float32_error_vs_float64": 0.0006300022392906612,
+            "reference_error_vs_float64": 0.0006910373955406612
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.14603499943518816,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.005014458649839071,
+            "torch_float32_error_vs_float64": 0.005014458649839071,
+            "reference_error_vs_float64": 0.005014458649839071
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.1432864495294258,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003297080179436307,
+            "torch_float32_error_vs_float64": 0.003541220804436307,
+            "reference_error_vs_float64": 0.003297080179436307
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16972674079595224,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.002524267724766105,
+            "torch_float32_error_vs_float64": 0.003012548974766105,
+            "reference_error_vs_float64": 0.002524267724766105
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.18975194045078103,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0019739960976039583,
+            "torch_float32_error_vs_float64": 0.0024622773476039583,
+            "reference_error_vs_float64": 0.0019739960976039583
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16128250558178595,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0017290633372795128,
+            "torch_float32_error_vs_float64": 0.0022173445872795128,
+            "reference_error_vs_float64": 0.0017290633372795128
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.1668416249903605,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0017389303625350294,
+            "torch_float32_error_vs_float64": 0.0022272116125350294,
+            "reference_error_vs_float64": 0.0017389303625350294
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.15838849212571612,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015338411299126165,
+            "torch_float32_error_vs_float64": 0.0020221223799126165,
+            "reference_error_vs_float64": 0.0015338411299126165
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2753675089194978,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015836241368560877,
+            "torch_float32_error_vs_float64": 0.0020719053868560877,
+            "reference_error_vs_float64": 0.0015836241368560877
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2551747717529213,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015753401371512155,
+            "torch_float32_error_vs_float64": 0.0020636213871512155,
+            "reference_error_vs_float64": 0.0015753401371512155
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.930407264513589,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003162074247370583,
+            "torch_float32_error_vs_float64": 0.003589320341120583,
+            "reference_error_vs_float64": 0.003162074247370583
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_1.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": 0.5779860989526651,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0007332886681226114,
+            "torch_float32_error_vs_float64": 0.0006417359337476114,
+            "reference_error_vs_float64": 0.0007332886681226114
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 3.814697265625e-05,
+            "tolerance_ratio_vs_torch": 0.22824067522721359,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.000112053029766912,
+            "torch_float32_error_vs_float64": 7.3906057110662e-05,
+            "reference_error_vs_float64": 0.000112053029766912
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.3417809624927863,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00016452924933219037,
+            "torch_float32_error_vs_float64": 0.00010817568914944786,
+            "reference_error_vs_float64": 0.00016452924933219037
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.3060318260857856,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.004868669008374127,
+            "torch_float32_error_vs_float64": 0.004624528383374127,
+            "reference_error_vs_float64": 0.004868669008374127
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2822125918743093,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.004198454522793327,
+            "torch_float32_error_vs_float64": 0.0037101732727933268,
+            "reference_error_vs_float64": 0.004198454522793327
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2730185152283926,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003898347739777819,
+            "torch_float32_error_vs_float64": 0.003410066489777819,
+            "reference_error_vs_float64": 0.003898347739777819
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.27348716302535603,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003796284960117191,
+            "torch_float32_error_vs_float64": 0.003308003710117191,
+            "reference_error_vs_float64": 0.003796284960117191
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2741133956406787,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003756767776394554,
+            "torch_float32_error_vs_float64": 0.003268486526394554,
+            "reference_error_vs_float64": 0.003756767776394554
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2748333015786356,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0036590766071640246,
+            "torch_float32_error_vs_float64": 0.0031707953571640246,
+            "reference_error_vs_float64": 0.0036590766071640246
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2755375996886425,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003579931794320146,
+            "torch_float32_error_vs_float64": 0.003091650544320146,
+            "reference_error_vs_float64": 0.003579931794320146
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2766892106886887,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0035832477128678875,
+            "torch_float32_error_vs_float64": 0.0030949664628678875,
+            "reference_error_vs_float64": 0.0035832477128678875
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.3792092267258527,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0033051017262550886,
+            "torch_float32_error_vs_float64": 0.0028168204762550886,
+            "reference_error_vs_float64": 0.0033051017262550886
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.943782678711196,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0054803949485631165,
+            "torch_float32_error_vs_float64": 0.0050531488548131165,
+            "reference_error_vs_float64": 0.0054803949485631165
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_2.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.00018310546875,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": 0.4033037297192838,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00020622623159027853,
+            "torch_float32_error_vs_float64": 0.00024818790151215353,
+            "reference_error_vs_float64": 0.00020622623159027853
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 7.62939453125e-05,
+            "tolerance_ratio_vs_torch": 0.5117594255787034,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 2.4799136710385028e-05,
+            "torch_float32_error_vs_float64": 6.565742245356887e-05,
+            "reference_error_vs_float64": 2.4799136710385028e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.2604886741478145,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.000335026515131176,
+            "torch_float32_error_vs_float64": 0.000396061671381176,
+            "reference_error_vs_float64": 0.000335026515131176
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.22274554697444246,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0016070446708909003,
+            "torch_float32_error_vs_float64": 0.0016070446708909003,
+            "reference_error_vs_float64": 0.0016070446708909003
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.29581344111197455,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0008436894327132904,
+            "torch_float32_error_vs_float64": 0.0010878300577132904,
+            "reference_error_vs_float64": 0.0008436894327132904
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.18139606492981447,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005596341334239696,
+            "torch_float32_error_vs_float64": 0.0010479153834239696,
+            "reference_error_vs_float64": 0.0005596341334239696
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16869806560722309,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005096154723105428,
+            "torch_float32_error_vs_float64": 0.0009978967223105428,
+            "reference_error_vs_float64": 0.0005096154723105428
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2826768749680864,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005530480461857223,
+            "torch_float32_error_vs_float64": 0.0010413292961857223,
+            "reference_error_vs_float64": 0.0005530480461857223
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.30748529124891477,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005310677547640807,
+            "torch_float32_error_vs_float64": 0.0010193490047640807,
+            "reference_error_vs_float64": 0.0005310677547640807
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.30989610337156115,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006945399100004579,
+            "torch_float32_error_vs_float64": 0.001182821160000458,
+            "reference_error_vs_float64": 0.0006945399100004579
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2509380832306416,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006651097246503923,
+            "torch_float32_error_vs_float64": 0.0011533909746503923,
+            "reference_error_vs_float64": 0.0006651097246503923
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.24362283725348874,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006837493324383104,
+            "torch_float32_error_vs_float64": 0.0011720305824383104,
+            "reference_error_vs_float64": 0.0006837493324383104
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.9400929778814924,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0019591529709259703,
+            "torch_float32_error_vs_float64": 0.0023863990646759703,
+            "reference_error_vs_float64": 0.0019591529709259703
+          }
+        },
+        "failures": []
+      }
+    ],
+    "reordered": [
+      {
+        "file": "prompt_0.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 4.9591064453125e-05,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 2.288818359375e-05,
+            "tolerance_ratio_vs_torch": 0.15899442597341423,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00035310322785875314,
+            "torch_float32_error_vs_float64": 0.00037217671418687814,
+            "reference_error_vs_float64": 0.00035310322785875314
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 3.0517578125e-05,
+            "tolerance_ratio_vs_torch": 0.17740683978765287,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 3.584694276526079e-05,
+            "torch_float32_error_vs_float64": 4.140699615362564e-05,
+            "reference_error_vs_float64": 3.584694276526079e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.13329284785234566,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006910373955406612,
+            "torch_float32_error_vs_float64": 0.0006300022392906612,
+            "reference_error_vs_float64": 0.0006910373955406612
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.14603499943518816,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.005014458649839071,
+            "torch_float32_error_vs_float64": 0.005014458649839071,
+            "reference_error_vs_float64": 0.005014458649839071
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.1432864495294258,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003297080179436307,
+            "torch_float32_error_vs_float64": 0.003541220804436307,
+            "reference_error_vs_float64": 0.003297080179436307
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16972674079595224,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.002524267724766105,
+            "torch_float32_error_vs_float64": 0.003012548974766105,
+            "reference_error_vs_float64": 0.002524267724766105
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.18975194045078103,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0019739960976039583,
+            "torch_float32_error_vs_float64": 0.0024622773476039583,
+            "reference_error_vs_float64": 0.0019739960976039583
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16128250558178595,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0017290633372795128,
+            "torch_float32_error_vs_float64": 0.0022173445872795128,
+            "reference_error_vs_float64": 0.0017290633372795128
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.1668416249903605,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0017389303625350294,
+            "torch_float32_error_vs_float64": 0.0022272116125350294,
+            "reference_error_vs_float64": 0.0017389303625350294
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.15838849212571612,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015338411299126165,
+            "torch_float32_error_vs_float64": 0.0020221223799126165,
+            "reference_error_vs_float64": 0.0015338411299126165
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2753675089194978,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015836241368560877,
+            "torch_float32_error_vs_float64": 0.0020719053868560877,
+            "reference_error_vs_float64": 0.0015836241368560877
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2551747717529213,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015753401371512155,
+            "torch_float32_error_vs_float64": 0.0020636213871512155,
+            "reference_error_vs_float64": 0.0015753401371512155
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.930407264513589,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003162074247370583,
+            "torch_float32_error_vs_float64": 0.003589320341120583,
+            "reference_error_vs_float64": 0.003162074247370583
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_1.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": 0.5779860989526651,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0007332886681226114,
+            "torch_float32_error_vs_float64": 0.0006417359337476114,
+            "reference_error_vs_float64": 0.0007332886681226114
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 3.814697265625e-05,
+            "tolerance_ratio_vs_torch": 0.22824067522721359,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.000112053029766912,
+            "torch_float32_error_vs_float64": 7.3906057110662e-05,
+            "reference_error_vs_float64": 0.000112053029766912
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.3417809624927863,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00016452924933219037,
+            "torch_float32_error_vs_float64": 0.00010817568914944786,
+            "reference_error_vs_float64": 0.00016452924933219037
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.3060318260857856,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.004868669008374127,
+            "torch_float32_error_vs_float64": 0.004624528383374127,
+            "reference_error_vs_float64": 0.004868669008374127
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2822125918743093,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.004198454522793327,
+            "torch_float32_error_vs_float64": 0.0037101732727933268,
+            "reference_error_vs_float64": 0.004198454522793327
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2730185152283926,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003898347739777819,
+            "torch_float32_error_vs_float64": 0.003410066489777819,
+            "reference_error_vs_float64": 0.003898347739777819
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.27348716302535603,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003796284960117191,
+            "torch_float32_error_vs_float64": 0.003308003710117191,
+            "reference_error_vs_float64": 0.003796284960117191
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2741133956406787,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003756767776394554,
+            "torch_float32_error_vs_float64": 0.003268486526394554,
+            "reference_error_vs_float64": 0.003756767776394554
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2748333015786356,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0036590766071640246,
+            "torch_float32_error_vs_float64": 0.0031707953571640246,
+            "reference_error_vs_float64": 0.0036590766071640246
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2755375996886425,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003579931794320146,
+            "torch_float32_error_vs_float64": 0.003091650544320146,
+            "reference_error_vs_float64": 0.003579931794320146
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2766892106886887,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0035832477128678875,
+            "torch_float32_error_vs_float64": 0.0030949664628678875,
+            "reference_error_vs_float64": 0.0035832477128678875
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.3792092267258527,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0033051017262550886,
+            "torch_float32_error_vs_float64": 0.0028168204762550886,
+            "reference_error_vs_float64": 0.0033051017262550886
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.943782678711196,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0054803949485631165,
+            "torch_float32_error_vs_float64": 0.0050531488548131165,
+            "reference_error_vs_float64": 0.0054803949485631165
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_2.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.00018310546875,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": 0.4033037297192838,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00020622623159027853,
+            "torch_float32_error_vs_float64": 0.00024818790151215353,
+            "reference_error_vs_float64": 0.00020622623159027853
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 7.62939453125e-05,
+            "tolerance_ratio_vs_torch": 0.5117594255787034,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 2.4799136710385028e-05,
+            "torch_float32_error_vs_float64": 6.565742245356887e-05,
+            "reference_error_vs_float64": 2.4799136710385028e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.2604886741478145,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.000335026515131176,
+            "torch_float32_error_vs_float64": 0.000396061671381176,
+            "reference_error_vs_float64": 0.000335026515131176
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.22274554697444246,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0016070446708909003,
+            "torch_float32_error_vs_float64": 0.0016070446708909003,
+            "reference_error_vs_float64": 0.0016070446708909003
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.29581344111197455,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0008436894327132904,
+            "torch_float32_error_vs_float64": 0.0010878300577132904,
+            "reference_error_vs_float64": 0.0008436894327132904
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.18139606492981447,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005596341334239696,
+            "torch_float32_error_vs_float64": 0.0010479153834239696,
+            "reference_error_vs_float64": 0.0005596341334239696
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16869806560722309,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005096154723105428,
+            "torch_float32_error_vs_float64": 0.0009978967223105428,
+            "reference_error_vs_float64": 0.0005096154723105428
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2826768749680864,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005530480461857223,
+            "torch_float32_error_vs_float64": 0.0010413292961857223,
+            "reference_error_vs_float64": 0.0005530480461857223
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.30748529124891477,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005310677547640807,
+            "torch_float32_error_vs_float64": 0.0010193490047640807,
+            "reference_error_vs_float64": 0.0005310677547640807
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.30989610337156115,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006945399100004579,
+            "torch_float32_error_vs_float64": 0.001182821160000458,
+            "reference_error_vs_float64": 0.0006945399100004579
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2509380832306416,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006651097246503923,
+            "torch_float32_error_vs_float64": 0.0011533909746503923,
+            "reference_error_vs_float64": 0.0006651097246503923
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.24362283725348874,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006837493324383104,
+            "torch_float32_error_vs_float64": 0.0011720305824383104,
+            "reference_error_vs_float64": 0.0006837493324383104
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.9400929778814924,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0019591529709259703,
+            "torch_float32_error_vs_float64": 0.0023863990646759703,
+            "reference_error_vs_float64": 0.0019591529709259703
+          }
+        },
+        "failures": []
+      }
+    ],
+    "blocked": [
+      {
+        "file": "prompt_0.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 4.9591064453125e-05,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 2.288818359375e-05,
+            "tolerance_ratio_vs_torch": 0.15899442597341423,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00035310322785875314,
+            "torch_float32_error_vs_float64": 0.00037217671418687814,
+            "reference_error_vs_float64": 0.00035310322785875314
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 3.0517578125e-05,
+            "tolerance_ratio_vs_torch": 0.17740683978765287,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 3.584694276526079e-05,
+            "torch_float32_error_vs_float64": 4.140699615362564e-05,
+            "reference_error_vs_float64": 3.584694276526079e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.13329284785234566,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006910373955406612,
+            "torch_float32_error_vs_float64": 0.0006300022392906612,
+            "reference_error_vs_float64": 0.0006910373955406612
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.14603499943518816,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.005014458649839071,
+            "torch_float32_error_vs_float64": 0.005014458649839071,
+            "reference_error_vs_float64": 0.005014458649839071
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.1432864495294258,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003297080179436307,
+            "torch_float32_error_vs_float64": 0.003541220804436307,
+            "reference_error_vs_float64": 0.003297080179436307
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16972674079595224,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.002524267724766105,
+            "torch_float32_error_vs_float64": 0.003012548974766105,
+            "reference_error_vs_float64": 0.002524267724766105
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.18975194045078103,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0019739960976039583,
+            "torch_float32_error_vs_float64": 0.0024622773476039583,
+            "reference_error_vs_float64": 0.0019739960976039583
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16128250558178595,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0017290633372795128,
+            "torch_float32_error_vs_float64": 0.0022173445872795128,
+            "reference_error_vs_float64": 0.0017290633372795128
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.1668416249903605,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0017389303625350294,
+            "torch_float32_error_vs_float64": 0.0022272116125350294,
+            "reference_error_vs_float64": 0.0017389303625350294
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.15838849212571612,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015338411299126165,
+            "torch_float32_error_vs_float64": 0.0020221223799126165,
+            "reference_error_vs_float64": 0.0015338411299126165
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2753675089194978,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015836241368560877,
+            "torch_float32_error_vs_float64": 0.0020719053868560877,
+            "reference_error_vs_float64": 0.0015836241368560877
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2551747717529213,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0015753401371512155,
+            "torch_float32_error_vs_float64": 0.0020636213871512155,
+            "reference_error_vs_float64": 0.0015753401371512155
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.930407264513589,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003162074247370583,
+            "torch_float32_error_vs_float64": 0.003589320341120583,
+            "reference_error_vs_float64": 0.003162074247370583
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_1.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": 0.5779860989526651,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0007332886681226114,
+            "torch_float32_error_vs_float64": 0.0006417359337476114,
+            "reference_error_vs_float64": 0.0007332886681226114
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 3.814697265625e-05,
+            "tolerance_ratio_vs_torch": 0.22824067522721359,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.000112053029766912,
+            "torch_float32_error_vs_float64": 7.3906057110662e-05,
+            "reference_error_vs_float64": 0.000112053029766912
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.3417809624927863,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00016452924933219037,
+            "torch_float32_error_vs_float64": 0.00010817568914944786,
+            "reference_error_vs_float64": 0.00016452924933219037
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.3060318260857856,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.004868669008374127,
+            "torch_float32_error_vs_float64": 0.004624528383374127,
+            "reference_error_vs_float64": 0.004868669008374127
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2822125918743093,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.004198454522793327,
+            "torch_float32_error_vs_float64": 0.0037101732727933268,
+            "reference_error_vs_float64": 0.004198454522793327
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2730185152283926,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003898347739777819,
+            "torch_float32_error_vs_float64": 0.003410066489777819,
+            "reference_error_vs_float64": 0.003898347739777819
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.27348716302535603,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003796284960117191,
+            "torch_float32_error_vs_float64": 0.003308003710117191,
+            "reference_error_vs_float64": 0.003796284960117191
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2741133956406787,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003756767776394554,
+            "torch_float32_error_vs_float64": 0.003268486526394554,
+            "reference_error_vs_float64": 0.003756767776394554
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2748333015786356,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0036590766071640246,
+            "torch_float32_error_vs_float64": 0.0031707953571640246,
+            "reference_error_vs_float64": 0.0036590766071640246
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2755375996886425,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.003579931794320146,
+            "torch_float32_error_vs_float64": 0.003091650544320146,
+            "reference_error_vs_float64": 0.003579931794320146
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2766892106886887,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0035832477128678875,
+            "torch_float32_error_vs_float64": 0.0030949664628678875,
+            "reference_error_vs_float64": 0.0035832477128678875
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.3792092267258527,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0033051017262550886,
+            "torch_float32_error_vs_float64": 0.0028168204762550886,
+            "reference_error_vs_float64": 0.0033051017262550886
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.943782678711196,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0054803949485631165,
+            "torch_float32_error_vs_float64": 0.0050531488548131165,
+            "reference_error_vs_float64": 0.0054803949485631165
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_2.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.00018310546875,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 9.1552734375e-05,
+            "tolerance_ratio_vs_torch": 0.4033037297192838,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.00020622623159027853,
+            "torch_float32_error_vs_float64": 0.00024818790151215353,
+            "reference_error_vs_float64": 0.00020622623159027853
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 7.62939453125e-05,
+            "tolerance_ratio_vs_torch": 0.5117594255787034,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 2.4799136710385028e-05,
+            "torch_float32_error_vs_float64": 6.565742245356887e-05,
+            "reference_error_vs_float64": 2.4799136710385028e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.2604886741478145,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.000335026515131176,
+            "torch_float32_error_vs_float64": 0.000396061671381176,
+            "reference_error_vs_float64": 0.000335026515131176
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.22274554697444246,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0016070446708909003,
+            "torch_float32_error_vs_float64": 0.0016070446708909003,
+            "reference_error_vs_float64": 0.0016070446708909003
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.29581344111197455,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0008436894327132904,
+            "torch_float32_error_vs_float64": 0.0010878300577132904,
+            "reference_error_vs_float64": 0.0008436894327132904
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.18139606492981447,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005596341334239696,
+            "torch_float32_error_vs_float64": 0.0010479153834239696,
+            "reference_error_vs_float64": 0.0005596341334239696
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.16869806560722309,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005096154723105428,
+            "torch_float32_error_vs_float64": 0.0009978967223105428,
+            "reference_error_vs_float64": 0.0005096154723105428
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2826768749680864,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005530480461857223,
+            "torch_float32_error_vs_float64": 0.0010413292961857223,
+            "reference_error_vs_float64": 0.0005530480461857223
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.30748529124891477,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0005310677547640807,
+            "torch_float32_error_vs_float64": 0.0010193490047640807,
+            "reference_error_vs_float64": 0.0005310677547640807
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.30989610337156115,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006945399100004579,
+            "torch_float32_error_vs_float64": 0.001182821160000458,
+            "reference_error_vs_float64": 0.0006945399100004579
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.2509380832306416,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006651097246503923,
+            "torch_float32_error_vs_float64": 0.0011533909746503923,
+            "reference_error_vs_float64": 0.0006651097246503923
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.24362283725348874,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0006837493324383104,
+            "torch_float32_error_vs_float64": 0.0011720305824383104,
+            "reference_error_vs_float64": 0.0006837493324383104
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00042724609375,
+            "tolerance_ratio_vs_torch": 0.9400929778814924,
+            "max_abs_diff_vs_reference": 0.0,
+            "tolerance_ratio_vs_reference": 0.0,
+            "max_abs_error_vs_float64": 0.0019591529709259703,
+            "torch_float32_error_vs_float64": 0.0023863990646759703,
+            "reference_error_vs_float64": 0.0019591529709259703
+          }
+        },
+        "failures": []
+      }
+    ],
+    "packed": [
+      {
+        "file": "prompt_0.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.000293731689453125,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0002899169921875,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 0.0004425048828125,
+            "tolerance_ratio_vs_torch": 2.8450056844930387,
+            "max_abs_diff_vs_reference": 0.000423431396484375,
+            "tolerance_ratio_vs_reference": 2.7223757952832264,
+            "max_abs_error_vs_float64": 7.032816862562186e-05,
+            "torch_float32_error_vs_float64": 0.00037217671418687814,
+            "reference_error_vs_float64": 0.00035310322785875314
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.386535144862501,
+            "max_abs_diff_vs_reference": 7.62939453125e-05,
+            "tolerance_ratio_vs_reference": 0.37407579897914717,
+            "max_abs_error_vs_float64": 4.044700254723921e-05,
+            "torch_float32_error_vs_float64": 4.140699615362564e-05,
+            "reference_error_vs_float64": 3.584694276526079e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.00079345703125,
+            "tolerance_ratio_vs_torch": 1.1473792798129736,
+            "max_abs_diff_vs_reference": 0.0008544921875,
+            "tolerance_ratio_vs_reference": 1.2356393334714308,
+            "max_abs_error_vs_float64": 0.00016345479195933876,
+            "torch_float32_error_vs_float64": 0.0006300022392906612,
+            "reference_error_vs_float64": 0.0006910373955406612
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.0048828125,
+            "tolerance_ratio_vs_torch": 1.8939851293757568,
+            "max_abs_diff_vs_reference": 0.0048828125,
+            "tolerance_ratio_vs_reference": 1.8939851293757568,
+            "max_abs_error_vs_float64": 0.00013164614983907086,
+            "torch_float32_error_vs_float64": 0.005014458649839071,
+            "reference_error_vs_float64": 0.005014458649839071
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.00341796875,
+            "tolerance_ratio_vs_torch": 1.2495184891250837,
+            "max_abs_diff_vs_reference": 0.003173828125,
+            "tolerance_ratio_vs_reference": 1.1602672720286784,
+            "max_abs_error_vs_float64": 0.00012325205443630693,
+            "torch_float32_error_vs_float64": 0.003541220804436307,
+            "reference_error_vs_float64": 0.003297080179436307
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.0029296875,
+            "tolerance_ratio_vs_torch": 1.0183604447757135,
+            "max_abs_diff_vs_reference": 0.00244140625,
+            "tolerance_ratio_vs_reference": 0.8486338480156184,
+            "max_abs_error_vs_float64": 8.906803395802854e-05,
+            "torch_float32_error_vs_float64": 0.003012548974766105,
+            "reference_error_vs_float64": 0.002524267724766105
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00244140625,
+            "tolerance_ratio_vs_torch": 0.8217574416915845,
+            "max_abs_diff_vs_reference": 0.001953125,
+            "tolerance_ratio_vs_reference": 0.8327575162091045,
+            "max_abs_error_vs_float64": 0.00010117831118350296,
+            "torch_float32_error_vs_float64": 0.0024622773476039583,
+            "reference_error_vs_float64": 0.0019739960976039583
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.002197265625,
+            "tolerance_ratio_vs_torch": 0.7257712751180367,
+            "max_abs_diff_vs_reference": 0.001708984375,
+            "tolerance_ratio_vs_reference": 0.8346635203561565,
+            "max_abs_error_vs_float64": 0.00010684046117148682,
+            "torch_float32_error_vs_float64": 0.0022173445872795128,
+            "reference_error_vs_float64": 0.0017290633372795128
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.002197265625,
+            "tolerance_ratio_vs_torch": 0.7176559061605896,
+            "max_abs_diff_vs_reference": 0.001708984375,
+            "tolerance_ratio_vs_reference": 0.8368412089621787,
+            "max_abs_error_vs_float64": 0.00013362806691930018,
+            "torch_float32_error_vs_float64": 0.0022272116125350294,
+            "reference_error_vs_float64": 0.0017389303625350294
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.001953125,
+            "tolerance_ratio_vs_torch": 0.6991479134804457,
+            "max_abs_diff_vs_reference": 0.00146484375,
+            "tolerance_ratio_vs_reference": 0.8389776134904244,
+            "max_abs_error_vs_float64": 0.0001284228403619636,
+            "torch_float32_error_vs_float64": 0.0020221223799126165,
+            "reference_error_vs_float64": 0.0015338411299126165
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.001953125,
+            "tolerance_ratio_vs_torch": 0.7710290249745938,
+            "max_abs_diff_vs_reference": 0.00146484375,
+            "tolerance_ratio_vs_reference": 0.8416694260565003,
+            "max_abs_error_vs_float64": 0.00016750369115925423,
+            "torch_float32_error_vs_float64": 0.0020719053868560877,
+            "reference_error_vs_float64": 0.0015836241368560877
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.001953125,
+            "tolerance_ratio_vs_torch": 0.9230906781424126,
+            "max_abs_diff_vs_reference": 0.00146484375,
+            "tolerance_ratio_vs_reference": 1.0403086639762722,
+            "max_abs_error_vs_float64": 0.00018996308256191696,
+            "torch_float32_error_vs_float64": 0.0020636213871512155,
+            "reference_error_vs_float64": 0.0015753401371512155
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00408935546875,
+            "tolerance_ratio_vs_torch": 8.905326674630066,
+            "max_abs_diff_vs_reference": 0.003662109375,
+            "tolerance_ratio_vs_reference": 7.974926830046335,
+            "max_abs_error_vs_float64": 0.0005000351276294168,
+            "torch_float32_error_vs_float64": 0.003589320341120583,
+            "reference_error_vs_float64": 0.003162074247370583
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_1.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.000347137451171875,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.00035858154296875,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 0.00060272216796875,
+            "tolerance_ratio_vs_torch": 3.8050751514383783,
+            "max_abs_diff_vs_reference": 0.00069427490234375,
+            "tolerance_ratio_vs_reference": 4.383063783740981,
+            "max_abs_error_vs_float64": 3.90137657788614e-05,
+            "torch_float32_error_vs_float64": 0.0006417359337476114,
+            "reference_error_vs_float64": 0.0007332886681226114
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.319536945318099,
+            "max_abs_diff_vs_reference": 9.1552734375e-05,
+            "tolerance_ratio_vs_reference": 0.5477774955202072,
+            "max_abs_error_vs_float64": 2.0500295391912005e-05,
+            "torch_float32_error_vs_float64": 7.3906057110662e-05,
+            "reference_error_vs_float64": 0.000112053029766912
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.000244140625,
+            "tolerance_ratio_vs_torch": 0.5622108128131592,
+            "max_abs_diff_vs_reference": 6.103515625e-05,
+            "tolerance_ratio_vs_reference": 0.3107033164605158,
+            "max_abs_error_vs_float64": 0.00016452924933219037,
+            "torch_float32_error_vs_float64": 0.00010817568914944786,
+            "reference_error_vs_float64": 0.00016452924933219037
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.0048828125,
+            "tolerance_ratio_vs_torch": 1.9030647335081363,
+            "max_abs_diff_vs_reference": 0.005126953125,
+            "tolerance_ratio_vs_reference": 1.9982177800466538,
+            "max_abs_error_vs_float64": 0.00025828411662587314,
+            "torch_float32_error_vs_float64": 0.004624528383374127,
+            "reference_error_vs_float64": 0.004868669008374127
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.003662109375,
+            "tolerance_ratio_vs_torch": 1.3373429847890612,
+            "max_abs_diff_vs_reference": 0.004150390625,
+            "tolerance_ratio_vs_reference": 1.5156551125008384,
+            "max_abs_error_vs_float64": 0.000211661172784261,
+            "torch_float32_error_vs_float64": 0.0037101732727933268,
+            "reference_error_vs_float64": 0.004198454522793327
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00341796875,
+            "tolerance_ratio_vs_torch": 1.184731251331765,
+            "max_abs_diff_vs_reference": 0.00390625,
+            "tolerance_ratio_vs_reference": 1.3539783437933803,
+            "max_abs_error_vs_float64": 0.000196383471916306,
+            "torch_float32_error_vs_float64": 0.003410066489777819,
+            "reference_error_vs_float64": 0.003898347739777819
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00341796875,
+            "tolerance_ratio_vs_torch": 1.1459580585898888,
+            "max_abs_diff_vs_reference": 0.00390625,
+            "tolerance_ratio_vs_reference": 1.3096661382709496,
+            "max_abs_error_vs_float64": 0.00019157160340910195,
+            "torch_float32_error_vs_float64": 0.003308003710117191,
+            "reference_error_vs_float64": 0.003796284960117191
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00341796875,
+            "tolerance_ratio_vs_torch": 1.1238603253543533,
+            "max_abs_diff_vs_reference": 0.00390625,
+            "tolerance_ratio_vs_reference": 1.2844115941907992,
+            "max_abs_error_vs_float64": 0.0002090853024583339,
+            "torch_float32_error_vs_float64": 0.003268486526394554,
+            "reference_error_vs_float64": 0.003756767776394554
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.003173828125,
+            "tolerance_ratio_vs_torch": 1.0315225351967392,
+            "max_abs_diff_vs_reference": 0.003662109375,
+            "tolerance_ratio_vs_reference": 1.1902181209598046,
+            "max_abs_error_vs_float64": 0.00022769259919641627,
+            "torch_float32_error_vs_float64": 0.0031707953571640246,
+            "reference_error_vs_float64": 0.0036590766071640246
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.0029296875,
+            "tolerance_ratio_vs_torch": 0.9453877838881343,
+            "max_abs_diff_vs_reference": 0.00341796875,
+            "tolerance_ratio_vs_reference": 1.1029522407498942,
+            "max_abs_error_vs_float64": 0.0001763795905844745,
+            "torch_float32_error_vs_float64": 0.003091650544320146,
+            "reference_error_vs_float64": 0.003579931794320146
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.0029296875,
+            "tolerance_ratio_vs_torch": 1.07846379966191,
+            "max_abs_diff_vs_reference": 0.00341796875,
+            "tolerance_ratio_vs_reference": 1.1061166870146049,
+            "max_abs_error_vs_float64": 0.00016955282228536817,
+            "torch_float32_error_vs_float64": 0.0030949664628678875,
+            "reference_error_vs_float64": 0.0035832477128678875
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.002685546875,
+            "tolerance_ratio_vs_torch": 1.1768285358107566,
+            "max_abs_diff_vs_reference": 0.003173828125,
+            "tolerance_ratio_vs_reference": 1.327703788801917,
+            "max_abs_error_vs_float64": 0.00016323249928973382,
+            "torch_float32_error_vs_float64": 0.0028168204762550886,
+            "reference_error_vs_float64": 0.0033051017262550886
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.004852294921875,
+            "tolerance_ratio_vs_torch": 10.282013647659449,
+            "max_abs_diff_vs_reference": 0.005279541015625,
+            "tolerance_ratio_vs_reference": 11.187338054389993,
+            "max_abs_error_vs_float64": 0.00020085393293811649,
+            "torch_float32_error_vs_float64": 0.0050531488548131165,
+            "reference_error_vs_float64": 0.0054803949485631165
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_2.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0003814697265625,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 0.000213623046875,
+            "tolerance_ratio_vs_torch": 0.9630827508388149,
+            "max_abs_diff_vs_reference": 0.0001220703125,
+            "tolerance_ratio_vs_reference": 0.8051160725106858,
+            "max_abs_error_vs_float64": 9.560001088715353e-05,
+            "torch_float32_error_vs_float64": 0.00024818790151215353,
+            "reference_error_vs_float64": 0.00020622623159027853
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 8.392333984375e-05,
+            "tolerance_ratio_vs_torch": 0.46153401402887184,
+            "max_abs_diff_vs_reference": 6.866455078125e-05,
+            "tolerance_ratio_vs_reference": 0.3776187704388782,
+            "max_abs_error_vs_float64": 4.386541407086497e-05,
+            "torch_float32_error_vs_float64": 6.565742245356887e-05,
+            "reference_error_vs_float64": 2.4799136710385028e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.0006103515625,
+            "tolerance_ratio_vs_torch": 0.8663752988778187,
+            "max_abs_diff_vs_reference": 0.00054931640625,
+            "tolerance_ratio_vs_reference": 0.7797377014354884,
+            "max_abs_error_vs_float64": 0.00021428989111882402,
+            "torch_float32_error_vs_float64": 0.000396061671381176,
+            "reference_error_vs_float64": 0.000335026515131176
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.00146484375,
+            "tolerance_ratio_vs_torch": 0.5712189068888429,
+            "max_abs_diff_vs_reference": 0.00146484375,
+            "tolerance_ratio_vs_reference": 0.5712189068888429,
+            "max_abs_error_vs_float64": 0.0001422009208909003,
+            "torch_float32_error_vs_float64": 0.0016070446708909003,
+            "reference_error_vs_float64": 0.0016070446708909003
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.35786817925617104,
+            "max_abs_diff_vs_reference": 0.000732421875,
+            "tolerance_ratio_vs_reference": 0.2684011584551867,
+            "max_abs_error_vs_float64": 0.00011126755771329044,
+            "torch_float32_error_vs_float64": 0.0010878300577132904,
+            "reference_error_vs_float64": 0.0008436894327132904
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.33991583174132345,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.16995794475635978,
+            "max_abs_error_vs_float64": 7.135288342396962e-05,
+            "torch_float32_error_vs_float64": 0.0010479153834239696,
+            "reference_error_vs_float64": 0.0005596341334239696
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.3289791841711008,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.17294670319277264,
+            "max_abs_error_vs_float64": 3.0181743795765215e-05,
+            "torch_float32_error_vs_float64": 0.0009978967223105428,
+            "reference_error_vs_float64": 0.0005096154723105428
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.3227323293560877,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.205107714458484,
+            "max_abs_error_vs_float64": 6.476679618572234e-05,
+            "torch_float32_error_vs_float64": 0.0010413292961857223,
+            "reference_error_vs_float64": 0.0005530480461857223
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.31907122196141696,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.23383882098050748,
+            "max_abs_error_vs_float64": 4.2786504764080746e-05,
+            "torch_float32_error_vs_float64": 0.0010193490047640807,
+            "reference_error_vs_float64": 0.0005310677547640807
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.41849255841763777,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.5169085674321298,
+            "max_abs_error_vs_float64": 0.0002062586600004579,
+            "torch_float32_error_vs_float64": 0.001182821160000458,
+            "reference_error_vs_float64": 0.0006945399100004579
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.5297581757091322,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.4221887786163072,
+            "max_abs_error_vs_float64": 0.0001768284746503923,
+            "torch_float32_error_vs_float64": 0.0011533909746503923,
+            "reference_error_vs_float64": 0.0006651097246503923
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.5989381226377715,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.6921562911054318,
+            "max_abs_error_vs_float64": 0.00019546808243831038,
+            "torch_float32_error_vs_float64": 0.0011720305824383104,
+            "reference_error_vs_float64": 0.0006837493324383104
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00146484375,
+            "tolerance_ratio_vs_torch": 3.223175924165117,
+            "max_abs_diff_vs_reference": 0.00103759765625,
+            "tolerance_ratio_vs_reference": 2.283085092595888,
+            "max_abs_error_vs_float64": 0.0009215553146759703,
+            "torch_float32_error_vs_float64": 0.0023863990646759703,
+            "reference_error_vs_float64": 0.0019591529709259703
+          }
+        },
+        "failures": []
+      }
+    ],
+    "avx2": [
+      {
+        "file": "prompt_0.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.00031280517578125,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.000308990478515625,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 0.000492095947265625,
+            "tolerance_ratio_vs_torch": 3.1638425284448446,
+            "max_abs_diff_vs_reference": 0.0004730224609375,
+            "tolerance_ratio_vs_reference": 3.041212600136217,
+            "max_abs_error_vs_float64": 0.00011991923307874686,
+            "torch_float32_error_vs_float64": 0.00037217671418687814,
+            "reference_error_vs_float64": 0.00035310322785875314
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 4.57763671875e-05,
+            "tolerance_ratio_vs_torch": 0.2899013586468758,
+            "max_abs_diff_vs_reference": 3.814697265625e-05,
+            "tolerance_ratio_vs_reference": 0.2415844538664529,
+            "max_abs_error_vs_float64": 1.0909060279118421e-05,
+            "torch_float32_error_vs_float64": 4.140699615362564e-05,
+            "reference_error_vs_float64": 3.584694276526079e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.00079345703125,
+            "tolerance_ratio_vs_torch": 1.1473792798129736,
+            "max_abs_diff_vs_reference": 0.0008544921875,
+            "tolerance_ratio_vs_reference": 1.2356393334714308,
+            "max_abs_error_vs_float64": 0.00016345479195933876,
+            "torch_float32_error_vs_float64": 0.0006300022392906612,
+            "reference_error_vs_float64": 0.0006910373955406612
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.005126953125,
+            "tolerance_ratio_vs_torch": 1.9886843858445447,
+            "max_abs_diff_vs_reference": 0.005126953125,
+            "tolerance_ratio_vs_reference": 1.9886843858445447,
+            "max_abs_error_vs_float64": 0.00011249447516092914,
+            "torch_float32_error_vs_float64": 0.005014458649839071,
+            "reference_error_vs_float64": 0.005014458649839071
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.003662109375,
+            "tolerance_ratio_vs_torch": 1.3387698097768754,
+            "max_abs_diff_vs_reference": 0.00341796875,
+            "tolerance_ratio_vs_reference": 1.2495186006462689,
+            "max_abs_error_vs_float64": 0.00012088857056369307,
+            "torch_float32_error_vs_float64": 0.003541220804436307,
+            "reference_error_vs_float64": 0.003297080179436307
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.003173828125,
+            "tolerance_ratio_vs_torch": 1.1032238151736895,
+            "max_abs_diff_vs_reference": 0.002685546875,
+            "tolerance_ratio_vs_reference": 0.9334972328171802,
+            "max_abs_error_vs_float64": 0.00016127915023389505,
+            "torch_float32_error_vs_float64": 0.003012548974766105,
+            "reference_error_vs_float64": 0.002524267724766105
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.002685546875,
+            "tolerance_ratio_vs_torch": 0.903933185860743,
+            "max_abs_diff_vs_reference": 0.002197265625,
+            "tolerance_ratio_vs_reference": 0.8327575162091045,
+            "max_abs_error_vs_float64": 0.00022326952739604167,
+            "torch_float32_error_vs_float64": 0.0024622773476039583,
+            "reference_error_vs_float64": 0.0019739960976039583
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00244140625,
+            "tolerance_ratio_vs_torch": 0.8064125279089297,
+            "max_abs_diff_vs_reference": 0.001953125,
+            "tolerance_ratio_vs_reference": 0.8346635203561565,
+            "max_abs_error_vs_float64": 0.00022406166272048722,
+            "torch_float32_error_vs_float64": 0.0022173445872795128,
+            "reference_error_vs_float64": 0.0017290633372795128
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.00244140625,
+            "tolerance_ratio_vs_torch": 0.797395451289544,
+            "max_abs_diff_vs_reference": 0.001953125,
+            "tolerance_ratio_vs_reference": 0.8368412089621787,
+            "max_abs_error_vs_float64": 0.00021419463746497058,
+            "torch_float32_error_vs_float64": 0.0022272116125350294,
+            "reference_error_vs_float64": 0.0017389303625350294
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.002197265625,
+            "tolerance_ratio_vs_torch": 0.7242298707679046,
+            "max_abs_diff_vs_reference": 0.001708984375,
+            "tolerance_ratio_vs_reference": 0.8389776134904244,
+            "max_abs_error_vs_float64": 0.00017514324508738355,
+            "torch_float32_error_vs_float64": 0.0020221223799126165,
+            "reference_error_vs_float64": 0.0015338411299126165
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.002197265625,
+            "tolerance_ratio_vs_torch": 0.9087127794343427,
+            "max_abs_diff_vs_reference": 0.001708984375,
+            "tolerance_ratio_vs_reference": 0.8416694260565003,
+            "max_abs_error_vs_float64": 0.00016750369115925423,
+            "torch_float32_error_vs_float64": 0.0020719053868560877,
+            "reference_error_vs_float64": 0.0015836241368560877
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.002197265625,
+            "tolerance_ratio_vs_torch": 1.0056888063203369,
+            "max_abs_diff_vs_reference": 0.001708984375,
+            "tolerance_ratio_vs_reference": 1.0989176027918368,
+            "max_abs_error_vs_float64": 0.00018996308256191696,
+            "torch_float32_error_vs_float64": 0.0020636213871512155,
+            "reference_error_vs_float64": 0.0015753401371512155
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00457763671875,
+            "tolerance_ratio_vs_torch": 9.968649262645597,
+            "max_abs_diff_vs_reference": 0.004150390625,
+            "tolerance_ratio_vs_reference": 9.038250407385846,
+            "max_abs_error_vs_float64": 0.0009883163776294168,
+            "torch_float32_error_vs_float64": 0.003589320341120583,
+            "reference_error_vs_float64": 0.003162074247370583
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_1.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.00034332275390625,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.000354766845703125,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 0.000598907470703125,
+            "tolerance_ratio_vs_torch": 3.7809923973153508,
+            "max_abs_diff_vs_reference": 0.000690460205078125,
+            "tolerance_ratio_vs_reference": 4.358981015698449,
+            "max_abs_error_vs_float64": 4.28284630444864e-05,
+            "torch_float32_error_vs_float64": 0.0006417359337476114,
+            "reference_error_vs_float64": 0.0007332886681226114
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 6.103515625e-05,
+            "tolerance_ratio_vs_torch": 0.319536945318099,
+            "max_abs_diff_vs_reference": 9.1552734375e-05,
+            "tolerance_ratio_vs_reference": 0.5477774955202072,
+            "max_abs_error_vs_float64": 2.0500295391912005e-05,
+            "torch_float32_error_vs_float64": 7.3906057110662e-05,
+            "reference_error_vs_float64": 0.000112053029766912
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.00030517578125,
+            "tolerance_ratio_vs_torch": 0.5622108128131592,
+            "max_abs_diff_vs_reference": 6.103515625e-05,
+            "tolerance_ratio_vs_reference": 0.2663171283947278,
+            "max_abs_error_vs_float64": 0.00022556440558219037,
+            "torch_float32_error_vs_float64": 0.00010817568914944786,
+            "reference_error_vs_float64": 0.00016452924933219037
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.0048828125,
+            "tolerance_ratio_vs_torch": 1.9030647335081363,
+            "max_abs_diff_vs_reference": 0.005126953125,
+            "tolerance_ratio_vs_reference": 1.9982177800466538,
+            "max_abs_error_vs_float64": 0.00025828411662587314,
+            "torch_float32_error_vs_float64": 0.004624528383374127,
+            "reference_error_vs_float64": 0.004868669008374127
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.003662109375,
+            "tolerance_ratio_vs_torch": 1.3373429847890612,
+            "max_abs_diff_vs_reference": 0.004150390625,
+            "tolerance_ratio_vs_reference": 1.5156551125008384,
+            "max_abs_error_vs_float64": 0.000211661172784261,
+            "torch_float32_error_vs_float64": 0.0037101732727933268,
+            "reference_error_vs_float64": 0.004198454522793327
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.00341796875,
+            "tolerance_ratio_vs_torch": 1.184731251331765,
+            "max_abs_diff_vs_reference": 0.00390625,
+            "tolerance_ratio_vs_reference": 1.3539783437933803,
+            "max_abs_error_vs_float64": 0.000196383471916306,
+            "torch_float32_error_vs_float64": 0.003410066489777819,
+            "reference_error_vs_float64": 0.003898347739777819
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.00341796875,
+            "tolerance_ratio_vs_torch": 1.1459580585898888,
+            "max_abs_diff_vs_reference": 0.00390625,
+            "tolerance_ratio_vs_reference": 1.3096661382709496,
+            "max_abs_error_vs_float64": 0.00019157160340910195,
+            "torch_float32_error_vs_float64": 0.003308003710117191,
+            "reference_error_vs_float64": 0.003796284960117191
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.00341796875,
+            "tolerance_ratio_vs_torch": 1.1238603253543533,
+            "max_abs_diff_vs_reference": 0.00390625,
+            "tolerance_ratio_vs_reference": 1.2844115941907992,
+            "max_abs_error_vs_float64": 0.0002090853024583339,
+            "torch_float32_error_vs_float64": 0.003268486526394554,
+            "reference_error_vs_float64": 0.003756767776394554
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.003173828125,
+            "tolerance_ratio_vs_torch": 1.0315225351967392,
+            "max_abs_diff_vs_reference": 0.003662109375,
+            "tolerance_ratio_vs_reference": 1.1902181209598046,
+            "max_abs_error_vs_float64": 0.00022769259919641627,
+            "torch_float32_error_vs_float64": 0.0031707953571640246,
+            "reference_error_vs_float64": 0.0036590766071640246
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.0029296875,
+            "tolerance_ratio_vs_torch": 0.9453877838881343,
+            "max_abs_diff_vs_reference": 0.00341796875,
+            "tolerance_ratio_vs_reference": 1.1029522407498942,
+            "max_abs_error_vs_float64": 0.0001763795905844745,
+            "torch_float32_error_vs_float64": 0.003091650544320146,
+            "reference_error_vs_float64": 0.003579931794320146
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.0029296875,
+            "tolerance_ratio_vs_torch": 1.023157963781812,
+            "max_abs_diff_vs_reference": 0.00341796875,
+            "tolerance_ratio_vs_reference": 1.0987988088393028,
+            "max_abs_error_vs_float64": 0.00016955282228536817,
+            "torch_float32_error_vs_float64": 0.0030949664628678875,
+            "reference_error_vs_float64": 0.0035832477128678875
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.002685546875,
+            "tolerance_ratio_vs_torch": 1.1315658998180353,
+            "max_abs_diff_vs_reference": 0.003173828125,
+            "tolerance_ratio_vs_reference": 1.2824411596382153,
+            "max_abs_error_vs_float64": 0.00016323249928973382,
+            "torch_float32_error_vs_float64": 0.0028168204762550886,
+            "reference_error_vs_float64": 0.0033051017262550886
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00482177734375,
+            "tolerance_ratio_vs_torch": 10.217346895158446,
+            "max_abs_diff_vs_reference": 0.0052490234375,
+            "tolerance_ratio_vs_reference": 11.122671360433982,
+            "max_abs_error_vs_float64": 0.00023137151106311649,
+            "torch_float32_error_vs_float64": 0.0050531488548131165,
+            "reference_error_vs_float64": 0.0054803949485631165
+          }
+        },
+        "failures": []
+      },
+      {
+        "file": "prompt_2.npz",
+        "greedy_match": true,
+        "tensors": {
+          "logits": {
+            "max_abs_diff_vs_torch": 0.0004425048828125,
+            "tolerance_ratio_vs_torch": null,
+            "max_abs_diff_vs_reference": 0.0003509521484375,
+            "tolerance_ratio_vs_reference": null
+          },
+          "final_ln": {
+            "max_abs_diff_vs_torch": 0.0001983642578125,
+            "tolerance_ratio_vs_torch": 0.9630827508388149,
+            "max_abs_diff_vs_reference": 0.0001220703125,
+            "tolerance_ratio_vs_reference": 0.8587904773447315,
+            "max_abs_error_vs_float64": 9.560001088715353e-05,
+            "torch_float32_error_vs_float64": 0.00024818790151215353,
+            "reference_error_vs_float64": 0.00020622623159027853
+          },
+          "layer_0": {
+            "max_abs_diff_vs_torch": 7.62939453125e-05,
+            "tolerance_ratio_vs_torch": 0.4349955117418978,
+            "max_abs_diff_vs_reference": 6.103515625e-05,
+            "tolerance_ratio_vs_reference": 0.3356611292790028,
+            "max_abs_error_vs_float64": 3.623601953961497e-05,
+            "torch_float32_error_vs_float64": 6.565742245356887e-05,
+            "reference_error_vs_float64": 2.4799136710385028e-05
+          },
+          "layer_1": {
+            "max_abs_diff_vs_torch": 0.00048828125,
+            "tolerance_ratio_vs_torch": 0.693100239102255,
+            "max_abs_diff_vs_reference": 0.00042724609375,
+            "tolerance_ratio_vs_reference": 0.6064626566720466,
+            "max_abs_error_vs_float64": 9.221957861882402e-05,
+            "torch_float32_error_vs_float64": 0.000396061671381176,
+            "reference_error_vs_float64": 0.000335026515131176
+          },
+          "layer_2": {
+            "max_abs_diff_vs_torch": 0.001220703125,
+            "tolerance_ratio_vs_torch": 0.4760157557407025,
+            "max_abs_diff_vs_reference": 0.001220703125,
+            "tolerance_ratio_vs_reference": 0.4760157557407025,
+            "max_abs_error_vs_float64": 0.0003863415458909003,
+            "torch_float32_error_vs_float64": 0.0016070446708909003,
+            "reference_error_vs_float64": 0.0016070446708909003
+          },
+          "layer_3": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.358089955030285,
+            "max_abs_diff_vs_reference": 0.000732421875,
+            "tolerance_ratio_vs_reference": 0.2684011584551867,
+            "max_abs_error_vs_float64": 0.00011126755771329044,
+            "torch_float32_error_vs_float64": 0.0010878300577132904,
+            "reference_error_vs_float64": 0.0008436894327132904
+          },
+          "layer_4": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.33991583174132345,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.16995794475635978,
+            "max_abs_error_vs_float64": 7.135288342396962e-05,
+            "torch_float32_error_vs_float64": 0.0010479153834239696,
+            "reference_error_vs_float64": 0.0005596341334239696
+          },
+          "layer_5": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.3289791841711008,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.23094221700361936,
+            "max_abs_error_vs_float64": 3.0853412454234785e-05,
+            "torch_float32_error_vs_float64": 0.0009978967223105428,
+            "reference_error_vs_float64": 0.0005096154723105428
+          },
+          "layer_6": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.3227323293560877,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.273476952611312,
+            "max_abs_error_vs_float64": 6.476679618572234e-05,
+            "torch_float32_error_vs_float64": 0.0010413292961857223,
+            "reference_error_vs_float64": 0.0005530480461857223
+          },
+          "layer_7": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.31907122196141696,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.23383882098050748,
+            "max_abs_error_vs_float64": 7.307965574909758e-05,
+            "torch_float32_error_vs_float64": 0.0010193490047640807,
+            "reference_error_vs_float64": 0.0005310677547640807
+          },
+          "layer_8": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.3923367735165354,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.5169085674321298,
+            "max_abs_error_vs_float64": 0.0002062586600004579,
+            "torch_float32_error_vs_float64": 0.001182821160000458,
+            "reference_error_vs_float64": 0.0006945399100004579
+          },
+          "layer_9": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.5018761664612832,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.39873384647095683,
+            "max_abs_error_vs_float64": 0.0001768284746503923,
+            "torch_float32_error_vs_float64": 0.0011533909746503923,
+            "reference_error_vs_float64": 0.0006651097246503923
+          },
+          "layer_10": {
+            "max_abs_diff_vs_torch": 0.0009765625,
+            "tolerance_ratio_vs_torch": 0.5323894423446858,
+            "max_abs_diff_vs_reference": 0.00048828125,
+            "tolerance_ratio_vs_reference": 0.5537250328843454,
+            "max_abs_error_vs_float64": 0.00019546808243831038,
+            "torch_float32_error_vs_float64": 0.0011720305824383104,
+            "reference_error_vs_float64": 0.0006837493324383104
+          },
+          "layer_11": {
+            "max_abs_diff_vs_torch": 0.00146484375,
+            "tolerance_ratio_vs_torch": 3.223175924165117,
+            "max_abs_diff_vs_reference": 0.00103759765625,
+            "tolerance_ratio_vs_reference": 2.283085092595888,
+            "max_abs_error_vs_float64": 0.0009215553146759703,
+            "torch_float32_error_vs_float64": 0.0023863990646759703,
+            "reference_error_vs_float64": 0.0019591529709259703
+          }
+        },
+        "failures": []
+      }
+    ]
+  },
+  "passed": true
+}
