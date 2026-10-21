@@ -234,5 +234,42 @@ queried. The original timeout still fails the test; no retry occurs. A
 [failing regression](../results/m3-timeout-capture-before.txt) and
 [passing harness suite](../results/m3-timeout-capture-after.txt) verify capture
 ordering while retaining exit-code, output and inherited-handle behavior.
-An isolated repeated CLI run is being used to obtain the missing stack, not
-as acceptance evidence.
+An isolated repeated CLI run obtained the missing stack; it is diagnostic
+evidence, not an acceptance retry.
+
+## Captured timeout under the approved options
+
+The isolated CLI reproduction stopped on another `gpt2rt --help` timeout and
+captured PID 54836 before termination. The
+[complete stack](../results/m3-stack-help-timeout.txt) has one remaining thread:
+
+```
+Windows DLL/process shutdown
+  debug CRT cleanup
+    ASan __RuntimeFunctions<Ucrtbased>::FreeDbg
+      asan_mz_size -> Allocator::AllocationSize
+        LargeMmapAllocator::GetBlockBegin
+          StaticSpinMutex::LockSlow
+            internal_sched_yield -> SleepEx
+```
+
+This is a second ASan allocator lock during shutdown, reached through the debug
+CRT interceptor even with legacy allocator hooks disabled. The lock owner is
+not established. A CPU-idle heuristic can miss a spinning waiter; the new
+deadline capture obtained the stack regardless. `--help` opens no model and
+performs no inference, providing a model-free reproduction command.
+
+The owner approved the next local trial: build ASan with
+`-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL` (`/MD`) instead of `/MDd`.
+Keep `/O1`, `/Zi`, all ASan instrumentation and fatal errors, initially with the
+same approved environment options. This tests whether avoiding the debug CRT
+interceptor removes the shutdown wait. It is a hypothesis, not a confirmed fix.
+[Microsoft supports ASan with both CRT variants](https://learn.microsoft.com/en-us/cpp/sanitizers/asan-building?view=msvc-170);
+[CMake documents the runtime selection](https://cmake.org/cmake/help/latest/variable/CMAKE_MSVC_RUNTIME_LIBRARY.html).
+
+Tradeoff: that local ASan build would omit debug CRT and debug STL iterator
+checks. The ordinary Debug build retains `/MDd` and those checks. CI settings
+remain unchanged. Adoption still requires deliberate memory-error probes
+and five consecutive full suites from a fresh build.
+The trial is opt-in through `scripts/test-asan-reliability.ps1 -ReleaseCrt`;
+neither the project presets nor CI select `/MD` for ASan by default.
