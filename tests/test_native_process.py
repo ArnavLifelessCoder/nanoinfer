@@ -7,6 +7,7 @@ import time
 import pytest
 
 from tests.native_process import capture
+from tests import native_process
 
 
 def test_capture_preserves_stdout_stderr_and_nonzero_exit():
@@ -27,6 +28,18 @@ def test_capture_preserves_stdout_stderr_and_nonzero_exit():
 def test_capture_timeout_is_an_error():
     with pytest.raises(subprocess.TimeoutExpired):
         capture([sys.executable, "-c", "import time; time.sleep(10)"], timeout=0.1)
+
+
+def test_timeout_diagnostic_runs_before_child_is_killed(monkeypatch):
+    observations = []
+
+    def diagnostic(process, directory):
+        observations.append(process.poll())
+
+    monkeypatch.setattr(native_process, "_capture_timeout", diagnostic, raising=False)
+    with pytest.raises(subprocess.TimeoutExpired):
+        capture([sys.executable, "-c", "import time; time.sleep(10)"], timeout=0.1)
+    assert observations == [None], "Capture the live process before timeout cleanup kills it."
 
 
 def test_capture_does_not_wait_for_descendant_to_close_inherited_output(tmp_path):

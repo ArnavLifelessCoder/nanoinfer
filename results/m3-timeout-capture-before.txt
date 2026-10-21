@@ -1,0 +1,26 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_timeout_diagnostic_runs_before_child_is_killed _____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000021E997DA2C0>
+
+    def test_timeout_diagnostic_runs_before_child_is_killed(monkeypatch):
+        observations = []
+
+        def diagnostic(process, directory):
+            observations.append(process.poll())
+
+        monkeypatch.setattr(native_process, "_capture_timeout", diagnostic, raising=False)
+        with pytest.raises(subprocess.TimeoutExpired):
+            capture([sys.executable, "-c", "import time; time.sleep(10)"], timeout=0.1)
+>       assert observations == [None], "Capture the live process before timeout cleanup kills it."
+E       AssertionError: Capture the live process before timeout cleanup kills it.
+E       assert [] == [None]
+E
+E         Right contains one more item: None
+E         Use -v to get more diff
+
+tests\test_native_process.py:42: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/test_native_process.py::test_timeout_diagnostic_runs_before_child_is_killed
+1 failed in 2.41s

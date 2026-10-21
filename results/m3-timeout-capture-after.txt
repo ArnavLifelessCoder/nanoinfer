@@ -1,0 +1,13 @@
+============================= test session starts =============================
+platform win32 -- Python 3.13.15, pytest-8.4.2, pluggy-1.7.0 -- <project>\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: <project>
+configfile: pyproject.toml
+collecting ... collected 4 items
+
+tests/test_native_process.py::test_capture_preserves_stdout_stderr_and_nonzero_exit PASSED [ 25%]
+tests/test_native_process.py::test_capture_timeout_is_an_error PASSED    [ 50%]
+tests/test_native_process.py::test_timeout_diagnostic_runs_before_child_is_killed PASSED [ 75%]
+tests/test_native_process.py::test_capture_does_not_wait_for_descendant_to_close_inherited_output PASSED [100%]
+
+============================= 4 passed in 10.30s ==============================

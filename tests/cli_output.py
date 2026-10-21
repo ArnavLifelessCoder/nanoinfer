@@ -15,6 +15,8 @@ def main():
     parser.add_argument("--count", type=int, default=100)
     args = parser.parse_args()
     for index in range(args.count):
+        if index % 25 == 0:
+            print(f"Checking output pair {index + 1}/{args.count}", flush=True)
         inspected = capture([str(args.inspector.resolve()), str(args.model.resolve())])
         assert inspected.returncode == 0 and not inspected.stderr, (index, inspected)
         assert inspected.stdout, (index, inspected)

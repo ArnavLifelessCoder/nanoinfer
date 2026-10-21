@@ -11,6 +11,7 @@ $build = [IO.Path]::GetFullPath((Join-Path $projectRoot $BuildDirectory))
 $output = Join-Path $projectRoot 'build/diagnostics'
 $procdump = Join-Path $output 'tools/procdump/procdump64.exe'
 if (-not (Test-Path -LiteralPath $procdump)) { throw 'Install ProcDump under build/diagnostics/tools/procdump first.' }
+$env:NANOINFER_PROCDUMP = $procdump
 if ($Label -notmatch '^[a-zA-Z0-9_-]+$') { throw 'Label must contain only letters, digits, underscores or hyphens.' }
 $stdout = Join-Path $output "$Label-ctest.txt"
 $stderr = Join-Path $output "$Label-ctest-stderr.txt"
