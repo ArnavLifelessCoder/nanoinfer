@@ -1,0 +1,12 @@
+{
+  "event_time_utc": "2026-10-21T05:10:16.2434403Z",
+  "event_id": 1,
+  "sleep_time_utc": "2026-10-20T18:40:02.7143096Z",
+  "wake_time_utc": "2026-10-21T05:10:15.3670215Z",
+  "affected_suite": "m3-final-4",
+  "failed_test": "export_tiny",
+  "ctest_timeout_seconds": 180,
+  "reported_elapsed_seconds": 37814.73,
+  "completed_clean_suites_before_sleep": 3,
+  "acceptance_gate_met": false
+}

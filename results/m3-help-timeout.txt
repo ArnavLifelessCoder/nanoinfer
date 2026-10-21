@@ -1,0 +1,20 @@
+6:   File "<frozen runpy>", line 203, in _run_module_as_main
+6:   File "<frozen runpy>", line 88, in _run_code
+6:   File "<project>\tests\cli_output.py", line 30, in <module>
+6:     main()
+6:     ~~~~^^
+6:   File "<project>\tests\cli_output.py", line 23, in main
+6:     help_text = capture([str(args.generator.resolve()), "--help"])
+6:   File "<project>\tests\native_process.py", line 17, in capture
+6:     result = subprocess.run(command, stdout=stdout, stderr=stderr, timeout=timeout)
+6:   File "<user>\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 556, in run
+6:     stdout, stderr = process.communicate(input, timeout=timeout)
+6:                      ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+6:   File "<user>\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 1241, in communicate
+6:     sts = self.wait(timeout=self._remaining_time(endtime))
+6:   File "<user>\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 1280, in wait
+6:     return self._wait(timeout=timeout)
+6:            ~~~~~~~~~~^^^^^^^^^^^^^^^^^
+6:   File "<user>\AppData\Local\Programs\Python\Python313\Lib\subprocess.py", line 1609, in _wait
+6:     raise TimeoutExpired(self.args, timeout)
+6: subprocess.TimeoutExpired: Command '['<drive>/\Users\\arnav\\Downloads\\SDE PROJs\\cpu-inference-runtime\\build\\asan-m3-awake\\gpt2rt.exe', '--help']' timed out after 60 seconds

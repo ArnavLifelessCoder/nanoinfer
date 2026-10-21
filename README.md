@@ -7,6 +7,10 @@ hand-written GEMM and GEMV, a thread pool, and int8 weights. The main engineerin
 problem is keeping the numerical contract intact while changing how data moves
 through the CPU.
 
+M3 re-review is pending the local ASan reliability gate. The captured stacks,
+M2 baseline and approved local workaround trials are recorded in the
+[investigation](docs/m3-asan-investigation.md).
+
 M3 pretrained cached correctness results, identical in local Debug and ASan:
 
 | Check across all three golden prompts | Measured result | Required |

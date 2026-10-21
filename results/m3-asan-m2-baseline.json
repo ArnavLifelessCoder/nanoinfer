@@ -1,0 +1,41 @@
+{
+  "label": "m2-baseline-01",
+  "build_directory": "build/diagnostics/m2-asan",
+  "git_head": "dbd63828ebfadbd87645a08ed82c147bf1fce578",
+  "ctest_exit_code": 8,
+  "idle_seconds": 12,
+  "captures": [
+    {
+      "pid": 46896,
+      "process": "gpt2inspect",
+      "cpu_seconds": 0.21875,
+      "thread_count": 1,
+      "has_exited": true,
+      "dump": "build/diagnostics/dumps/m2-baseline-01-gpt2inspect-46896.dmp",
+      "capture_exit_code": 1
+    },
+    {
+      "pid": 44420,
+      "process": "gpt2inspect",
+      "cpu_seconds": 0.203125,
+      "thread_count": 1,
+      "has_exited": true,
+      "dump": "build/diagnostics/dumps/m2-baseline-01-gpt2inspect-44420.dmp",
+      "capture_exit_code": 1
+    }
+  ],
+  "tested_source_revision": "e349784a87bc3d699146f618977fd43c2bbef625",
+  "source_archive_sha256": "84BBE9E5DB2940A93B923CE2D1ACA93F2C631805911BA6D2A118979022E55ADA",
+  "tests": {
+    "passed": 6,
+    "failed": [
+      "loader_integration: timeout",
+      "model_schema: timeout"
+    ],
+    "total": 8
+  },
+  "toolset": "MSVC 14.44.35207",
+  "os_version": "10.0.26300.0",
+  "inherited_compat_layer": "DetectorsAppHealth",
+  "asan_runtime_sha256": "3AA742521E8CBD23252F0545AA51D5A15624A3E4430FBE2F81567AFAEB3FC59B"
+}

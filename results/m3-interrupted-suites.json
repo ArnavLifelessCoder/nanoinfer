@@ -1,0 +1,45 @@
+{
+  "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+  "fresh_build": "build/asan-m3-final",
+  "requested_suites": 5,
+  "completed_suites": 4,
+  "passed": false,
+  "runs": [
+    {
+      "label": "m3-final-1",
+      "build_directory": "build/asan-m3-final",
+      "git_head": "22901c75fd494f4f96523d2c0baa13a4d6a145b1",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 0,
+      "idle_seconds": 12,
+      "captures": []
+    },
+    {
+      "label": "m3-final-2",
+      "build_directory": "build/asan-m3-final",
+      "git_head": "22901c75fd494f4f96523d2c0baa13a4d6a145b1",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 0,
+      "idle_seconds": 12,
+      "captures": []
+    },
+    {
+      "label": "m3-final-3",
+      "build_directory": "build/asan-m3-final",
+      "git_head": "22901c75fd494f4f96523d2c0baa13a4d6a145b1",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 0,
+      "idle_seconds": 12,
+      "captures": []
+    },
+    {
+      "label": "m3-final-4",
+      "build_directory": "build/asan-m3-final",
+      "git_head": "22901c75fd494f4f96523d2c0baa13a4d6a145b1",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 8,
+      "idle_seconds": 12,
+      "captures": []
+    }
+  ]
+}

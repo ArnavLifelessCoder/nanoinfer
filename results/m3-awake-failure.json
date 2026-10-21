@@ -1,0 +1,18 @@
+{
+  "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+  "fresh_build": "build/asan-m3-awake",
+  "requested_suites": 5,
+  "completed_suites": 1,
+  "passed": false,
+  "runs": [
+    {
+      "label": "m3-awake-1",
+      "build_directory": "build/asan-m3-awake",
+      "git_head": "22901c75fd494f4f96523d2c0baa13a4d6a145b1",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 8,
+      "idle_seconds": 12,
+      "captures": []
+    }
+  ]
+}

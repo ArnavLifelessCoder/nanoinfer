@@ -1,0 +1,133 @@
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <project>/build/diagnostics/symbols
+OK                                             <program-files-x86>\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64
+OK                                             <project>/build/asan
+OK                                             <project>/build/diagnostics/m2-asan
+No .natvis files found at <drive>/windows\SYSTEM32\Visualizers.
+No .natvis files found at <user>\AppData\Local\Dbg\Visualizers.
+
+Microsoft (R) Windows Debugger Version 10.0.26100.1 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+
+Loading Dump File [<project>\build\diagnostics\dumps\stale-inspector.dmp]
+User Mini Dump File with Full Memory: Only application data is available
+
+Comment: '
+*** "<project>\build\diagnostics\tools\procdump\procdump64.exe" -accepteula -ma 51896 build/diagnostics/dumps/stale-inspector.dmp
+*** Manual dump'
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <project>/build/diagnostics/symbols
+OK                                             <program-files-x86>\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64
+OK                                             <project>/build/asan
+OK                                             <project>/build/diagnostics/m2-asan
+Symbol search path is: <project>/build/diagnostics/symbols;<program-files-x86>\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64;<project>/build/asan;<project>/build/diagnostics/m2-asan
+Executable search path is:
+Windows 10 Version 26300 MP (32 procs) Free x64
+Product: WinNt, suite: SingleUserTS Personal
+Edition build lab: 26100.1.amd64fre.ge_release.240331-1435
+Debug session time: Tue Oct 20 23:08:02.000 2026 (UTC + 5:30)
+System Uptime: 1 days 1:58:18.314
+Process Uptime: 0 days 4:11:59.000
+................................
+
+************* Symbol Loading Error Summary **************
+Module name            Error
+ntdll                  The system cannot find the file specified
+
+You can troubleshoot most symbol related issues by turning on symbol loading diagnostics (!sym noisy) and repeating the command that caused symbols to be loaded.
+You should also verify that your symbol search path (.sympath) is correct.
+Unable to add extension DLL: ntsdexts
+Unable to add extension DLL: uext
+Unable to add extension DLL: exts
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+For analysis of this file, run !analyze -v
+................................
+
+************* Symbol Loading Error Summary **************
+Module name            Error
+ntdll                  The system cannot find the file specified
+
+You can troubleshoot most symbol related issues by turning on symbol loading diagnostics (!sym noisy) and repeating the command that caused symbols to be loaded.
+You should also verify that your symbol search path (.sympath) is correct.
+
+.  0  Id: cab8.93e8 Suspend: 0 Teb: 000000e5`09231000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffa`2938ca73     : 00000000`00000000 00000000`00000200 000000e5`0914eb20 00000000`00000000 : ntdll!ZwWaitForAlertByThreadId+0x14
+00007ffa`26a3e158     : 60000000`00000000 00000000`00000000 dfffffff`ffffffff 00000234`0406a440 : ntdll!RtlWaitOnAddress+0x213
+00007ff9`2f48c12e     : 00000234`049600e0 00000234`0406a440 00007ff9`2f4c4d57 00000000`00000002 : KERNELBASE!WaitOnAddress+0x38
+00007ff9`2f48889e     : 00000000`00000000 00000000`00000000 00000000`00000000 00007ff9`2f4ceabf : clang_rt_asan_dynamic_x86_64!__sanitizer::FutexWait+0x1e
+00007ff9`2f4d10fe     : 000000e5`0914e400 00000234`0406a440 00000234`04030000 00007ffa`26a130f1 : clang_rt_asan_dynamic_x86_64!__sanitizer::Semaphore::Wait+0x1e
+(Inline Function)     : --------`-------- --------`-------- --------`-------- --------`-------- : clang_rt_asan_dynamic_x86_64!__sanitizer::Mutex::Lock+0x67
+00007ff9`2f4cea9a     : 00000234`0406a440 000000e5`0914e350 000000e5`0914e490 00000234`0406a440 : clang_rt_asan_dynamic_x86_64!__sanitizer::AddrHashMap<bool,11>::acquire+0x10e
+00007ff9`2f4cf8ae     : 00007ff9`2ff0a760 00007ff9`2f4a3a18 00007ff9`2ff0aa08 00000000`00000000 : clang_rt_asan_dynamic_x86_64!__sanitizer::AddrHashMap<bool,11>::Handle::Handle+0x2a
+(Inline Function)     : --------`-------- --------`-------- --------`-------- --------`-------- : clang_rt_asan_dynamic_x86_64!__asan_win_moveable::FixedMemoryMap::IsOwned+0x18
+00007ff9`2f4cb1a7     : 00000234`04030000 000000e5`00000000 00000234`0406aff0 000000e5`0914e4f0 : clang_rt_asan_dynamic_x86_64!__asan_win_moveable::IsOwned+0x4e
+(Inline Function)     : --------`-------- --------`-------- --------`-------- --------`-------- : clang_rt_asan_dynamic_x86_64!AllocationOwnership::{ctor}+0x8
+00007ffa`26692d7b     : 00000234`0425bdc0 00000234`0406a440 00000000`ffffffff 00000234`0406a440 : clang_rt_asan_dynamic_x86_64!__asan_wrap_RtlFreeHeap+0x67
+00007ff9`2f4e4f6d     : 00000234`0406a440 00000234`0406aff0 00000000`ffffffff 00001256`04000100 : ucrtbase!free_base+0x1b
+00007ffa`2668acc8     : 00000234`0406aff0 00007ffa`267b98c0 00000000`00000001 00007ffa`26689341 : clang_rt_asan_dynamic_x86_64!__asan::__RuntimeFunctions<__asan::Ucrtbase>::FreeBase+0x3d
+00007ffa`172cbfec     : 00000234`0406a990 00000234`0406a448 00000000`00000000 00007ffa`266c98ba : ucrtbase!o___stdio_common_vswprintf+0x3c8
+00007ffa`29405c7b     : 00000000`7ffe0384 00000000`00000000 00007ffa`172cbf70 00007ffa`29405c60 : dbghelp!GetSymLoadError+0x109a6c
+00007ffa`2943ef6a     : 00007ffa`2726d538 000000e5`0914f598 ffffffff`fffffffe 000000e5`0914f560 : ntdll!RtlTimeToSecondsSince1970+0x33b
+00007ffa`2933b2e3     : 00000000`00000000 00000000`00000002 00000000`00000002 000000e5`0914f590 : ntdll!RtlWow64SuspendThread+0x4f9a
+00007ffa`2933b69b     : 00007ffa`1734d880 00000000`000004a3 00000000`00000000 00000000`00000000 : ntdll!RtlRaiseException+0x1533
+00007ffa`293a026d     : 00000234`040544c0 00000234`04054c60 00007ffa`172cbf70 00007ffa`197c0460 : ntdll!RtlRaiseException+0x18eb
+00007ffa`2939ef8e     : 00000000`00000001 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!LdrShutdownProcess+0x16d
+00007ffa`280a17ab     : 000000e5`00000000 000000e5`0914fa98 ffffffff`fffffffe 000000e5`0914fa94 : ntdll!RtlExitUserProcess+0x9e
+00007ff9`9fa6219b     : 000000e5`00000001 000000e5`0914fa98 ffffffff`fffffffe 00007ff6`109300f8 : kernel32!ExitProcess+0xb
+00007ff9`9fa6214f     : 000000e5`00000001 000000e5`0914fb00 000000e5`0914fb40 000000e5`0914faf0 : ucrtbased!wassert+0x54b
+00007ff9`9fa62456     : 00000000`00000001 00001266`00000000 00007ff6`00000000 00007ff6`109300f8 : ucrtbased!wassert+0x4ff
+*** WARNING: Unable to verify checksum for gpt2inspect.exe
+00007ff6`1099c73b     : 00007ff6`00000001 00007ff6`109a37b0 00000000`00000000 00000000`00000000 : ucrtbased!exit+0x16
+00007ff6`1099c5de     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : gpt2inspect+0x6c73b
+00007ff6`1099c87e     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : gpt2inspect+0x6c5de
+00007ffa`2808dda7     : 000000e5`09230000 00000000`00000000 00000000`00000000 00000000`00000000 : gpt2inspect+0x6c87e
+00007ffa`2939ee4c     : 00000000`00000000 00000000`00000000 000004f0`fffffb30 000004d0`fffffb30 : kernel32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+start             end                 module name
+00007ff6`10930000 00007ff6`109c5000   gpt2inspect C (no symbols)
+00007ff9`2f480000 00007ff9`2ff73000   clang_rt_asan_dynamic_x86_64   (private pdb symbols)  <drive>/program files (x86)\microsoft visual studio\2022\buildtools\vc\tools\msvc\14.44.35207\bin\hostx64\x64\clang_rt.asan_dynamic-x86_64.pdb
+00007ff9`9f9c0000 00007ff9`9fbc4000   ucrtbased   (export symbols)       ucrtbased.dll
+00007ff9`ad5f0000 00007ff9`ad6d1000   MSVCP140D   (deferred)
+00007ff9`d5600000 00007ff9`d5630000   VCRUNTIME140D   (deferred)
+00007ffa`0b9e0000 00007ffa`0b9ef000   VCRUNTIME140_1D   (deferred)
+00007ffa`0dc90000 00007ffa`0dcdd000   WRusr      (deferred)
+00007ffa`16460000 00007ffa`16468000   msimg32    (deferred)
+00007ffa`17190000 00007ffa`173dc000   dbghelp    (export symbols)       dbghelp.dll
+00007ffa`197b0000 00007ffa`197ce000   VCRUNTIME140   (deferred)
+00007ffa`19b30000 00007ffa`19b3b000   VCRUNTIME140_1   (deferred)
+00007ffa`23320000 00007ffa`233bf000   apphelp    (deferred)
+00007ffa`252d0000 00007ffa`252eb000   kernel_appcore   (deferred)
+00007ffa`265d0000 00007ffa`26673000   msvcp_win   (deferred)
+00007ffa`26680000 00007ffa`267cc000   ucrtbase   (export symbols)       ucrtbase.dll
+00007ffa`267e0000 00007ffa`26807000   win32u     (deferred)
+00007ffa`26960000 00007ffa`26d61000   KERNELBASE   (export symbols)       KERNELBASE.dll
+00007ffa`26f00000 00007ffa`2702a000   gdi32full   (deferred)
+00007ffa`27030000 00007ffa`27207000   user32     (deferred)
+00007ffa`27210000 00007ffa`27276000   shlwapi    (deferred)
+00007ffa`274b0000 00007ffa`275a9000   SHCore     (deferred)
+00007ffa`275b0000 00007ffa`27689000   oleaut32   (deferred)
+00007ffa`27730000 00007ffa`27848000   rpcrt4     (deferred)
+00007ffa`28060000 00007ffa`2812b000   kernel32   (export symbols)       kernel32.dll
+00007ffa`28130000 00007ffa`284bb000   combase    (deferred)
+00007ffa`284c0000 00007ffa`28c5c000   shell32    (deferred)
+00007ffa`28c90000 00007ffa`28d4c000   advapi32   (deferred)
+00007ffa`28d70000 00007ffa`28e19000   msvcrt     (deferred)
+00007ffa`28ea0000 00007ffa`28ed1000   imm32      (deferred)
+00007ffa`29050000 00007ffa`290f8000   sechost    (deferred)
+00007ffa`29100000 00007ffa`2912b000   gdi32      (deferred)
+00007ffa`29320000 00007ffa`29588000   ntdll      (export symbols)       ntdll.dll

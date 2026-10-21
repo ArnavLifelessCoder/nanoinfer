@@ -1,0 +1,158 @@
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <project>/build/diagnostics/symbols
+OK                                             <program-files-x86>\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64
+OK                                             <project>/build/diagnostics/approved-probe
+No .natvis files found at <drive>/windows\SYSTEM32\Visualizers.
+No .natvis files found at <user>\AppData\Local\Dbg\Visualizers.
+
+Microsoft (R) Windows Debugger Version 10.0.26100.1 AMD64
+Copyright (c) Microsoft Corporation. All rights reserved.
+
+
+Loading Dump File [<project>\build\diagnostics\approved-errors\probe-0-39020.dmp]
+User Mini Dump File with Full Memory: Only application data is available
+
+Comment: '
+*** build\diagnostics\tools\procdump\procdump64.exe -accepteula -ma 39020 build\diagnostics\approved-errors\probe-0-39020.dmp
+*** Manual dump'
+
+************* Path validation summary **************
+Response                         Time (ms)     Location
+OK                                             <project>/build/diagnostics/symbols
+OK                                             <program-files-x86>\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64
+OK                                             <project>/build/diagnostics/approved-probe
+Symbol search path is: <project>/build/diagnostics/symbols;<program-files-x86>\Microsoft Visual Studio\2022\BuildTools\VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64;<project>/build/diagnostics/approved-probe
+Executable search path is:
+Windows 10 Version 26300 MP (32 procs) Free x64
+Product: WinNt, suite: SingleUserTS Personal
+Edition build lab: 26100.1.amd64fre.ge_release.240331-1435
+Debug session time: Tue Oct 20 23:30:46.000 2026 (UTC + 5:30)
+System Uptime: 1 days 2:21:02.089
+Process Uptime: 0 days 0:00:11.000
+..............................
+
+************* Symbol Loading Error Summary **************
+Module name            Error
+ntdll                  The system cannot find the file specified
+
+You can troubleshoot most symbol related issues by turning on symbol loading diagnostics (!sym noisy) and repeating the command that caused symbols to be loaded.
+You should also verify that your symbol search path (.sympath) is correct.
+Unable to add extension DLL: ntsdexts
+Unable to add extension DLL: uext
+Unable to add extension DLL: exts
+
++------------------------------------------------------------------------+
+| This target supports Hardware-enforced Stack Protection. A HW based    |
+| "Shadow Stack" may be available to assist in debugging and analysis.   |
+| See aka.ms/userhsp for more info.                                      |
+|                                                                        |
+| dps @ssp                                                               |
+|                                                                        |
++------------------------------------------------------------------------+
+
+For analysis of this file, run !analyze -v
+..............................
+
+************* Symbol Loading Error Summary **************
+Module name            Error
+ntdll                  The system cannot find the file specified
+
+You can troubleshoot most symbol related issues by turning on symbol loading diagnostics (!sym noisy) and repeating the command that caused symbols to be loaded.
+You should also verify that your symbol search path (.sympath) is correct.
+
+.  0  Id: 986c.d270 Suspend: 0 Teb: 00000045`8a08b000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffa`2939f8f9     : 00007ffa`294f36f0 0000016e`117be640 00000045`8a2fa978 00007ffa`294f36f0 : ntdll!NtWaitForSingleObject+0x14
+00007ffa`2934aa2a     : 00000000`00000000 00000045`8a2fdc40 00000045`8a2fac70 00000000`00000003 : ntdll!RtlFreeActivationContextStack+0x279
+00007ffa`2934c066     : 00000045`8a2fac70 00000045`8a2faea0 00000000`00000200 00000045`8a2faa00 : ntdll!LdrGetDllHandleEx+0x116a
+00007ffa`2937cf93     : 00000000`00000000 0000016e`117be7e0 00000045`8a2fdc40 0000016e`117be640 : ntdll!RtlValidAcl+0x496
+00007ffa`2937b6ad     : 00007ffa`26cdcbd8 00007ffa`26960000 00007ffa`26960000 0000016e`117be640 : ntdll!RtlImageDirectoryEntryToData+0x383
+00007ffa`26a5d422     : 00000000`00000000 00000000`00000001 00000000`00000000 00007ffa`26a281b1 : ntdll!LdrResolveDelayLoadedAPI+0x18d
+00007ffa`26a8a417     : 00000000`00000001 00000000`00000000 00000000`00000001 00007ffa`26cdcbd8 : KERNELBASE!GetSecurityDescriptorLength+0x52
+00007ffa`269df9ca     : 00000045`8a2fbdf8 00000045`8a2fc000 00000045`8a2fb850 00000045`8a2fb8d0 : KERNELBASE!time+0x4187
+00007ffa`269dd513     : 0000016e`00000000 0000016e`01bffe70 00000001`00000060 00000000`00000000 : KERNELBASE!CreateProcessInternalW+0x22ea
+00007ffa`269dd076     : 00000000`00000000 00007ff9`2f48fe62 0000016e`117b0000 00000000`00000000 : KERNELBASE!CreateProcessInternalA+0x483
+00007ffa`280a4ec4     : 00000045`8a2fdac0 00007ffa`26a497b9 00000000`00001000 00007ff9`2f485060 : KERNELBASE!CreateProcessA+0x66
+00007ff9`2f498191     : 0000016e`11de0018 00007ff9`2f4f750c 00007ff9`2f4f69d8 00000000`00000000 : kernel32!CreateProcessA+0x54
+00007ff9`2f49637b     : 0000016e`11de4018 0000016e`11de4018 0000016e`11de4070 0000016e`11de0018 : clang_rt_asan_dynamic_x86_64!__sanitizer::SymbolizerProcess::StartSymbolizerSubprocess+0x261
+00007ff9`2f4965f5     : 0000016e`01501ab0 00007ff9`2f494c02 00000045`8a2fddb0 0000016e`11de4070 : clang_rt_asan_dynamic_x86_64!__sanitizer::SymbolizerProcess::SendCommand+0x4b
+00007ff9`2f49669b     : 00007ff7`eb931445 00007ff7`eb931445 0000016e`11de4070 00007ff9`2f4f0fd8 : clang_rt_asan_dynamic_x86_64!__sanitizer::LLVMSymbolizer::SymbolizePC+0x25
+00007ff9`2f493908     : 0000016e`11de40e0 00007ff7`eb931445 00000045`8a2fdea0 00000000`00000000 : clang_rt_asan_dynamic_x86_64!__sanitizer::Symbolizer::SymbolizePC+0x7b
+(Inline Function)     : --------`-------- --------`-------- --------`-------- --------`-------- : clang_rt_asan_dynamic_x86_64!__sanitizer::`anonymous-namespace'::StackTraceTextPrinter::ProcessAddressFrames+0x14
+00007ff9`2f4937b7     : 00000045`8a2fdf90 00000045`8a2fdf01 00000045`8a200000 00000000`00000000 : clang_rt_asan_dynamic_x86_64!__sanitizer::StackTrace::PrintTo+0x128
+00007ff9`2f4ad8c0     : 00007ff9`2ff65478 00000000`00000000 00007ff7`eb931446 00007ff9`2f4f097e : clang_rt_asan_dynamic_x86_64!__sanitizer::StackTrace::Print+0x87
+00007ff9`2f4d3e00     : 00000000`00000002 00000045`8a2ff538 00000000`00000002 00000045`8a2fe880 : clang_rt_asan_dynamic_x86_64!__asan::ErrorGeneric::Print+0x1d0
+00007ff9`2f4d5a2c     : 00007ff9`2f4faac0 00001172`122a0038 00007ff7`eb931446 00007ff7`eb931446 : clang_rt_asan_dynamic_x86_64!__asan::ScopedInErrorReport::~ScopedInErrorReport+0x80
+00007ff9`2f4d8e9a     : 00007ff7`eb9320ef 00000045`8a2ff530 00007ff7`eb93141d 00000000`00000028 : clang_rt_asan_dynamic_x86_64!__asan::ReportGenericError+0x14c
+*** WARNING: Unable to verify checksum for asan_error_probe.exe
+00007ff7`eb931446     : 00000000`00000004 00000045`8a2ff630 00000000`00000004 00300032`00350033 : clang_rt_asan_dynamic_x86_64!__asan_report_store4+0x3a
+00007ff7`eb932ea9     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : asan_error_probe!main+0x186
+00007ff7`eb932df2     : 00007ff7`eb939500 00007ff7`eb9395e0 00000000`00000000 00000000`00000000 : asan_error_probe!invoke_main+0x39
+00007ff7`eb932cae     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : asan_error_probe!__scrt_common_main_seh+0x132
+00007ff7`eb932f1e     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : asan_error_probe!__scrt_common_main+0xe
+00007ffa`2808dda7     : 00000045`8a08a000 00000000`00000000 00000000`00000000 00000000`00000000 : asan_error_probe!mainCRTStartup+0xe
+00007ffa`2939ee4c     : 00000000`00000000 00000000`00000000 000004f0`fffffb30 000004d0`fffffb30 : kernel32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   1  Id: 986c.c4ac Suspend: 0 Teb: 00000045`8a08d000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffa`29344d0e     : 00000000`00000000 00000000`00000000 00007ffa`29343420 0000016e`117cd560 : ntdll!NtWaitForWorkViaWorkerFactory+0x14
+00007ffa`2808dda7     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!TpCallbackMayRunLong+0x1a0e
+00007ffa`2939ee4c     : 00000000`00000000 00000000`00000000 000004f0`fffffb30 000004d0`fffffb30 : kernel32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   2  Id: 986c.c868 Suspend: 0 Teb: 00000045`8a08f000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffa`29344d0e     : 00000000`00000000 00000000`00000000 00007ffa`29343420 0000016e`117cd990 : ntdll!NtWaitForWorkViaWorkerFactory+0x14
+00007ffa`2808dda7     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!TpCallbackMayRunLong+0x1a0e
+00007ffa`2939ee4c     : 00000000`00000000 00000000`00000000 000004f0`fffffb30 000004d0`fffffb30 : kernel32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+   3  Id: 986c.b83c Suspend: 0 Teb: 00000045`8a091000 Unfrozen
+RetAddr               : Args to Child                                                           : Call Site
+00007ffa`29344d0e     : 00000000`0001001e 00000000`00000001 0000016e`117cdee0 0000016e`117cdee0 : ntdll!NtWaitForWorkViaWorkerFactory+0x14
+00007ffa`2808dda7     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!TpCallbackMayRunLong+0x1a0e
+00007ffa`2939ee4c     : 00000000`00000000 00000000`00000000 000004f0`fffffb30 000004d0`fffffb30 : kernel32!BaseThreadInitThunk+0x17
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : ntdll!RtlUserThreadStart+0x2c
+
+WARNING: Teb 4 pointer is NULL - defaulting to 00000000`7ffde000
+WARNING: 00000000`7ffde000 does not appear to be a TEB
+   4  Id: 986c.4748 Suspend: -1 Teb: 00000000`7ffde000 Unfrozen
+WARNING: Thread 4748 access failure during dump writing, NTSTATUS 0xC0000022
+WARNING: Teb 4 pointer is NULL - defaulting to 00000000`7ffde000
+WARNING: 00000000`7ffde000 does not appear to be a TEB
+RetAddr               : Args to Child                                                           : Call Site
+00000000`00000000     : 00000000`00000000 00000000`00000000 00000000`00000000 00000000`00000000 : 0x0
+start             end                 module name
+00007ff7`eb930000 00007ff7`eb945000   asan_error_probe C (private pdb symbols)  <project>/build/diagnostics/approved-probe\asan_error_probe.pdb
+00007ff9`2f480000 00007ff9`2ff73000   clang_rt_asan_dynamic_x86_64   (private pdb symbols)  <drive>/program files (x86)\microsoft visual studio\2022\buildtools\vc\tools\msvc\14.44.35207\bin\hostx64\x64\clang_rt.asan_dynamic-x86_64.pdb
+00007ff9`9f9c0000 00007ff9`9fbc4000   ucrtbased   (deferred)
+00007ff9`d5600000 00007ff9`d5630000   VCRUNTIME140D   (deferred)
+00007ffa`0b9e0000 00007ffa`0b9ef000   VCRUNTIME140_1D   (deferred)
+00007ffa`0dc90000 00007ffa`0dcdd000   WRusr      (deferred)
+00007ffa`16460000 00007ffa`16468000   msimg32    (deferred)
+00007ffa`17190000 00007ffa`173dc000   dbghelp    (deferred)
+00007ffa`197b0000 00007ffa`197ce000   VCRUNTIME140   (deferred)
+00007ffa`19b30000 00007ffa`19b3b000   VCRUNTIME140_1   (deferred)
+00007ffa`23320000 00007ffa`233bf000   apphelp    (deferred)
+00007ffa`265d0000 00007ffa`26673000   msvcp_win   (deferred)
+00007ffa`26680000 00007ffa`267cc000   ucrtbase   (deferred)
+00007ffa`267e0000 00007ffa`26807000   win32u     (deferred)
+00007ffa`26960000 00007ffa`26d61000   KERNELBASE   (export symbols)       KERNELBASE.dll
+00007ffa`26f00000 00007ffa`2702a000   gdi32full   (deferred)
+00007ffa`27030000 00007ffa`27207000   user32     (deferred)
+00007ffa`27210000 00007ffa`27276000   shlwapi    (deferred)
+00007ffa`274b0000 00007ffa`275a9000   SHCore     (deferred)
+00007ffa`275b0000 00007ffa`27689000   oleaut32   (deferred)
+00007ffa`27730000 00007ffa`27848000   rpcrt4     (deferred)
+00007ffa`28060000 00007ffa`2812b000   kernel32   (export symbols)       kernel32.dll
+00007ffa`28130000 00007ffa`284bb000   combase    (deferred)
+00007ffa`284c0000 00007ffa`28c5c000   shell32    (deferred)
+00007ffa`28c90000 00007ffa`28d4c000   advapi32   (deferred)
+00007ffa`28d70000 00007ffa`28e19000   msvcrt     (deferred)
+00007ffa`28ea0000 00007ffa`28ed1000   imm32      (deferred)
+00007ffa`29050000 00007ffa`290f8000   sechost    (deferred)
+00007ffa`29100000 00007ffa`2912b000   gdi32      (deferred)
+00007ffa`29320000 00007ffa`29588000   ntdll      (export symbols)       ntdll.dll

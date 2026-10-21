@@ -3,6 +3,10 @@
 Review `git diff main...m3`. The base is approved M2 commit `e349784`, now on
 remote `main`. M3 is isolated on `m3`; merging it into `main` awaits approval.
 
+Re-review is pending the five consecutive local ASan passes. The earlier
+single passing run below is historical evidence, not completion of that gate.
+See the [investigation and captured stacks](m3-asan-investigation.md).
+
 ## What was built
 
 Preallocated per-layer K/V storage, scalar cached prefill and single-token decode,
@@ -31,7 +35,7 @@ forward results against both the scalar reference and PyTorch.
 
 ## Full local validation output
 
-Debug and MSVC ASan each pass **11/11 CTest cases**, **42/42 pytest cases**,
+The original M3 snapshot records **11/11 CTest cases**, **42/42 pytest cases**,
 and **29 unit tests plus 2 full-context cache tests** with both seeds 42 and 1234.
 Both builds are warning-free. The complete outputs are linked below.
 
@@ -43,17 +47,16 @@ the parent exits: [before](../results/m3-capture-regression-before.txt),
 captures to temporary files and enforces a native-process timeout. Nonzero exits,
 stderr and timeouts remain failures.
 
-That capture change did not eliminate every local timeout: a subsequent full
-ASan run [timed out in model_schema](../results/m3-asan-timeout.txt), while the
-[isolated schema rerun](../results/m3-asan-schema-recheck.txt) passed. A subsequent
-[attempt](../results/m3-asan-isolated-attempt.txt) reported empty JSON output in
-`generation_cli` and timed out in `golden_tiny`. The latter
-[passed when rerun with file redirection](../results/m3-asan-golden-recheck.txt).
-The cause of these intermittent local process/output failures is unconfirmed.
-The final passing ASan validation uses a fresh `build/asan-m3` directory, sequential CTest
+That capture change did not eliminate the local failures: one full ASan run
+timed out in `model_schema`; another lost JSON output in `generation_cli` and
+timed out in `golden_tiny`. Isolated reruns passed, but are not acceptance
+evidence. The long failed-attempt dumps have been replaced by this summary
+and the [stack-based investigation](m3-asan-investigation.md).
+The historical passing ASan validation uses a fresh `build/asan-m3` directory, sequential CTest
 execution with output redirected directly to a file, a 180-second CTest limit
 and the unchanged 60-second native subprocess limit. No runtime, numerical or
-sanitizer settings were changed in response.
+sanitizer settings were changed for that historical run. The current owner-approved
+local trial is documented separately in the investigation.
 
 | Artifact | Debug | MSVC AddressSanitizer |
 |---|---|---|
@@ -86,8 +89,9 @@ The [m3 workflow history](https://github.com/ArnavLifelessCoder/nanoinfer/action
 also lists that final run.
 
 TSan is skipped because M3 has no native worker threads. Linux ASan also enables
-fatal UBSan and runs the deliberate-overflow regression probe. No sanitizer
-exceptions or tolerance changes were added for M3.
+fatal UBSan and runs the deliberate-overflow regression probe. CI has no added
+sanitizer exceptions. The approved local MSVC options and their tradeoffs are
+recorded in the investigation; numerical tolerances remain unchanged.
 
 ## Files changed
 
