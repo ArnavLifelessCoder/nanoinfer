@@ -3,15 +3,35 @@
 Review `git diff main...m3`. The base is approved M2 commit `e349784`, now on
 remote `main`. M3 is isolated on `m3`; merging it into `main` awaits approval.
 
-Re-review is pending the five consecutive local ASan passes. The earlier
-single passing run below is historical evidence, not completion of that gate.
-See the [investigation and captured stacks](m3-asan-investigation.md).
-The approved `/MD` trial failed in its first full suite (11/12 passed), so it is
-not adopted. Current ordinary Debug validation passes 12/12 CTest cases and
-43/43 Python tests; the full logs are linked in the investigation.
-The subsequent compatibility-environment control also timed out. The owner
-stopped further runtime-option trials; no proposed workaround is adopted.
-The five consecutive local ASan suite requirement remains unmet.
+## ASan gate (owner decision)
+
+The captured stacks place the local MSVC ASan stalls in the ASan runtime during
+process shutdown, after `main` returns, with no nanoinfer frames; approved M2
+shows the same stall. See the [investigation and captured stacks](m3-asan-investigation.md).
+The owner therefore replaced the "five consecutive local ASan passes" gate with:
+
+1. CI ASan green on Linux (GCC ASan + fatal UBSan) and Windows (MSVC ASan).
+2. A full local MSVC ASan suite in which the deliberate heap-overflow and
+   use-after-free probes are caught, and any stall matches the documented
+   shutdown signature (`LdrShutdownProcess` -> ASan `RtlFreeHeap` wrapper ->
+   `AddrHashMap` mutex) with its dump attached.
+3. Any other failure still blocks. A passing retry is never evidence.
+
+`scripts/test-m3-gate.ps1 -Label run2` runs that gate from a fresh ASan build
+directory, with idle-process dump capture, then the memory-error probes and
+Debug CTest. Result: [summary](../results/m3-gate-run2.json),
+[ASan CTest](../results/m3-gate-run2-asan-tests.txt),
+[probes](../results/m3-gate-run2-error-probes.json),
+[Debug CTest](../results/m3-gate-run2-debug-tests.txt).
+
+Every native call in the correctness harness is now bounded:
+`tests/golden_forward.py` runs its tool through `tests/native_process.capture`
+(60 seconds by default, `--timeout` for the pretrained scalar runs), so a stall
+in `golden_tiny`, `golden_negative` or `golden_cached` fails with a capture
+instead of running until the CTest limit.
+
+The earlier `/MD` and compatibility-environment trials failed and are not
+adopted; no runtime option or environment workaround is in use.
 
 After adding the fixed-seed sequence regression, ordinary Debug again passed
 12/12 CTest cases ([full output](../results/m3-sequence-debug-tests.txt)) and

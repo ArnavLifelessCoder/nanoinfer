@@ -1,0 +1,29 @@
+Test project <project>/build/debug
+      Start  1: unit
+ 1/12 Test  #1: unit .............................   Passed    8.56 sec
+      Start  2: export_tiny
+ 2/12 Test  #2: export_tiny ......................   Passed   23.13 sec
+      Start  3: roundtrip_tiny
+ 3/12 Test  #3: roundtrip_tiny ...................   Passed    4.53 sec
+      Start  4: cached_forward
+ 4/12 Test  #4: cached_forward ...................   Passed    1.53 sec
+      Start  5: generation_cli
+ 5/12 Test  #5: generation_cli ...................   Passed   21.09 sec
+      Start  6: cli_output
+ 6/12 Test  #6: cli_output .......................   Passed   63.70 sec
+      Start  7: golden_cached
+ 7/12 Test  #7: golden_cached ....................   Passed    6.99 sec
+      Start  8: loader_integration
+ 8/12 Test  #8: loader_integration ...............   Passed    4.80 sec
+      Start  9: model_schema
+ 9/12 Test  #9: model_schema .....................   Passed   31.20 sec
+      Start 10: golden_tiny
+10/12 Test #10: golden_tiny ......................   Passed    4.09 sec
+      Start 11: reference_contract
+11/12 Test #11: reference_contract ...............   Passed   36.59 sec
+      Start 12: golden_negative
+12/12 Test #12: golden_negative ..................   Passed   30.14 sec
+
+100% tests passed out of 12
+
+Total Test time (real) = 236.67 sec

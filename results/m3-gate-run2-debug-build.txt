@@ -1,0 +1,11 @@
+[1/11] Building CXX object CMakeFiles\nanoinfer.dir\src\runtime\cached.cpp.obj
+[2/11] Building CXX object CMakeFiles\gpt2cachecheck.dir\tests\cache_check.cpp.obj
+[3/11] Building CXX object CMakeFiles\gpt2rt.dir\src\tools\generate.cpp.obj
+[4/11] Building CXX object CMakeFiles\nanoinfer_cache_tests.dir\tests\test_cached_forward.cpp.obj
+[5/11] Linking CXX static library nanoinfer.lib
+[6/11] Linking CXX executable gpt2inspect.exe
+[7/11] Linking CXX executable gpt2ref.exe
+[8/11] Linking CXX executable gpt2cachecheck.exe
+[9/11] Linking CXX executable nanoinfer_tests.exe
+[10/11] Linking CXX executable nanoinfer_cache_tests.exe
+[11/11] Linking CXX executable gpt2rt.exe

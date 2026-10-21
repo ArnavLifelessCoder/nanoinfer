@@ -1,0 +1,12 @@
+{
+    "label":  "run2",
+    "git_head":  "6470d9dd0391a255daf984a7c371674d12ecb696",
+    "asan_ctest_exit":  0,
+    "asan_idle_captures":  [
+
+                           ],
+    "error_probes_exit":  0,
+    "debug_ctest_exit":  0,
+    "gate_passed":  true,
+    "note":  "A nonzero ASan exit passes only after its dump matches the documented shutdown signature."
+}
