@@ -1,10 +1,13 @@
 # M3 local ASan investigation
 
-M3 remains blocked on local ASan reliability. The owner stopped further
-runtime-option trials after the compatibility control failed. No workaround
-has been adopted. A passing retry is not acceptance evidence.
-The five consecutive full-suite runs use a fresh build and stop at the first
-failure.
+Outcome: the stalls are a shutdown deadlock inside the MSVC ASan runtime, not
+in nanoinfer, and they predate M3. The owner stopped further runtime-option
+trials after the compatibility control failed; no workaround is adopted. The
+owner replaced the "five consecutive local passes" requirement with the gate in
+the [M3 review packet](m3-review.md#asan-gate-owner-decision): CI ASan on both
+platforms, plus a local run whose memory-error probes are caught and whose only
+permitted stall is the shutdown signature below, with its dump. A passing retry
+is still not acceptance evidence.
 
 ## Captured hangs and M2 baseline
 
@@ -21,7 +24,7 @@ module lists are committed:
 | gpt2inspect, PID 44420 | M2 schema validation | 1 | [stack](../results/m3-stack-m2-schema.txt) |
 
 The SDK debugger installer was blocked by the execution policy. ProcDump was
-installed successfully. `src/platform/dump_stacks_windows.cpp` uses the already
+installed successfully. `tests/diagnostics/dump_stacks_windows.cpp` uses the already
 installed Windows DbgEng engine and executes `.reload; ~*kb; lm` against each
 dump. The ASan frames use the matching PDB shipped with MSVC 14.44.35207.
 Some Windows/CRT frames have only export symbols and offsets; do not interpret
@@ -171,7 +174,7 @@ default development environment remains unchanged:
 To build the offline stack reader after loading `scripts/dev-shell.ps1`:
 
 ```powershell
-cl /nologo /std:c++20 /EHsc /W4 /WX /MD /Zi src/platform/dump_stacks_windows.cpp /Fobuild/diagnostics/dump_stacks.obj /Fdbuild/diagnostics/dump-stacks-compile.pdb /Febuild/diagnostics/dump_stacks.exe /link dbgeng.lib /PDB:build/diagnostics/dump_stacks.pdb
+cl /nologo /std:c++20 /EHsc /W4 /WX /MD /Zi tests/diagnostics/dump_stacks_windows.cpp /Fobuild/diagnostics/dump_stacks.obj /Fdbuild/diagnostics/dump-stacks-compile.pdb /Febuild/diagnostics/dump_stacks.exe /link dbgeng.lib /PDB:build/diagnostics/dump_stacks.pdb
 $symbols = "$env:VCToolsInstallDir/bin/Hostx64/x64;$PWD/build/asan-m3-reliability"
 .\build\diagnostics\dump_stacks.exe build/diagnostics/dumps/CAPTURE.dmp $symbols
 ```
