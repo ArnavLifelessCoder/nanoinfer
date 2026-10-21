@@ -1,6 +1,7 @@
 param(
     [string]$BuildDirectory = 'build/asan-m3-reliability',
-    [string]$Label = 'm3-reliability'
+    [string]$Label = 'm3-reliability',
+    [switch]$ReleaseCrt
 )
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
@@ -11,8 +12,11 @@ try {
     if (Test-Path -LiteralPath $BuildDirectory) { throw 'A fresh build directory is required.' }
     # Owner-approved local trial. Do not put these options in CI or persistent settings.
     $env:ASAN_OPTIONS = 'windows_hook_legacy_allocators=false:symbolize=false'
+    $crtOptions = @()
+    if ($ReleaseCrt) { $crtOptions += '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL' }
     & cmake --preset asan -B $BuildDirectory `
         "-DFETCHCONTENT_SOURCE_DIR_GOOGLETEST=$projectRoot/build/debug/_deps/googletest-src" `
+        @crtOptions `
         *> "build/diagnostics/$Label-configure.txt"
     if ($LASTEXITCODE) { throw 'Configure failed.' }
     & cmake --build $BuildDirectory *> "build/diagnostics/$Label-build.txt"
@@ -28,6 +32,7 @@ try {
         $runs += $report
         $summary = [ordered]@{
             asan_options = $env:ASAN_OPTIONS
+            crt_selection = $(if ($ReleaseCrt) { '/MD' } else { '/MDd (CMake Debug default)' })
             fresh_build = $BuildDirectory
             requested_suites = 5
             completed_suites = $runs.Count

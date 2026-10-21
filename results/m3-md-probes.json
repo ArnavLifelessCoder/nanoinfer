@@ -1,0 +1,39 @@
+{
+  "memory_errors": {
+    "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+    "requested": 2,
+    "completed": 2,
+    "passed": true,
+    "records": [
+      {
+        "index": 0,
+        "pid": 3592,
+        "expected_exit": null,
+        "diagnostic": "heap-buffer-overflow",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "=================================================================\n==3592==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x124eab5a0018 at pc 0x7ff636de1436 bp 0x006f8ccff7f0 sp 0x006f8ccff7f8\nWRITE of size 4 at 0x124eab5a0018 thread T0\n    #0 0x7ff636de1435  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140001435)\n    #1 0x7ff636de2aeb  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140002aeb)\n    #2 0x7ffa2808dda6  (C:\\windows\\System32\\KERNEL32.DLL+0x18002dda6)\n    #3 0x7ffa2939ee4b  (C:\\windows\\SYSTEM32\\ntdll.dll+0x18007ee4b)\n\n0x124eab5a0018 is located 4 bytes after 4-byte region [0x124eab5a0010,0x124eab5a0014)\nallocated by thread T0 here:\n    #0 0x7ff636de20de  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x1400020de)\n    #1 0x7ff636de140c  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x14000140c)\n    #2 0x7ff636de2aeb  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140002aeb)\n    #3 0x7ffa2808dda6  (C:\\windows\\System32\\KERNEL32.DLL+0x18002dda6)\n    #4 0x7ffa2939ee4b  (C:\\windows\\SYSTEM32\\ntdll.dll+0x18007ee4b)\n\nSUMMARY: AddressSanitizer: heap-buffer-overflow (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140001435) \nShadow bytes around the buggy address:\n  0x124eab59fd80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x124eab59fe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x124eab59fe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x124eab59ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x124eab59ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n=>0x124eab5a0000: fa fa 04[fa]fa fa fa fa fa fa fa fa fa fa fa fa\n  0x124eab5a0080: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x124eab5a0100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x124eab5a0180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x124eab5a0200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x124eab5a0280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==3592==ABORTING\n",
+        "passed": true
+      },
+      {
+        "index": 1,
+        "pid": 33320,
+        "expected_exit": null,
+        "diagnostic": "heap-use-after-free",
+        "exit": 1,
+        "stdout": "",
+        "stderr": "=================================================================\n==33320==ERROR: AddressSanitizer: heap-use-after-free on address 0x1299e2fa00d0 at pc 0x7ff636de12a8 bp 0x00d89e92fa80 sp 0x00d89e92fa88\nREAD of size 4 at 0x1299e2fa00d0 thread T0\n    #0 0x7ff636de12a7  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x1400012a7)\n    #1 0x7ff636de1515  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140001515)\n    #2 0x7ff636de2aeb  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140002aeb)\n    #3 0x7ffa2808dda6  (C:\\windows\\System32\\KERNEL32.DLL+0x18002dda6)\n    #4 0x7ffa2939ee4b  (C:\\windows\\SYSTEM32\\ntdll.dll+0x18007ee4b)\n\n0x1299e2fa00d0 is located 0 bytes inside of 32-byte region [0x1299e2fa00d0,0x1299e2fa00f0)\nfreed by thread T0 here:\n    #0 0x7ff636de219e  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x14000219e)\n    #1 0x7ff636de150d  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x14000150d)\n    #2 0x7ff636de2aeb  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140002aeb)\n    #3 0x7ffa2808dda6  (C:\\windows\\System32\\KERNEL32.DLL+0x18002dda6)\n    #4 0x7ffa2939ee4b  (C:\\windows\\SYSTEM32\\ntdll.dll+0x18007ee4b)\n\npreviously allocated by thread T0 here:\n    #0 0x7ff636de20de  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x1400020de)\n    #1 0x7ff636de14da  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x1400014da)\n    #2 0x7ff636de2aeb  (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x140002aeb)\n    #3 0x7ffa2808dda6  (C:\\windows\\System32\\KERNEL32.DLL+0x18002dda6)\n    #4 0x7ffa2939ee4b  (C:\\windows\\SYSTEM32\\ntdll.dll+0x18007ee4b)\n\nSUMMARY: AddressSanitizer: heap-use-after-free (<project>\\build\\diagnostics\\md-probe\\asan_error_probe.exe+0x1400012a7) \nShadow bytes around the buggy address:\n  0x1299e2f9fe00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1299e2f9fe80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1299e2f9ff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1299e2f9ff80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x1299e2fa0000: fa fa fd fd fd fd fa fa fd fd fd fd fa fa fd fd\n=>0x1299e2fa0080: fd fd fa fa fd fd fd fd fa fa[fd]fd fd fd fa fa\n  0x1299e2fa0100: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x1299e2fa0180: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x1299e2fa0200: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x1299e2fa0280: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x1299e2fa0300: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==33320==ABORTING\n",
+        "passed": true
+      }
+    ]
+  },
+  "repeated_exits": {
+    "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+    "requested": 200,
+    "completed": 200,
+    "passed": true,
+    "records": []
+  },
+  "crt": "MultiThreadedDLL (/MD)",
+  "compile_flags_source": "build/diagnostics/md-probe/build.ninja"
+}
