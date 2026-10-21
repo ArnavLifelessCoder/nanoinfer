@@ -316,5 +316,37 @@ Run the error probes and repeated model-free CLI check first, then use a fresh
 build for five complete suites with stop-on-first-failure. Record the inherited
 and effective compatibility values. Any failure still requires capture and
 investigation. The opt-in `-ClearCompatibilityLayer` switch records both values
-and restores the caller's process environment in `finally`. The trial is in
-progress; it is not yet an adopted workaround.
+and restores the caller's process environment in `finally`.
+
+Both memory-error probes passed and all 200 standalone exit checks passed.
+The first CLI invocation used an incorrect fixture path and immediately returned
+the expected file-not-found error. That invocation error and the corrected path
+are recorded in the [trial report](../results/m3-compat-probes.json).
+With the correct fixture, the CLI check timed out in `gpt2rt --help` between
+pairs 176 and 200 of the requested 1,000 pairs. The driver stopped at that first
+failure. No full-suite acceptance batch was started.
+
+The [captured stack](../results/m3-stack-compat-timeout.txt), PID 28224, contains
+one thread waiting in `AddrHashMap::acquire` through
+`__asan_win_moveable::IsOwned` and `__asan_wrap_RtlFreeHeap` during shell DLL
+cleanup. `apphelp.dll` is absent from the module list. Removing the inherited
+compatibility setting therefore did not prevent the failure. The lock owner
+remains unknown. **The compatibility control failed and is not adopted.**
+
+## Proposed RTL allocator control
+
+The latest stack shows that disabling legacy allocator hooks does not prevent
+the RTL free interceptor from entering the ownership map. The next proposed
+local control is to add `windows_hook_rtl_allocators=false`, retaining `/MDd`,
+`windows_hook_legacy_allocators=false`, and `symbolize=false`, and restoring the
+ordinary inherited compatibility environment. This proposal awaits approval.
+
+[Microsoft documents the RTL allocator option](https://learn.microsoft.com/en-us/cpp/sanitizers/asan-runtime?view=msvc-170).
+The tradeoff is loss of ASan allocation tracking for Windows heap APIs such as
+`HeapAlloc`/`HeapFree` and their RTL counterparts. The source tree has no direct
+calls to those allocation APIs. Standard C/C++ allocation instrumentation must
+remain effective, verified by the overflow and use-after-free probes before
+any full-suite batch. Neither suppression of reported errors nor successful
+retries are acceptable. CI, registry, persistent environment, and security
+settings would remain unchanged. The five consecutive fresh-build suite gate
+still applies; the new control is a hypothesis, not a confirmed solution.
