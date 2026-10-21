@@ -6,6 +6,9 @@ remote `main`. M3 is isolated on `m3`; merging it into `main` awaits approval.
 Re-review is pending the five consecutive local ASan passes. The earlier
 single passing run below is historical evidence, not completion of that gate.
 See the [investigation and captured stacks](m3-asan-investigation.md).
+The approved `/MD` trial failed in its first full suite (11/12 passed), so it is
+not adopted. Current ordinary Debug validation passes 12/12 CTest cases and
+43/43 Python tests; the full logs are linked in the investigation.
 
 ## What was built
 

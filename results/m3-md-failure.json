@@ -1,0 +1,37 @@
+{
+  "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+  "crt_selection": "/MD",
+  "fresh_build": "build/asan-m3-md",
+  "requested_suites": 5,
+  "completed_suites": 1,
+  "passed": false,
+  "runs": [
+    {
+      "label": "m3-md-1",
+      "build_directory": "build/asan-m3-md",
+      "git_head": "7354c61334510cac50a3cadded3fcb1f4fdf56a4",
+      "asan_options": "windows_hook_legacy_allocators=false:symbolize=false",
+      "ctest_exit_code": 8,
+      "idle_seconds": 12,
+      "captures": []
+    }
+  ],
+  "ctest": {
+    "passed": 11,
+    "total": 12,
+    "failed": [
+      "cli_output"
+    ],
+    "elapsed_seconds": 477.95
+  },
+  "deadline_capture": {
+    "pid": 49204,
+    "command": "gpt2rt --help",
+    "native_timeout_seconds": 60,
+    "dump": "build/native-capture/timeout-49204-1792561770165702100.dmp",
+    "stack": "results/m3-stack-md-timeout.txt",
+    "threads": 1
+  },
+  "adopted": false,
+  "conclusion": "The release CRT also reaches the ASan allocator spin lock during process shutdown. The /MD trial does not satisfy the five-suite gate."
+}

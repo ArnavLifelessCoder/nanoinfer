@@ -273,3 +273,46 @@ remain unchanged. Adoption still requires deliberate memory-error probes
 and five consecutive full suites from a fresh build.
 The trial is opt-in through `scripts/test-asan-reliability.ps1 -ReleaseCrt`;
 neither the project presets nor CI select `/MD` for ASan by default.
+
+The `/MD` error probes detected both deliberate memory errors, and the flushed
+standalone probe passed 200 launches ([probe evidence](../results/m3-md-probes.json)).
+The fresh `build/asan-m3-md` full-suite batch then failed in its first suite:
+11/12 tests passed; `cli_output` timed out in `gpt2rt --help`.
+The batch stopped without retrying or starting suite 2.
+The [failure report](../results/m3-md-failure.json) records the tested revision
+and deadline capture, which is separate from the CPU-idle monitor's captures.
+
+The [release-CRT stack](../results/m3-stack-md-timeout.txt) again has one thread
+waiting in `StaticSpinMutex::LockSlow`, reached through
+`LargeMmapAllocator::GetBlockBegin`, `asan_mz_size`, and
+`__RuntimeFunctions<Ucrtbase>::FreeBase` during DLL shutdown.
+Changing the CRT changed the interceptor from `FreeDbg` to `FreeBase` but did
+not eliminate the allocator wait. **The `/MD` trial failed and is not adopted.**
+The other local runtime options also remain experimental because the five-suite
+gate has not passed.
+
+The current ordinary `/MDd` Debug validation passed all 12 CTest cases and all
+43 Python tests. Full outputs:
+[build](../results/m3-current-debug-build.txt),
+[CTest](../results/m3-current-debug-tests.txt),
+[pytest](../results/m3-current-python.txt).
+
+## Proposed compatibility-environment control
+
+The invoking process inherits `__COMPAT_LAYER=DetectorsAppHealth`, and the
+captured process loads `apphelp.dll`. Neither observation proves that Windows
+compatibility processing caused the ASan wait. The captured lock owner remains
+unknown; changing more allocator hooks would not directly test this hypothesis.
+
+Proposed next control, pending owner approval: omit `__COMPAT_LAYER` only from
+the local diagnostic child-process environment. Return to the default `/MDd`
+build and retain the two already-approved ASan options initially. Do not alter
+registry settings, system/user environment variables, installed software, or
+security tools. The behavioral tradeoff is that these test children no longer
+request the inherited compatibility layer; ASan instrumentation, allocation
+checks, fatal exits, and debug CRT checks remain enabled.
+
+Run the error probes and repeated model-free CLI check first, then use a fresh
+build for five complete suites with stop-on-first-failure. Record the inherited
+and effective compatibility values. Any failure still requires capture and
+investigation. This control has not been run and is not a claimed workaround.
