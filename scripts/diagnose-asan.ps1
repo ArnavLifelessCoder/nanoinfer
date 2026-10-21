@@ -20,6 +20,8 @@ $command = "--test-dir `"$build`" -j 1 --timeout 180 --verbose --no-tests=error"
 $test = Start-Process -FilePath (Get-Command ctest).Source -ArgumentList $command `
     -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru `
     -RedirectStandardOutput $stdout -RedirectStandardError $stderr
+# Touch the handle now: without it, ExitCode can read as null after exit.
+$null = $test.Handle
 $seen = @{}
 $captures = [System.Collections.Generic.List[object]]::new()
 while (-not $test.HasExited) {
