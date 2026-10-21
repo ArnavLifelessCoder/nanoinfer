@@ -25,7 +25,9 @@ def compare_array(actual, target, *, hidden):
     return difference, ratio, ratio <= 1
 
 
-def check_prompt(executable, model, golden, directory, prompt, new_tokens, *, timeout=60):
+def check_prompt(
+    executable, model, golden, directory, prompt, new_tokens, *, timeout=60, arguments=()
+):
     arrays_path = golden / prompt["file"]
     output = directory / arrays_path.stem
     output.mkdir(parents=True, exist_ok=True)
@@ -34,7 +36,8 @@ def check_prompt(executable, model, golden, directory, prompt, new_tokens, *, ti
     # Bounded like every other native call: a stalled tool fails with a capture
     # instead of hanging until the CTest limit.
     result = capture(
-        [str(executable), str(model), str(ids), str(output), str(new_tokens)], timeout=timeout
+        [str(executable), str(model), str(ids), str(output), str(new_tokens), *arguments],
+        timeout=timeout,
     )
     print(result.stdout, end="", flush=True)
     assert result.returncode == 0, (result.returncode, result.stderr)
