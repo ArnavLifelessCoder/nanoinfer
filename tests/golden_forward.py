@@ -2,11 +2,12 @@
 
 import argparse
 import json
-import subprocess
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import numpy as np
+
+from tests.native_process import capture
 
 
 def compare_array(actual, target, *, hidden):
@@ -24,15 +25,19 @@ def compare_array(actual, target, *, hidden):
     return difference, ratio, ratio <= 1
 
 
-def check_prompt(executable, model, golden, directory, prompt, new_tokens):
+def check_prompt(executable, model, golden, directory, prompt, new_tokens, *, timeout=60):
     arrays_path = golden / prompt["file"]
     output = directory / arrays_path.stem
     output.mkdir(parents=True, exist_ok=True)
     ids = output / "ids.txt"
     ids.write_text(" ".join(str(token) for token in prompt["ids"]), encoding="utf-8")
-    subprocess.run(
-        [str(executable), str(model), str(ids), str(output), str(new_tokens)], check=True
+    # Bounded like every other native call: a stalled tool fails with a capture
+    # instead of hanging until the CTest limit.
+    result = capture(
+        [str(executable), str(model), str(ids), str(output), str(new_tokens)], timeout=timeout
     )
+    print(result.stdout, end="", flush=True)
+    assert result.returncode == 0, (result.returncode, result.stderr)
     metadata = json.loads((output / "output.json").read_text(encoding="utf-8"))
     assert metadata["positions"] == len(prompt["ids"])
     differences = {}
@@ -78,6 +83,7 @@ def main() -> None:
     parser.add_argument("--report", type=Path)
     parser.add_argument("--new-tokens", type=int, default=32, choices=range(33))
     parser.add_argument("--jobs", type=int, default=1, choices=range(1, 4))
+    parser.add_argument("--timeout", type=float, default=60, help="seconds per native run")
     args = parser.parse_args()
     metadata = json.loads((args.golden / "manifest.json").read_text(encoding="utf-8"))
 
@@ -89,6 +95,7 @@ def main() -> None:
             args.directory.resolve(),
             prompt,
             args.new_tokens,
+            timeout=args.timeout,
         )
 
     # Independent correctness cases may run in separate processes. Each native

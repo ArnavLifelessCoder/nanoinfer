@@ -22,7 +22,7 @@ try {
     if ($Pretrained) {
         & python -m tests.golden_forward --executable "build/$Preset/gpt2ref.exe" `
             --model models/gpt2.bin --golden golden --directory "build/$Preset/pretrained" `
-            --jobs 3 --report "results/m2-$Preset-pretrained.json" 2>&1 |
+            --jobs 3 --timeout 7200 --report "results/m2-$Preset-pretrained.json" 2>&1 |
             Tee-Object "results/m2-$Preset-pretrained.txt"
         if ($LASTEXITCODE -ne 0) { throw 'Pretrained golden comparison failed' }
         & python scripts/hidden_error_stats.py --golden golden `

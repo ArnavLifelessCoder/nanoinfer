@@ -31,7 +31,7 @@ try {
     if ($Pretrained) {
         & python -m tests.golden_cached --executable "build/$Preset/gpt2cachecheck.exe" `
             --model models/gpt2.bin --golden golden --directory "build/$Preset/cached-pretrained" `
-            --jobs 3 --report "results/m3-$Preset-pretrained.json" 2>&1 |
+            --jobs 3 --timeout 7200 --report "results/m3-$Preset-pretrained.json" 2>&1 |
             Tee-Object "results/m3-$Preset-pretrained.txt"
         if ($LASTEXITCODE -ne 0) { throw 'Pretrained cached comparison failed' }
     }

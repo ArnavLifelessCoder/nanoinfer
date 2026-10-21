@@ -140,10 +140,12 @@ driver; tokenization remains in Python.
 
 For Linux, run `uv run python -m tests.golden_forward --executable
 build/debug/gpt2ref --model models/gpt2.bin --golden golden --directory
-build/debug/pretrained --report results/m2-debug-pretrained.json`, then repeat
-with the ASan executable. The optional `--jobs 3` runs independent correctness
-cases in separate processes; each runtime uses one thread. These are not
-throughput measurements.
+build/debug/pretrained --timeout 7200 --report results/m2-debug-pretrained.json`,
+then repeat with the ASan executable. The optional `--jobs 3` runs independent
+correctness cases in separate processes; each runtime uses one thread. These are
+not throughput measurements. Every native run in the correctness harness is
+bounded by `--timeout` (60 seconds by default, enough for the tiny model); the
+pretrained scalar reference needs the longer limit.
 
 Debug uses unoptimized code with symbols. ASan uses MSVC AddressSanitizer on
 Windows and address plus undefined-behavior sanitizers on Linux. The local

@@ -16,6 +16,7 @@ def main():
     parser.add_argument("--directory", type=Path, required=True)
     parser.add_argument("--report", type=Path, required=True)
     parser.add_argument("--jobs", type=int, default=1, choices=range(1, 4))
+    parser.add_argument("--timeout", type=float, default=60, help="seconds per native run")
     args = parser.parse_args()
     manifest = json.loads((args.golden / "manifest.json").read_text(encoding="utf-8"))
 
@@ -27,6 +28,7 @@ def main():
             args.directory.resolve(),
             prompt,
             32,
+            timeout=args.timeout,
         )
         path = args.directory / Path(prompt["file"]).stem / "cache-check.json"
         cache = json.loads(path.read_text(encoding="utf-8"))
