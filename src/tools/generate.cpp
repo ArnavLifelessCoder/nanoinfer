@@ -41,7 +41,9 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
   if (arguments.size() == 1 && arguments[0] == "--help") {
     std::cout << "gpt2rt --model MODEL --prompt-ids IDS [--max-new 128] [--temp 0]\n"
                  "       [--top-k 0] [--top-p 1] [--seed 42] [--gemm auto]\n"
+                 "       [--threads PHYSICAL_CORES]\n"
                  "stdout: JSON prompt_ids and generated_ids; temp=0 selects greedy.\n"
+                 "--threads: worker count for optimized kernels; 1 with --gemm reference.\n"
                  "--gemm: auto, reference, naive, reordered, blocked, packed or avx2.\n"
               << std::flush;
     return 0;
@@ -50,6 +52,7 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
     std::filesystem::path model_path, ids_path;
     std::size_t new_tokens = 128;
     std::uint64_t seed = 42;
+    std::optional<std::size_t> threads;
     SamplingOptions options;
     std::optional<kernels::GemmStep> gemm = kernels::best_step();
     std::set<std::string> seen;
@@ -72,6 +75,8 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
         options.top_k = number<std::size_t>(value.string());
       else if (name == "--top-p")
         options.top_p = number<double>(value.string());
+      else if (name == "--threads")
+        threads = number<std::size_t>(value.string());
       else if (name == "--gemm")
         gemm = gemm_option(value.string());
       else
@@ -88,7 +93,8 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
     std::string token;
     while (input >> token) ids.push_back(number<std::uint32_t>(token));
     if (!input.eof()) throw std::runtime_error("cannot read prompt IDs");
-    CachedTransformer transformer(model_path, gemm);
+    const auto workers = threads.value_or(gemm ? physical_core_cpus().size() : 1);
+    CachedTransformer transformer(model_path, gemm, workers);
     if (ids.size() > transformer.config().ctx ||
         new_tokens > transformer.config().ctx - ids.size()) {
       throw std::invalid_argument("prompt and continuation exceed model context");

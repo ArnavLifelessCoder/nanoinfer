@@ -43,12 +43,13 @@ void write_floats(const std::filesystem::path& path, std::span<const float> valu
 
 int reference_main(std::span<const std::filesystem::path> arguments) {
   try {
-    if (arguments.size() != 5) {
-      throw std::invalid_argument("gpt2opt MODEL IDS OUTPUT_DIRECTORY NEW_TOKENS KERNEL");
+    if (arguments.size() != 5 && arguments.size() != 6) {
+      throw std::invalid_argument("gpt2opt MODEL IDS OUTPUT_DIRECTORY NEW_TOKENS KERNEL [THREADS]");
     }
     enable_flush_to_zero();
     const auto count = number(arguments[3].string());
-    CachedTransformer transformer(arguments[0], step_named(arguments[4].string()));
+    const auto threads = arguments.size() == 6 ? number(arguments[5].string()) : 1U;
+    CachedTransformer transformer(arguments[0], step_named(arguments[4].string()), threads);
     std::ifstream input(arguments[1]);
     if (!input) throw std::runtime_error("cannot open prompt IDs");
     std::vector<std::uint32_t> tokens;

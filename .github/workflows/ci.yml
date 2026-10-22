@@ -46,9 +46,11 @@ jobs:
         run: git ls-files '*.cpp' '*.hpp' | xargs -r uv run clang-format --dry-run --Werror
 
   tsan:
-    # Enable in M5 and label every concurrency test; M1 has no runtime workers.
-    if: ${{ false }}
+    # Every test that starts pool threads carries the "concurrency" label;
+    # CTest adds the fixtures they require. Any reported race fails the job.
     runs-on: ubuntu-latest
+    env:
+      TSAN_OPTIONS: halt_on_error=1 second_deadlock_stack=1
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

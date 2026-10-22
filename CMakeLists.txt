@@ -82,7 +82,10 @@ set(NANOINFER_SOURCES ${MAPPING_SOURCE} src/model/loader.cpp src/ops/ref/ops.cpp
   src/runtime/reference.cpp)
 add_library(nanoinfer STATIC ${NANOINFER_SOURCES})
 target_sources(nanoinfer PRIVATE src/runtime/kv_cache.cpp src/ops/ref/cached_attention.cpp
-  src/runtime/sampling.cpp src/runtime/cached.cpp src/runtime/fp_env.cpp src/kernels/gemm.cpp)
+  src/runtime/sampling.cpp src/runtime/cached.cpp src/runtime/fp_env.cpp src/kernels/gemm.cpp
+  src/kernels/gemv.cpp src/kernels/attention.cpp src/runtime/thread_pool.cpp)
+find_package(Threads REQUIRED)
+target_link_libraries(nanoinfer PUBLIC Threads::Threads)
 target_include_directories(nanoinfer PUBLIC include PRIVATE src)
 target_link_libraries(nanoinfer PRIVATE project_options)
 
@@ -94,8 +97,8 @@ else()
   set(NANOINFER_AVX2_FLAGS -mavx2 -mfma)
 endif()
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(AMD64|amd64|x86_64)$")
-  target_sources(nanoinfer PRIVATE src/kernels/gemm_avx2.cpp)
-  set_source_files_properties(src/kernels/gemm_avx2.cpp PROPERTIES
+  target_sources(nanoinfer PRIVATE src/kernels/gemm_avx2.cpp src/kernels/gemv_avx2.cpp)
+  set_source_files_properties(src/kernels/gemm_avx2.cpp src/kernels/gemv_avx2.cpp PROPERTIES
     COMPILE_OPTIONS "${NANOINFER_AVX2_FLAGS}")
   target_compile_definitions(nanoinfer PRIVATE NANOINFER_HAVE_AVX2_KERNEL)
 endif()
@@ -104,7 +107,11 @@ if(NANOINFER_BENCHMARKS)
   add_executable(peak_bench bench/peak_bench.cpp bench/peak_avx2.cpp bench/bench_main.cpp)
   set_source_files_properties(bench/peak_avx2.cpp PROPERTIES COMPILE_OPTIONS
     "${NANOINFER_AVX2_FLAGS}")
-  foreach(target IN ITEMS gemm_bench peak_bench)
+  add_executable(gemv_bench bench/gemv_bench.cpp bench/bench_main.cpp)
+  add_executable(stream_bench bench/stream_bench.cpp bench/peak_avx2.cpp bench/bench_main.cpp)
+  add_executable(e2e_bench bench/e2e_bench.cpp)
+  target_link_libraries(e2e_bench PRIVATE nanoinfer project_options)
+  foreach(target IN ITEMS gemm_bench peak_bench gemv_bench stream_bench)
     target_link_libraries(${target} PRIVATE nanoinfer project_options benchmark::benchmark)
   endforeach()
 endif()
@@ -120,9 +127,11 @@ target_include_directories(gpt2rt PRIVATE src)
 target_link_libraries(gpt2rt PRIVATE nanoinfer project_options)
 if(BUILD_TESTING)
   add_executable(nanoinfer_tests tests/test_main.cpp tests/test_mapped_file.cpp tests/test_loader.cpp
-    tests/test_ref_ops.cpp tests/test_kv_cache.cpp tests/test_sampling.cpp tests/test_gemm.cpp)
+    tests/test_ref_ops.cpp tests/test_kv_cache.cpp tests/test_sampling.cpp tests/test_gemm.cpp
+    tests/test_gemv.cpp tests/test_thread_pool.cpp tests/test_attention.cpp)
   target_link_libraries(nanoinfer_tests PRIVATE nanoinfer project_options GTest::gtest)
   add_test(NAME unit COMMAND nanoinfer_tests)
+  set_tests_properties(unit PROPERTIES LABELS concurrency)
   if(NANOINFER_ASAN AND NOT MSVC)
     add_executable(ubsan_probe tests/ubsan_probe.cpp)
     target_link_libraries(ubsan_probe PRIVATE project_options)
@@ -181,6 +190,11 @@ if(BUILD_TESTING)
     --kernels naive reordered blocked packed avx2)
   set_tests_properties(golden_optimized PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     FIXTURES_REQUIRED "tiny_model;tiny_oracle")
+  add_test(NAME thread_invariance COMMAND "${Python3_EXECUTABLE}" -m tests.thread_invariance
+    --executable "$<TARGET_FILE:gpt2opt>" --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin"
+    --directory "${CMAKE_BINARY_DIR}/thread-invariance")
+  set_tests_properties(thread_invariance PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED tiny_model LABELS concurrency)
   add_test(NAME oracle_tiny COMMAND "${Python3_EXECUTABLE}" -m python.oracle --tiny
     --golden "${CMAKE_BINARY_DIR}/fixtures/golden")
   set_tests_properties(oracle_tiny PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
