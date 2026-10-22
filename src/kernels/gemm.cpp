@@ -10,6 +10,7 @@
 
 #include "kernels/micro_kernel.hpp"
 #include "nanoinfer/ref_ops.hpp"
+#include "nanoinfer/thread_pool.hpp"
 
 #if defined(_MSC_VER) && !defined(__clang__) && defined(_M_X64)
 #include <intrin.h>
@@ -136,18 +137,28 @@ void pack_a(const float* a, std::size_t lda, std::size_t row0, std::size_t mc, s
   }
 }
 
-// NR-column panels of a kc x nc block of B, row by row, zero padded.
-void pack_b(const float* b, bool transpose_b, std::size_t inner, std::size_t columns,
-            std::size_t row0, std::size_t kc, std::size_t col0, std::size_t nc,
-            float* destination) {
-  for (std::size_t jr = 0; jr < nc; jr += kNr) {
-    const auto valid = std::min(kNr, nc - jr);
-    for (std::size_t p = 0; p < kc; ++p) {
-      for (std::size_t j = 0; j < kNr; ++j) {
-        *destination++ =
-            j < valid ? b_at(b, row0 + p, col0 + jr + j, inner, columns, transpose_b) : 0.0F;
-      }
+// One NR-column panel (number `panel`) of a kc x nc block of B, row by row,
+// zero padded. Panels are independent, so they can be packed in parallel.
+void pack_b_panel(const float* b, bool transpose_b, std::size_t inner, std::size_t columns,
+                  std::size_t row0, std::size_t kc, std::size_t col0, std::size_t nc,
+                  std::size_t panel, float* packed) {
+  const auto jr = panel * kNr;
+  const auto valid = std::min(kNr, nc - jr);
+  float* destination = packed + jr * kc;
+  for (std::size_t p = 0; p < kc; ++p) {
+    for (std::size_t j = 0; j < kNr; ++j) {
+      *destination++ =
+          j < valid ? b_at(b, row0 + p, col0 + jr + j, inner, columns, transpose_b) : 0.0F;
     }
+  }
+}
+
+template <typename Fn>
+void run(ThreadPool* pool, std::size_t count, const Fn& fn) {
+  if (pool == nullptr) {
+    if (count != 0) fn(std::size_t{0}, count);
+  } else {
+    pool->parallel_for(count, fn);
   }
 }
 
@@ -168,26 +179,51 @@ void micro_kernel_scalar(std::size_t depth, const float* a, const float* b, floa
   }
 }
 
+// NR panels per work unit: one unit is an MC-row block of A times 8 panels
+// (128 columns) of B. A shape constant, never derived from the thread count.
+constexpr std::size_t kPanelsPerUnit = 8;
+
 void gemm_packed(detail::MicroKernel kernel, const float* a, const float* b, float* c,
-                 std::size_t m, std::size_t n, std::size_t k, bool transpose_b) {
-  thread_local Workspace a_space, b_space;
+                 std::size_t m, std::size_t n, std::size_t k, bool transpose_b, ThreadPool* pool) {
+  // The caller's packed B block is shared read-only by every thread.
+  thread_local Workspace b_space;
   float* packed_b = b_space.get(kKc * ((std::min(n, kNc) + kNr - 1) / kNr * kNr));
-  float* packed_a = a_space.get(kKc * ((std::min(m, kMc) + kMr - 1) / kMr * kMr));
+  const auto row_blocks = (m + kMc - 1) / kMc;
   for (std::size_t jc = 0; jc < n; jc += kNc) {
     const auto nc = std::min(kNc, n - jc);
+    const auto panels = (nc + kNr - 1) / kNr;
+    const auto groups = (panels + kPanelsPerUnit - 1) / kPanelsPerUnit;
     for (std::size_t pc = 0; pc < k; pc += kKc) {
       const auto kc = std::min(kKc, k - pc);
-      pack_b(b, transpose_b, k, n, pc, kc, jc, nc, packed_b);
-      for (std::size_t ic = 0; ic < m; ic += kMc) {
-        const auto mc = std::min(kMc, m - ic);
-        pack_a(a, k, ic, mc, pc, kc, packed_a);
-        for (std::size_t jr = 0; jr < nc; jr += kNr) {
-          for (std::size_t ir = 0; ir < mc; ir += kMr) {
-            kernel(kc, packed_a + ir * kc, packed_b + jr * kc, c + (ic + ir) * n + jc + jr, n,
-                   std::min(kMr, mc - ir), std::min(kNr, nc - jr), pc != 0);
+      run(pool, panels, [&](std::size_t begin, std::size_t end) {
+        for (auto panel = begin; panel < end; ++panel) {
+          pack_b_panel(b, transpose_b, k, n, pc, kc, jc, nc, panel, packed_b);
+        }
+      });
+      // Units are ordered by row block, so a thread's contiguous range of
+      // units repacks its A block only when the row block changes.
+      run(pool, row_blocks * groups, [&](std::size_t begin, std::size_t end) {
+        thread_local Workspace a_space;
+        float* packed_a = a_space.get(kKc * ((std::min(m, kMc) + kMr - 1) / kMr * kMr));
+        std::size_t packed_block = row_blocks;
+        for (auto unit = begin; unit < end; ++unit) {
+          const auto block = unit / groups, group = unit % groups;
+          const auto ic = block * kMc;
+          const auto mc = std::min(kMc, m - ic);
+          if (block != packed_block) {
+            pack_a(a, k, ic, mc, pc, kc, packed_a);
+            packed_block = block;
+          }
+          const auto panel_end = std::min(panels, (group + 1) * kPanelsPerUnit);
+          for (auto panel = group * kPanelsPerUnit; panel < panel_end; ++panel) {
+            const auto jr = panel * kNr;
+            for (std::size_t ir = 0; ir < mc; ir += kMr) {
+              kernel(kc, packed_a + ir * kc, packed_b + jr * kc, c + (ic + ir) * n + jc + jr, n,
+                     std::min(kMr, mc - ir), std::min(kNr, nc - jr), pc != 0);
+            }
           }
         }
-      }
+      });
     }
   }
 }
@@ -260,7 +296,8 @@ GemmStep best_step() noexcept {
 }
 
 void gemm(GemmStep step, std::span<const float> a, std::span<const float> b, std::size_t rows,
-          std::size_t columns, std::size_t inner, std::span<float> output, bool transpose_b) {
+          std::size_t columns, std::size_t inner, std::span<float> output, bool transpose_b,
+          ThreadPool* pool) {
   validate(a, b, rows, columns, inner, output);
   if (rows == 0) return;
   const float* left = a.data();
@@ -275,14 +312,14 @@ void gemm(GemmStep step, std::span<const float> a, std::span<const float> b, std
       return gemm_blocked(left, right, destination, rows, columns, inner, transpose_b);
     case GemmStep::packed:
       return gemm_packed(micro_kernel_scalar, left, right, destination, rows, columns, inner,
-                         transpose_b);
+                         transpose_b, pool);
     case GemmStep::avx2:
 #if defined(NANOINFER_HAVE_AVX2_KERNEL)
       if (!available(GemmStep::avx2)) {
         throw std::runtime_error("the AVX2 GEMM needs a CPU with AVX2 and FMA");
       }
       return gemm_packed(detail::micro_kernel_avx2, left, right, destination, rows, columns, inner,
-                         transpose_b);
+                         transpose_b, pool);
 #else
       throw std::runtime_error("this build has no AVX2 GEMM");
 #endif

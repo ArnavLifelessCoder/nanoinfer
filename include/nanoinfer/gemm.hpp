@@ -4,6 +4,10 @@
 #include <span>
 #include <string_view>
 
+namespace nanoinfer {
+class ThreadPool;
+}
+
 namespace nanoinfer::kernels {
 
 // The GEMM optimization steps, kept side by side so each one can be tested
@@ -37,8 +41,13 @@ struct CpuFeatures {
 // C[M,N] = A[M,K] * B, where B is [K,N] row-major, or [N,K] row-major when
 // transpose_b is set (the tied output embedding). C is overwritten. All
 // buffers are contiguous and must not overlap.
+//
+// Step 6: with a pool, the packed and avx2 steps split B packing and the
+// MC x (8 NR) output tiles across its threads. Every tile is still computed by
+// one thread in a fixed order, so the result is bit-identical for any thread
+// count. Steps 1-3 ignore the pool.
 void gemm(GemmStep step, std::span<const float> a, std::span<const float> b, std::size_t rows,
-          std::size_t columns, std::size_t inner, std::span<float> output,
-          bool transpose_b = false);
+          std::size_t columns, std::size_t inner, std::span<float> output, bool transpose_b = false,
+          ThreadPool* pool = nullptr);
 
 }  // namespace nanoinfer::kernels
