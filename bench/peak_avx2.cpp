@@ -30,6 +30,29 @@ float fma_throughput(std::size_t iterations) {
   return _mm256_cvtss_f32(sum);
 }
 
+// Sums count floats with eight vector accumulators (two cache lines per
+// iteration), so the loop is limited by memory, not by add latency. count
+// must be a multiple of 64.
+float sum_avx2(const float* values, std::size_t count) {
+  __m256 s0 = _mm256_setzero_ps(), s1 = _mm256_setzero_ps();
+  __m256 s2 = _mm256_setzero_ps(), s3 = _mm256_setzero_ps();
+  __m256 s4 = _mm256_setzero_ps(), s5 = _mm256_setzero_ps();
+  __m256 s6 = _mm256_setzero_ps(), s7 = _mm256_setzero_ps();
+  for (std::size_t i = 0; i < count; i += 64) {
+    s0 = _mm256_add_ps(s0, _mm256_loadu_ps(values + i));
+    s1 = _mm256_add_ps(s1, _mm256_loadu_ps(values + i + 8));
+    s2 = _mm256_add_ps(s2, _mm256_loadu_ps(values + i + 16));
+    s3 = _mm256_add_ps(s3, _mm256_loadu_ps(values + i + 24));
+    s4 = _mm256_add_ps(s4, _mm256_loadu_ps(values + i + 32));
+    s5 = _mm256_add_ps(s5, _mm256_loadu_ps(values + i + 40));
+    s6 = _mm256_add_ps(s6, _mm256_loadu_ps(values + i + 48));
+    s7 = _mm256_add_ps(s7, _mm256_loadu_ps(values + i + 56));
+  }
+  const __m256 low = _mm256_add_ps(_mm256_add_ps(s0, s1), _mm256_add_ps(s2, s3));
+  const __m256 high = _mm256_add_ps(_mm256_add_ps(s4, s5), _mm256_add_ps(s6, s7));
+  return _mm256_cvtss_f32(_mm256_add_ps(low, high));
+}
+
 // One dependent FMA chain: each step waits for the previous result, so the
 // loop runs at one FMA per FMA-latency cycles. Timing it gives the core clock.
 float fma_chain(std::size_t iterations) {
