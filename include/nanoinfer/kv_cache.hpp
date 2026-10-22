@@ -29,5 +29,11 @@ namespace ops::ref {
 void cached_attention(std::span<const float> fused_qkv, std::span<const float> keys,
                       std::span<const float> values, std::size_t first_position, std::size_t width,
                       std::size_t heads, std::span<float> output);
+// The same computation restricted to heads [head_begin, head_end). Heads write
+// disjoint output columns, so ranges may run concurrently.
+void cached_attention(std::span<const float> fused_qkv, std::span<const float> keys,
+                      std::span<const float> values, std::size_t first_position, std::size_t width,
+                      std::size_t heads, std::span<float> output, std::size_t head_begin,
+                      std::size_t head_end);
 }  // namespace ops::ref
 }  // namespace nanoinfer

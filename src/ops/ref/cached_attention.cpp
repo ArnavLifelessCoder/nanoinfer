@@ -9,6 +9,16 @@ namespace nanoinfer::ops::ref {
 void cached_attention(std::span<const float> fused_qkv, std::span<const float> keys,
                       std::span<const float> values, std::size_t first_position, std::size_t width,
                       std::size_t heads, std::span<float> output) {
+  cached_attention(fused_qkv, keys, values, first_position, width, heads, output, 0, heads);
+}
+
+void cached_attention(std::span<const float> fused_qkv, std::span<const float> keys,
+                      std::span<const float> values, std::size_t first_position, std::size_t width,
+                      std::size_t heads, std::span<float> output, std::size_t head_begin,
+                      std::size_t head_end) {
+  if (head_begin > head_end || head_end > heads) {
+    throw std::invalid_argument("cached attention head range outside heads");
+  }
   const auto stride = elements(3, width);
   if (width == 0 || heads == 0 || width % heads != 0 || fused_qkv.empty() ||
       fused_qkv.size() % stride != 0 || keys.size() != values.size() || keys.size() % width != 0) {
@@ -26,7 +36,7 @@ void cached_attention(std::span<const float> fused_qkv, std::span<const float> k
   const auto* qkv = fused_qkv.data();
   const auto* key_data = keys.data();
   const auto* value_data = values.data();
-  for (std::size_t head = 0; head < heads; ++head) {
+  for (std::size_t head = head_begin; head < head_end; ++head) {
     for (std::size_t row = 0; row < rows; ++row) {
       const auto last_key = first_position + row;
       for (std::size_t key = 0; key <= last_key; ++key) {
