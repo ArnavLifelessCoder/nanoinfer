@@ -11,6 +11,8 @@ dependencies = [
 
 [dependency-groups]
 dev = ["pytest==8.4.2", "ruff==0.14.1", "clang-format==19.1.7"]
+# Perplexity data download and result plots; not needed by the runtime or CI.
+bench = ["pyarrow==26.0.0", "matplotlib==3.11.2"]
 
 [tool.ruff]
 line-length = 100

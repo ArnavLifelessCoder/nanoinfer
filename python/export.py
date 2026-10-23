@@ -15,7 +15,25 @@ import torch  # noqa: E402
 import transformers  # noqa: E402
 from transformers import GPT2Config, GPT2LMHeadModel  # noqa: E402
 
-from python.model_format import write_model  # noqa: E402
+from python.model_format import Quantized, write_model  # noqa: E402
+from python.quantize import GROUP, quantize  # noqa: E402
+
+# int8 weight-only quantization: every Conv1D matrix is [in, out] and is
+# grouped along axis 0; the tied embedding is [vocab, d_model] and is used as
+# [N, K] for the logits, so it is grouped along axis 1. Position embeddings,
+# LayerNorm parameters and biases stay float32.
+QUANTIZED_SUFFIXES = (
+    "attn.c_attn.weight",
+    "attn.c_proj.weight",
+    "mlp.c_fc.weight",
+    "mlp.c_proj.weight",
+)
+
+
+def quantized_axis(name):
+    if name == "wte.weight":
+        return 1
+    return 0 if name.endswith(QUANTIZED_SUFFIXES) else None
 
 
 def make_tiny(seed: int = 42) -> GPT2LMHeadModel:
@@ -36,7 +54,7 @@ def make_tiny(seed: int = 42) -> GPT2LMHeadModel:
     return GPT2LMHeadModel(config).float().cpu().eval()
 
 
-def export_weights(model: GPT2LMHeadModel, path: Path) -> dict:
+def export_weights(model: GPT2LMHeadModel, path: Path, quant=None, group=GROUP) -> dict:
     config = model.config
     if (
         config.activation_function != "gelu_new"
@@ -54,6 +72,12 @@ def export_weights(model: GPT2LMHeadModel, path: Path) -> dict:
     for name, parameter in model.transformer.named_parameters():
         # Conv1D already stores [in, out]. Keep this layout for x @ weight.
         tensors[name] = parameter.detach().cpu().float().numpy()
+        axis = quantized_axis(name)
+        if quant == "int8" and axis is not None:
+            q, scales = quantize(tensors[name], axis, group)
+            tensors[name] = Quantized(q, scales, axis, group)
+    if quant not in (None, "int8"):
+        raise ValueError("the only supported quantization is int8")
     manifest = write_model(
         path,
         dict(
@@ -70,6 +94,9 @@ def export_weights(model: GPT2LMHeadModel, path: Path) -> dict:
         "transformers": transformers.__version__,
         "revision": getattr(config, "_commit_hash", None),
         "weight_layout": "Conv1D [in, out]; embeddings [vocab/ctx, d_model]",
+        "quantization": None
+        if quant is None
+        else f"{quant} symmetric, group {group} along the input dimension",
     }
     return manifest
 
@@ -137,6 +164,8 @@ def main() -> None:
     parser.add_argument("--golden", type=Path, default=ROOT / "golden")
     parser.add_argument("--tiny", action="store_true", help="seeded test model, no download")
     parser.add_argument("--revision", default="main", help="Hugging Face model revision")
+    parser.add_argument("--quant", choices=["int8"], help="write int8 weights; no golden")
+    parser.add_argument("--group", type=int, default=GROUP, help="int8 group size")
     args = parser.parse_args()
     torch.set_num_threads(1)
     torch.manual_seed(42)
@@ -163,11 +192,12 @@ def main() -> None:
         )
         if actual != expected:
             raise ValueError(f"expected GPT-2 small config {expected}; got {actual}")
-    manifest = export_weights(model, args.output)
+    manifest = export_weights(model, args.output, args.quant, args.group)
     manifest_path = args.output.with_suffix(".json")
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2), flush=True)
-    write_golden(model, args.golden, args.tiny)
+    if args.quant is None:  # The PyTorch golden belongs to the float32 model.
+        write_golden(model, args.golden, args.tiny)
 
 
 if __name__ == "__main__":
