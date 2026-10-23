@@ -1,0 +1,275 @@
+{
+  "purpose": "M5 memory bandwidth (STREAM triad) and decode GEMV bandwidth",
+  "machine": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.13.15",
+    "machine": "AMD64",
+    "system": {
+      "cpu": "AMD Ryzen 9 8940HX with Radeon Graphics",
+      "physical_cores": 16,
+      "logical_processors": 32,
+      "reported_base_mhz": 2401,
+      "l2_kib": 16384,
+      "l3_kib": 65536,
+      "ram_bytes": 16162496512,
+      "memory_modules": [
+        {
+          "capacity_bytes": 17179869184,
+          "rated_mt_s": 5600,
+          "configured_mt_s": 5200,
+          "part": "M425R2GA3EB0-CWMOL"
+        }
+      ],
+      "os": "Microsoft Windows 11 Home",
+      "os_version": "10.0.26300",
+      "kernel_build": "26300",
+      "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+    },
+    "compiler": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_CXX_COMPILER": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+      "CMAKE_CXX_FLAGS_RELEASE": "/O2 /Ob2 /DNDEBUG",
+      "command src/kernels/gemm.cpp": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe\"  /nologo /TP -DNANOINFER_HAVE_AVX2_KERNEL -I\"<project>\\include\" -I\"<project>\\src\" /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /W4 /WX /permissive- /Zc:__cplusplus /utf-8 /O2 /arch:AVX2 /FoCMakeFiles\\nanoinfer.dir\\src\\kernels\\gemm.cpp.obj /FdCMakeFiles\\nanoinfer.dir\\nanoinfer.pdb /FS -c \"<project>\\src\\kernels\\gemm.cpp\"",
+      "command src/kernels/gemm_avx2.cpp": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe\"  /nologo /TP -DNANOINFER_HAVE_AVX2_KERNEL -I\"<project>\\include\" -I\"<project>\\src\" /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /W4 /WX /permissive- /Zc:__cplusplus /utf-8 /O2 /arch:AVX2 /arch:AVX2 /FoCMakeFiles\\nanoinfer.dir\\src\\kernels\\gemm_avx2.cpp.obj /FdCMakeFiles\\nanoinfer.dir\\nanoinfer.pdb /FS -c \"<project>\\src\\kernels\\gemm_avx2.cpp\"",
+      "version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64"
+    }
+  },
+  "power": {
+    "on_battery": false,
+    "battery_percent": 26,
+    "background_cpu_percent": 3.5381421447477135,
+    "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+  },
+  "context": {
+    "date": "2026-10-23T18:26:07+05:30",
+    "host_name": "<host>",
+    "executable": "<project>\\build\\release\\gemv_bench.exe",
+    "num_cpus": 32,
+    "mhz_per_cpu": 2395,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 1048576,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 33554432,
+        "num_sharing": 16
+      }
+    ],
+    "load_avg": [],
+    "library_version": "v1.9.1",
+    "library_build_type": "release",
+    "json_schema_version": 1,
+    "flush_to_zero": "on",
+    "pinned_core": "2"
+  },
+  "triad_bytes_counted": "3 x 4 bytes per element (STREAM convention; write-allocate not counted)",
+  "triad_gb_per_second": {
+    "1": {
+      "median": 14.984580358769623,
+      "minimum": 14.298334866848085,
+      "maximum": 15.195104317848411,
+      "p99": 15.195104317848411,
+      "samples": 5
+    },
+    "2": {
+      "median": 16.28243468570309,
+      "minimum": 16.154652594044734,
+      "maximum": 16.818897141870227,
+      "p99": 16.818897141870227,
+      "samples": 5
+    },
+    "4": {
+      "median": 16.542584547469634,
+      "minimum": 16.27070202439727,
+      "maximum": 16.62622170175339,
+      "p99": 16.62622170175339,
+      "samples": 5
+    },
+    "8": {
+      "median": 15.969847776773111,
+      "minimum": 15.739939418316485,
+      "maximum": 16.272860291946998,
+      "p99": 16.272860291946998,
+      "samples": 5
+    },
+    "16": {
+      "median": 15.78520823031012,
+      "minimum": 15.20619542853087,
+      "maximum": 15.811894934064082,
+      "p99": 15.811894934064082,
+      "samples": 5
+    }
+  },
+  "read_bytes_counted": "4 bytes per element read once (AVX2 sum, eight accumulators)",
+  "read_gb_per_second": {
+    "1": {
+      "median": 27.204729187047683,
+      "minimum": 26.342669838918287,
+      "maximum": 28.478476636085485,
+      "p99": 28.478476636085485,
+      "samples": 5
+    },
+    "2": {
+      "median": 29.081971557789547,
+      "minimum": 28.549220666989395,
+      "maximum": 29.82234024543328,
+      "p99": 29.82234024543328,
+      "samples": 5
+    },
+    "4": {
+      "median": 29.6087277569653,
+      "minimum": 28.731290249833528,
+      "maximum": 29.86088529061838,
+      "p99": 29.86088529061838,
+      "samples": 5
+    },
+    "8": {
+      "median": 29.300777900900563,
+      "minimum": 27.52485657852289,
+      "maximum": 31.377762236801686,
+      "p99": 31.377762236801686,
+      "samples": 5
+    },
+    "16": {
+      "median": 28.613609031068975,
+      "minimum": 19.31162699653094,
+      "maximum": 30.8285231741553,
+      "p99": 30.8285231741553,
+      "samples": 5
+    }
+  },
+  "measured_bandwidth_definition": "best median of the read-only stream over thread counts",
+  "measured_bandwidth_gb_per_second": 29.6087277569653,
+  "gemv": [
+    {
+      "shape": "768->3072",
+      "layout": "int8",
+      "threads": 1,
+      "weight_bytes": 2654208,
+      "gb_per_second": {
+        "median": 5.41152815947533,
+        "minimum": 5.140952913775147,
+        "maximum": 5.754796371915184,
+        "p99": 5.754796371915184,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 18.27680069165517
+    },
+    {
+      "shape": "768->50257",
+      "layout": "int8 transposed",
+      "threads": 1,
+      "weight_bytes": 43422048,
+      "gb_per_second": {
+        "median": 8.722844036798463,
+        "minimum": 7.684908945312241,
+        "maximum": 10.567623516357862,
+        "p99": 10.567623516357862,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 29.460381102482387
+    },
+    {
+      "shape": "768->3072",
+      "layout": "int8",
+      "threads": 16,
+      "weight_bytes": 2654208,
+      "gb_per_second": {
+        "median": 12.367300207599465,
+        "minimum": 11.863299182525203,
+        "maximum": 16.434330526015753,
+        "p99": 16.434330526015753,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 41.76910372209465
+    },
+    {
+      "shape": "768->50257",
+      "layout": "int8 transposed",
+      "threads": 16,
+      "weight_bytes": 43422048,
+      "gb_per_second": {
+        "median": 109.24380840834839,
+        "minimum": 82.17336446162314,
+        "maximum": 117.99549968851228,
+        "p99": 117.99549968851228,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 368.95813053855153
+    },
+    {
+      "shape": "768->3072",
+      "layout": "f32",
+      "threads": 1,
+      "weight_bytes": 9437184,
+      "gb_per_second": {
+        "median": 17.627807304499555,
+        "minimum": 16.663659907695624,
+        "maximum": 19.27617431027973,
+        "p99": 19.27617431027973,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 59.535848514641785
+    },
+    {
+      "shape": "768->50257",
+      "layout": "f32 transposed",
+      "threads": 1,
+      "weight_bytes": 154389504,
+      "gb_per_second": {
+        "median": 26.858354878642178,
+        "minimum": 25.91263695069369,
+        "maximum": 28.226819271645812,
+        "p99": 28.226819271645812,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 90.71093867693753
+    },
+    {
+      "shape": "768->3072",
+      "layout": "f32",
+      "threads": 16,
+      "weight_bytes": 9437184,
+      "gb_per_second": {
+        "median": 47.19072484492414,
+        "minimum": 18.49975634025832,
+        "maximum": 55.97971971681238,
+        "p99": 55.97971971681238,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 159.381129889388
+    },
+    {
+      "shape": "768->50257",
+      "layout": "f32 transposed",
+      "threads": 16,
+      "weight_bytes": 154389504,
+      "gb_per_second": {
+        "median": 41.3818903765677,
+        "minimum": 39.530355814899885,
+        "maximum": 45.60437910654957,
+        "p99": 45.60437910654957,
+        "samples": 7
+      },
+      "percent_of_measured_bandwidth": 139.76247380920591
+    }
+  ],
+  "note": "768->3072 weights are 9.4 MB and fit in L3, so that row measures cache bandwidth; 768->50257 (154 MB) measures DRAM."
+}

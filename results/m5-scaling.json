@@ -1,0 +1,199 @@
+{
+  "purpose": "M5 thread scaling: prefill 128 tokens; decode 128 tokens after a 32-token prompt",
+  "machine": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.13.15",
+    "machine": "AMD64",
+    "system": {
+      "cpu": "AMD Ryzen 9 8940HX with Radeon Graphics",
+      "physical_cores": 16,
+      "logical_processors": 32,
+      "reported_base_mhz": 2401,
+      "l2_kib": 16384,
+      "l3_kib": 65536,
+      "ram_bytes": 16162496512,
+      "memory_modules": [
+        {
+          "capacity_bytes": 17179869184,
+          "rated_mt_s": 5600,
+          "configured_mt_s": 5200,
+          "part": "M425R2GA3EB0-CWMOL"
+        }
+      ],
+      "os": "Microsoft Windows 11 Home",
+      "os_version": "10.0.26300",
+      "kernel_build": "26300",
+      "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+    },
+    "compiler": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_CXX_COMPILER": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+      "CMAKE_CXX_FLAGS_RELEASE": "/O2 /Ob2 /DNDEBUG",
+      "command src/kernels/gemm.cpp": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe\"  /nologo /TP -DNANOINFER_HAVE_AVX2_KERNEL -I\"<project>\\include\" -I\"<project>\\src\" /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /W4 /WX /permissive- /Zc:__cplusplus /utf-8 /O2 /arch:AVX2 /FoCMakeFiles\\nanoinfer.dir\\src\\kernels\\gemm.cpp.obj /FdCMakeFiles\\nanoinfer.dir\\nanoinfer.pdb /FS -c \"<project>\\src\\kernels\\gemm.cpp\"",
+      "command src/kernels/gemm_avx2.cpp": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe\"  /nologo /TP -DNANOINFER_HAVE_AVX2_KERNEL -I\"<project>\\include\" -I\"<project>\\src\" /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /W4 /WX /permissive- /Zc:__cplusplus /utf-8 /O2 /arch:AVX2 /arch:AVX2 /FoCMakeFiles\\nanoinfer.dir\\src\\kernels\\gemm_avx2.cpp.obj /FdCMakeFiles\\nanoinfer.dir\\nanoinfer.pdb /FS -c \"<project>\\src\\kernels\\gemm_avx2.cpp\"",
+      "version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64"
+    }
+  },
+  "power": {
+    "on_battery": false,
+    "battery_percent": 26,
+    "background_cpu_percent": 3.5381421447477135,
+    "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+  },
+  "kernel": "avx2",
+  "repetitions": 5,
+  "prompt": "bench.common.PROMPT_TEXT tokens, identical for every run",
+  "pinning": "participant i pinned to physical core i; one thread per physical core",
+  "rows": [
+    {
+      "threads": 1,
+      "prefill": {
+        "128": {
+          "tokens_per_second": {
+            "median": 127.10013107201017,
+            "minimum": 126.0909825245779,
+            "maximum": 129.43413016219714,
+            "p99": 129.43413016219714,
+            "samples": 5
+          }
+        }
+      },
+      "decode": {
+        "tokens_per_second": {
+          "median": 27.80169399196705,
+          "minimum": 27.286634347780048,
+          "maximum": 28.37104665534396,
+          "p99": 28.37104665534396,
+          "samples": 5
+        },
+        "ms_per_token": {
+          "median": 35.44265,
+          "minimum": 31.997999999999998,
+          "maximum": 51.2652,
+          "p99": 45.8639,
+          "samples": 640
+        }
+      }
+    },
+    {
+      "threads": 2,
+      "prefill": {
+        "128": {
+          "tokens_per_second": {
+            "median": 228.6939431838485,
+            "minimum": 227.54180191775075,
+            "maximum": 230.17608470479917,
+            "p99": 230.17608470479917,
+            "samples": 5
+          }
+        }
+      },
+      "decode": {
+        "tokens_per_second": {
+          "median": 34.03699773789581,
+          "minimum": 33.38096640766427,
+          "maximum": 35.51192619489794,
+          "p99": 35.51192619489794,
+          "samples": 5
+        },
+        "ms_per_token": {
+          "median": 28.626600000000003,
+          "minimum": 24.1539,
+          "maximum": 45.5413,
+          "p99": 39.0087,
+          "samples": 640
+        }
+      }
+    },
+    {
+      "threads": 4,
+      "prefill": {
+        "128": {
+          "tokens_per_second": {
+            "median": 366.3454465836856,
+            "minimum": 322.20711876353016,
+            "maximum": 384.85244817270257,
+            "p99": 384.85244817270257,
+            "samples": 5
+          }
+        }
+      },
+      "decode": {
+        "tokens_per_second": {
+          "median": 40.302203554465436,
+          "minimum": 37.345972299617046,
+          "maximum": 42.88060515254021,
+          "p99": 42.88060515254021,
+          "samples": 5
+        },
+        "ms_per_token": {
+          "median": 23.876350000000002,
+          "minimum": 19.969,
+          "maximum": 82.0372,
+          "p99": 45.8125,
+          "samples": 640
+        }
+      }
+    },
+    {
+      "threads": 8,
+      "prefill": {
+        "128": {
+          "tokens_per_second": {
+            "median": 519.015006832346,
+            "minimum": 464.97097563988,
+            "maximum": 618.5756329526838,
+            "p99": 618.5756329526838,
+            "samples": 5
+          }
+        }
+      },
+      "decode": {
+        "tokens_per_second": {
+          "median": 39.206588520176105,
+          "minimum": 38.878132605534695,
+          "maximum": 40.135317477102724,
+          "p99": 40.135317477102724,
+          "samples": 5
+        },
+        "ms_per_token": {
+          "median": 25.12885,
+          "minimum": 20.6423,
+          "maximum": 46.8446,
+          "p99": 35.9368,
+          "samples": 640
+        }
+      }
+    },
+    {
+      "threads": 16,
+      "prefill": {
+        "128": {
+          "tokens_per_second": {
+            "median": 641.2215270089521,
+            "minimum": 593.2160186863047,
+            "maximum": 649.1662271270337,
+            "p99": 649.1662271270337,
+            "samples": 5
+          }
+        }
+      },
+      "decode": {
+        "tokens_per_second": {
+          "median": 34.49221238601334,
+          "minimum": 30.31975569667349,
+          "maximum": 35.102224946301135,
+          "p99": 35.102224946301135,
+          "samples": 5
+        },
+        "ms_per_token": {
+          "median": 28.85785,
+          "minimum": 22.9444,
+          "maximum": 125.71799999999999,
+          "p99": 49.541399999999996,
+          "samples": 640
+        }
+      }
+    }
+  ]
+}
