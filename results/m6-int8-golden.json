@@ -1,0 +1,418 @@
+{
+  "rule": "Check the int8 kernels against the int8 reference twin on the golden prompts.\n\nThe reference twin is the `naive` step, which multiplies the exactly\ndequantized float32 weights. The packed and avx2 int8 kernels dequantize in\ntheir inner loops and must agree with it within the approved bounds (logits\n1e-3; hidden atol 1e-4 + rtol 1e-6). Greedy agreement with the float32 PyTorch\ngolden is reported, not required: int8 may change tokens.\n\nM4's float64 rule, applied to int8: when a hidden tensor is outside the bound,\nit still passes if its error against the float64 oracle of the int8 weights\n(golden/oracle_int8_prompt_N.npz, python/oracle.py --quant int8) is within the\nfloat32 rounding noise of a correct implementation: no larger than the larger\nof the reference twin's error against that oracle and PyTorch float32's error\nagainst its own float64 oracle (golden/oracle_prompt_N.npz), plus 1e-4. A\ndequantization or indexing bug produces errors far above that noise.",
+  "model": "gpt2-int8.bin",
+  "reference_kernel": "blocked",
+  "rows": [
+    {
+      "file": "prompt_0.npz",
+      "kernel": "packed",
+      "tensors": {
+        "logits": {
+          "max_abs_diff": 9.5367431640625e-05,
+          "tolerance_ratio": null
+        },
+        "final_ln": {
+          "max_abs_diff": 4.1961669921875e-05,
+          "tolerance_ratio": 0.290578985496833
+        },
+        "layer_0": {
+          "max_abs_diff": 0.00023651123046875,
+          "tolerance_ratio": 1.1599580678900256,
+          "error_vs_float64": 1.246342293370617e-05,
+          "reference_error_vs_float64": 0.00023353205452281145,
+          "torch_float32_error_vs_float64": 4.140699615362564e-05
+        },
+        "layer_1": {
+          "max_abs_diff": 0.000152587890625,
+          "tolerance_ratio": 0.6300741446050405
+        },
+        "layer_2": {
+          "max_abs_diff": 0.0009765625,
+          "tolerance_ratio": 0.6223476875160255
+        },
+        "layer_3": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.5353300668979679
+        },
+        "layer_4": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.5402495115356551
+        },
+        "layer_5": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6025438846616058
+        },
+        "layer_6": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6480626132174386
+        },
+        "layer_7": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6448473472716261
+        },
+        "layer_8": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6473615343524859
+        },
+        "layer_9": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.661733881734259
+        },
+        "layer_10": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.7515494808378858
+        },
+        "layer_11": {
+          "max_abs_diff": 0.000335693359375,
+          "tolerance_ratio": 1.2434703595036236,
+          "error_vs_float64": 0.0019474372398917694,
+          "reference_error_vs_float64": 0.0022831305992667694,
+          "torch_float32_error_vs_float64": 0.003589320341120583
+        }
+      },
+      "greedy_agreement_with_float32_torch": 0.21875
+    },
+    {
+      "file": "prompt_0.npz",
+      "kernel": "avx2",
+      "tensors": {
+        "logits": {
+          "max_abs_diff": 0.000110626220703125,
+          "tolerance_ratio": null
+        },
+        "final_ln": {
+          "max_abs_diff": 7.2479248046875e-05,
+          "tolerance_ratio": 0.501909156767257
+        },
+        "layer_0": {
+          "max_abs_diff": 0.000213623046875,
+          "tolerance_ratio": 1.0477040613200232,
+          "error_vs_float64": 1.990900764781145e-05,
+          "reference_error_vs_float64": 0.00023353205452281145,
+          "torch_float32_error_vs_float64": 4.140699615362564e-05
+        },
+        "layer_1": {
+          "max_abs_diff": 0.000152587890625,
+          "tolerance_ratio": 0.6300741446050405
+        },
+        "layer_2": {
+          "max_abs_diff": 0.0009765625,
+          "tolerance_ratio": 0.5334408750137362
+        },
+        "layer_3": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.4907192279898039
+        },
+        "layer_4": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.49522871890768394
+        },
+        "layer_5": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6025438846616058
+        },
+        "layer_6": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6480626132174386
+        },
+        "layer_7": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6696491683205348
+        },
+        "layer_8": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6732559957265852
+        },
+        "layer_9": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.6893061268065198
+        },
+        "layer_10": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.7966424496881589
+        },
+        "layer_11": {
+          "max_abs_diff": 0.000579833984375,
+          "tolerance_ratio": 1.3145258086181164,
+          "error_vs_float64": 0.0017032966148917694,
+          "reference_error_vs_float64": 0.0022831305992667694,
+          "torch_float32_error_vs_float64": 0.003589320341120583
+        }
+      },
+      "greedy_agreement_with_float32_torch": 0.21875
+    },
+    {
+      "file": "prompt_1.npz",
+      "kernel": "packed",
+      "tensors": {
+        "logits": {
+          "max_abs_diff": 0.00017547607421875,
+          "tolerance_ratio": null
+        },
+        "final_ln": {
+          "max_abs_diff": 0.00012969970703125,
+          "tolerance_ratio": 0.8190224220636931
+        },
+        "layer_0": {
+          "max_abs_diff": 3.4332275390625e-05,
+          "tolerance_ratio": 0.22723848656441087
+        },
+        "layer_1": {
+          "max_abs_diff": 0.00018310546875,
+          "tolerance_ratio": 0.4371502524761283
+        },
+        "layer_2": {
+          "max_abs_diff": 0.00048828125,
+          "tolerance_ratio": 0.19051766889438979
+        },
+        "layer_3": {
+          "max_abs_diff": 3.0517578125e-05,
+          "tolerance_ratio": 0.17844897592817
+        },
+        "layer_4": {
+          "max_abs_diff": 6.103515625e-05,
+          "tolerance_ratio": 0.20259533903670426
+        },
+        "layer_5": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.22547398701876809
+        },
+        "layer_6": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.23837669286188143
+        },
+        "layer_7": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.20951469430435526
+        },
+        "layer_8": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.18436422124008234
+        },
+        "layer_9": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.22148552445363534
+        },
+        "layer_10": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.36682491697376535
+        },
+        "layer_11": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 1.5587977538503766,
+          "error_vs_float64": 0.0014737913255657986,
+          "reference_error_vs_float64": 0.0007413694505657986,
+          "torch_float32_error_vs_float64": 0.0050531488548131165
+        }
+      },
+      "greedy_agreement_with_float32_torch": 1.0
+    },
+    {
+      "file": "prompt_1.npz",
+      "kernel": "avx2",
+      "tensors": {
+        "logits": {
+          "max_abs_diff": 0.00017547607421875,
+          "tolerance_ratio": null
+        },
+        "final_ln": {
+          "max_abs_diff": 0.00011444091796875,
+          "tolerance_ratio": 0.7226668429973763
+        },
+        "layer_0": {
+          "max_abs_diff": 3.814697265625e-05,
+          "tolerance_ratio": 0.2524872072937899
+        },
+        "layer_1": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.37470021640811
+        },
+        "layer_2": {
+          "max_abs_diff": 0.000732421875,
+          "tolerance_ratio": 0.2857765033415847
+        },
+        "layer_3": {
+          "max_abs_diff": 6.103515625e-05,
+          "tolerance_ratio": 0.20239274193027249
+        },
+        "layer_4": {
+          "max_abs_diff": 1.8596649169921875e-05,
+          "tolerance_ratio": 0.1755826271651437
+        },
+        "layer_5": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.20743606805726664
+        },
+        "layer_6": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.2734743681402876
+        },
+        "layer_7": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.20951469430435526
+        },
+        "layer_8": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.18436422124008234
+        },
+        "layer_9": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.22148552445363534
+        },
+        "layer_10": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.3821092885143389
+        },
+        "layer_11": {
+          "max_abs_diff": 0.000701904296875,
+          "tolerance_ratio": 1.4938478474399444,
+          "error_vs_float64": 0.0014432737474407986,
+          "reference_error_vs_float64": 0.0007413694505657986,
+          "torch_float32_error_vs_float64": 0.0050531488548131165
+        }
+      },
+      "greedy_agreement_with_float32_torch": 1.0
+    },
+    {
+      "file": "prompt_2.npz",
+      "kernel": "packed",
+      "tensors": {
+        "logits": {
+          "max_abs_diff": 0.0003509521484375,
+          "tolerance_ratio": null
+        },
+        "final_ln": {
+          "max_abs_diff": 0.00018310546875,
+          "tolerance_ratio": 1.1562983680510712,
+          "error_vs_float64": 0.00023575037527479026,
+          "reference_error_vs_float64": 8.858241091047603e-05,
+          "torch_float32_error_vs_float64": 0.00024818790151215353
+        },
+        "layer_0": {
+          "max_abs_diff": 8.392333984375e-05,
+          "tolerance_ratio": 0.4618168175884027
+        },
+        "layer_1": {
+          "max_abs_diff": 0.0003662109375,
+          "tolerance_ratio": 0.5201662832896669
+        },
+        "layer_2": {
+          "max_abs_diff": 0.0009765625,
+          "tolerance_ratio": 0.465598588677558
+        },
+        "layer_3": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.3678200471025811
+        },
+        "layer_4": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.40644459473143885
+        },
+        "layer_5": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.4330214236793616
+        },
+        "layer_6": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.526021828237113
+        },
+        "layer_7": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.5521215887010534
+        },
+        "layer_8": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.5514998866667733
+        },
+        "layer_9": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.5422053476795863
+        },
+        "layer_10": {
+          "max_abs_diff": 0.000244140625,
+          "tolerance_ratio": 0.7237408832052293
+        },
+        "layer_11": {
+          "max_abs_diff": 0.0010986328125,
+          "tolerance_ratio": 2.4298685927065065,
+          "error_vs_float64": 0.001714825728129199,
+          "reference_error_vs_float64": 0.000616192915629199,
+          "torch_float32_error_vs_float64": 0.0023863990646759703
+        }
+      },
+      "greedy_agreement_with_float32_torch": 0.84375
+    },
+    {
+      "file": "prompt_2.npz",
+      "kernel": "avx2",
+      "tensors": {
+        "logits": {
+          "max_abs_diff": 0.0003814697265625,
+          "tolerance_ratio": null
+        },
+        "final_ln": {
+          "max_abs_diff": 0.000263214111328125,
+          "tolerance_ratio": 1.662178904073415,
+          "error_vs_float64": 0.00031585901785291526,
+          "reference_error_vs_float64": 8.858241091047603e-05,
+          "torch_float32_error_vs_float64": 0.00024818790151215353
+        },
+        "layer_0": {
+          "max_abs_diff": 6.866455078125e-05,
+          "tolerance_ratio": 0.3778501234814204
+        },
+        "layer_1": {
+          "max_abs_diff": 0.0003662109375,
+          "tolerance_ratio": 0.5201662832896669
+        },
+        "layer_2": {
+          "max_abs_diff": 0.0009765625,
+          "tolerance_ratio": 0.543198353457151
+        },
+        "layer_3": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.35990997032047417
+        },
+        "layer_4": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.40875393901968565
+        },
+        "layer_5": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.4376526688524029
+        },
+        "layer_6": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.53509117010327
+        },
+        "layer_7": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.5745655557214214
+        },
+        "layer_8": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.5428827009376049
+        },
+        "layer_9": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.5338637269460542
+        },
+        "layer_10": {
+          "max_abs_diff": 0.00030517578125,
+          "tolerance_ratio": 0.7394743806662125
+        },
+        "layer_11": {
+          "max_abs_diff": 0.00177001953125,
+          "tolerance_ratio": 3.9147882882493716,
+          "error_vs_float64": 0.002386212446879199,
+          "reference_error_vs_float64": 0.000616192915629199,
+          "torch_float32_error_vs_float64": 0.0023863990646759703
+        }
+      },
+      "greedy_agreement_with_float32_torch": 0.84375
+    }
+  ],
+  "mean_greedy_agreement": 0.6875,
+  "failures": [],
+  "passed": true
+}

@@ -1,0 +1,18 @@
+{
+  "tokens": 16384,
+  "scored": 16383,
+  "windows": 31,
+  "window": 1024,
+  "stride": 512,
+  "nll_sum": 53387.62830907855,
+  "perplexity": 26.01624452162063,
+  "runtime": "PyTorch float32",
+  "torch": "2.11.0+cu128",
+  "threads": 16,
+  "dataset": "Salesforce/wikitext",
+  "data_file": "wikitext-2-raw-v1/test-00000-of-00001.parquet",
+  "dataset_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+  "parquet_sha256": "5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91",
+  "token_ids_sha256": "f8c99b2efa3d927d9e380b78eba201293b084cf5f7b60ed67aa77ecd86ae45eb",
+  "model_revision": "607a30d783dfa663caf39e06633721c8d4cfcd7e"
+}

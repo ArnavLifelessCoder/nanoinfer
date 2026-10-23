@@ -1,0 +1,53 @@
+{
+  "purpose": "M6 perplexity: PyTorch f32, runtime f32, runtime int8 on the same slice",
+  "slice": {
+    "dataset": "Salesforce/wikitext",
+    "data_file": "wikitext-2-raw-v1/test-00000-of-00001.parquet",
+    "dataset_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+    "parquet_sha256": "5f1bea067869d04849c0f975a2b29c4ff47d867f484f5010ea5e861eab246d91",
+    "tokens": 16384,
+    "token_ids_sha256": "f8c99b2efa3d927d9e380b78eba201293b084cf5f7b60ed67aa77ecd86ae45eb",
+    "window": 1024,
+    "stride": 512,
+    "scoring": "token t scored once from its in-window prefix (src/tools/perplexity.cpp)"
+  },
+  "int8": "symmetric, group 32 along the input dimension; wte, c_attn, attn.c_proj, c_fc, mlp.c_proj quantized; wpe, LayerNorm and biases f32",
+  "rows": [
+    {
+      "config": "PyTorch f32",
+      "perplexity": 26.01624452162063,
+      "scored": 16383
+    },
+    {
+      "config": "runtime f32",
+      "perplexity": 26.016244915414294,
+      "scored": 16383
+    },
+    {
+      "config": "runtime int8",
+      "perplexity": 26.246720090686804,
+      "scored": 16383
+    }
+  ],
+  "runtime_details": {
+    "runtime f32": {
+      "tokens": 16384,
+      "scored": 16383,
+      "windows": 31,
+      "window": 1024,
+      "stride": 512,
+      "nll_sum": 53387.62855705906,
+      "perplexity": 26.016244915414294
+    },
+    "runtime int8": {
+      "tokens": 16384,
+      "scored": 16383,
+      "windows": 31,
+      "window": 1024,
+      "stride": 512,
+      "nll_sum": 53532.12473224705,
+      "perplexity": 26.246720090686804
+    }
+  },
+  "int8_minus_runtime_f32": 0.2304751752725096
+}
