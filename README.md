@@ -1,259 +1,191 @@
 # nanoinfer
 
-A C++20 CPU inference runtime for GPT-2 small, built one milestone at a time.
-M3 adds a preallocated KV cache and seeded sampling to the scalar reference
-forward pass and validated, read-only mapped loading. Later milestones add
-hand-written GEMM and GEMV, a thread pool, and int8 weights. The main engineering
-problem is keeping the numerical contract intact while changing how data moves
-through the CPU.
+nanoinfer runs GPT-2 small (124M parameters) on a CPU with no ML framework at
+run time: a C++20 loader memory-maps an exported weight file, and every
+operation, from the GEMM micro-kernel to attention, sampling and the thread
+pool, is written here. Python only exports weights, tokenizes and checks
+results against PyTorch. The hard part is not running the model; it is making
+the matrix products fast enough to approach the hardware limits while keeping
+a numerical contract with PyTorch, and knowing exactly how far from those
+limits each phase is. Prefill is compute-bound and decode is memory-bound, so
+the project measures both against a roofline built from the machine's measured
+peak and bandwidth, and uses int8 weights to cut the bytes decode has to read.
 
-M3 is blocked on the local ASan reliability gate. The owner stopped further
-runtime-option trials; no workaround has been adopted. Captured stacks,
-the M2 baseline and failed local controls are recorded in the
-[investigation](docs/m3-asan-investigation.md).
+## Results
 
-M3 pretrained cached correctness results, identical in local Debug and ASan:
+AMD Ryzen 9 8940HX (Zen 4, 16 cores), one DDR5-5200 channel, Windows 11 on AC
+power with the Balanced plan, MSVC 19.44 `/O2 /arch:AVX2`. Medians of 5 to 7
+runs; every number links to a JSON file in `results/` written by a script in
+`bench/` or `scripts/`.
 
-| Check across all three golden prompts | Measured result | Required |
-|---|---:|---:|
-| Maximum absolute logit error | 0.00018310546875 | < 0.001 |
-| Maximum elementwise hidden error / allowed bound | 0.943782678711 | <= 1 |
-| Exact greedy token agreement | 32/32 for each prompt | 32/32 |
-| Cache/full-recompute logit and hidden error | 0 across 101 positions | Exact equality |
+| Measurement | Result | Source |
+|---|---|---|
+| GEMM 1024x3072x768, one core: naive -> AVX2 6x16 micro-kernel | 0.20 -> 51.6 GFLOPS, 82.9% of the 62.3 GFLOPS single-core peak | [m4-gemm](results/m4-gemm.md) |
+| GEMM 768x768x768, one core, AVX2 | 53.2 GFLOPS, 85.4% of peak | [m4-gemm](results/m4-gemm.md) |
+| GEMM 1024x3072x768, 16 cores | 542 GFLOPS, 60% of the 897 GFLOPS all-core peak | [m7-kernels](results/m7-kernels.md) |
+| Decode, 128 tokens after a 32-token prompt, int8 (4 threads) | 81.5 tok/s, 12.3 / 15.4 ms per token p50 / p99 | [m7-e2e](results/m7-e2e.json) |
+| Decode, float32 (8 threads) | 41.9 tok/s, 23.0 / 83.6 ms p50 / p99 | [m7-e2e](results/m7-e2e.json) |
+| PyTorch 2.11 CPU decode, float32, same prompt and thread counts | 16.1 tok/s at 4 threads, 16.9 at 8 (best) | [m7-e2e](results/m7-e2e.json) |
+| Decode vs bandwidth ceiling (29.6 GB/s / weight bytes per token) | float32 70% of 59.9 tok/s; int8 38% of 212 tok/s | [m8-roofline](results/m8-roofline.json) |
+| Prefill 128 / 512 tokens, 16 threads, float32 | runtime 526 / 809 tok/s; PyTorch 632 / 834 tok/s | [m7-e2e](results/m7-e2e.json) |
+| WikiText-2 perplexity (16,384 tokens, window 1024, stride 512) | PyTorch f32 26.0162, runtime f32 26.0162, runtime int8 26.2467 (+0.23) | [m6-perplexity](results/m6-perplexity.md) |
+| Logits vs PyTorch, three golden prompts | max abs error 1.8e-4; 32/32 greedy tokens | [m2-summary](results/m2-summary.json) |
 
-These values come from `scripts/summarize_m3.py` and
-[the saved acceptance summary](results/m3-summary.json). The hidden bound is
-the owner-approved `1e-4 + 1e-6 * abs(expected)`, applied independently to each
-element. Maximum absolute hidden error is `0.00048828125`; it passes this
-combined bound, not the original absolute-only `1e-4` bound.
+At equal thread counts the int8 runtime decodes 5.1 times faster than PyTorch
+(4 threads) and the float32 runtime 2.5 times faster (8 threads). PyTorch's
+library GEMM wins prefill at 16 threads; the runtime is ahead at 8 threads
+(553 vs 516 tok/s for 128 tokens). Full thread-scaling curves for all three
+systems are in [m7.md](results/m7.md) and [m5.md](results/m5.md).
 
-No performance results have been collected yet. GEMM step measurements and the
-roofline plot belong to M4 and M7-M8 and will link to actual runs in `results/`.
+![Roofline](docs/roofline.png)
+
+The left panel shows each GEMM step against one core's ceilings, the right
+panel the threaded kernels and the fastest decode configurations against the
+machine's. The compute ceiling is `cores x clock x 2 FMA pipes x 8 lanes x 2`
+with the clock measured under FMA load on all cores (1.75 GHz here; 1.95 GHz on
+one core), and the bandwidth ceiling is the measured read-only stream. GEMV
+points above the DRAM line are shapes whose weights fit in the 64 MB L3 (the
+9.4 MB MLP matrix, and the 43 MB int8 embedding). Decode sits below its
+bandwidth line: each token runs about a hundred short parallel regions, and
+synchronization dominates once the per-region work is small, which is also why
+decode is fastest at 4 to 8 threads rather than 16.
+
+## Architecture
 
 ```mermaid
 flowchart LR
-    HF[GPT-2 in PyTorch] --> E[Python exporter]
-    E --> W[Aligned weight file]
-    E --> G[Small golden fixtures]
-    W --> P[Platform read-only mapping]
-    P --> L[Validated C++ loader]
-    L --> V[Immutable tensor views]
-    V --> R[Scalar reference transformer]
-    R --> O[Logits and greedy tokens]
-    V --> K[Cached prefill and decode]
-    K --> S[Seeded sampler]
-    S --> O
-    G --> C[Correctness comparison]
-    O --> C
+    HF[GPT-2 in PyTorch] --> E[python/export.py]
+    E -->|f32 v1 or int8 v2| W[Weight file]
+    E --> G[Golden fixtures and float64 oracle]
+    W --> M[Read-only mapping]
+    M --> L[Validating loader]
+    L --> V[Zero-copy tensor views]
+    V --> C[Cached transformer]
+    C --> K{Kernels}
+    K --> GEMM[Packed GEMM: 6x16 AVX2 tile, prefill]
+    K --> GEMV[Fixed-order GEMV, f32 or int8, decode]
+    K --> ATT[Vectorized causal attention]
+    P[Pinned thread pool] --> GEMM
+    P --> GEMV
+    P --> ATT
+    C --> KV[Preallocated KV cache]
+    C --> S[Seeded sampler]
+    S --> T[Token IDs]
+    V --> R[Scalar reference twin]
+    R --> X[Differential and golden tests]
+    G --> X
 ```
 
-## Build and export
+`src/ops/ref` holds the scalar reference operations and `src/kernels` the
+optimized ones; every optimized operation has a reference twin and a
+differential test. [docs/kernels.md](docs/kernels.md) describes the GEMM steps,
+[docs/quantization.md](docs/quantization.md) the int8 format and kernels,
+[docs/runtime.md](docs/runtime.md) the cache and sampling contract, and
+[docs/format.md](docs/format.md) the file format.
 
-Requirements: Visual Studio 2022 C++ Build Tools with the Windows SDK, CMake/Ninja
-and AddressSanitizer, Python 3.11 or newer, Git and `uv`. Linux requires GCC 12+
-or Clang 15+, CMake 3.20+ and Ninja. Python dependencies are pinned in `uv.lock`;
-GoogleTest and Google Benchmark are fetched by CMake, with benchmarks opt-in.
+## Build and run
 
-From the project directory in PowerShell:
-
-```powershell
-. .\scripts\dev-shell.ps1
-uv sync --locked
-New-Item -ItemType Directory -Force build | Out-Null
-python -m pytest --basetemp=build/pytest -v
-python -m python.export --tiny --output build/fixtures/tiny.bin --golden build/fixtures/golden
-.\scripts\test-m3.ps1 -Preset debug
-.\scripts\test-m3.ps1 -Preset asan
-```
-
-The development shell adds the native x64 compiler and project Python environment
-to the current process's path. Caches and temporary files stay inside the project.
-`scripts/test-m3.ps1` saves complete configure, build and test logs under `results/`.
-
-For the recorded local validation, the venv reuses an existing PyTorch
-`2.11.0+cu128` installation through `--system-site-packages`; every operation runs
-on CPU. Other project dependencies are installed in the venv. This avoids a
-stalled wheel download on this machine. To reproduce that setup with an existing
-PyTorch 2.11 installation, create the venv with `uv venv --system-site-packages`
-and use `uv sync --locked --no-install-package torch`. A fresh normal `uv sync`
-and CI use the official CPU wheel. Exact local versions are in
-`results/m1-environment.json`.
-The Windows shell accepts Hugging Face's supported cache-copy fallback and
-disables its symlink-privilege advisory; system privileges are not changed.
-
-Equivalent Linux commands:
+Requirements: CMake 3.20+, Ninja, Python 3.11+ and `uv`; on Linux GCC 12+ or
+Clang 15+; on Windows Visual Studio 2022 Build Tools (C++ and AddressSanitizer).
+GoogleTest and Google Benchmark are fetched by CMake.
 
 ```sh
-export UV_CACHE_DIR="$PWD/.cache/uv"
-export HF_HOME="$PWD/.cache/huggingface"
-export TIKTOKEN_CACHE_DIR="$PWD/.cache/tiktoken"
-uv sync --locked
+uv sync --locked                     # add --group bench for the benchmark drivers
 mkdir -p build
-uv run python -m pytest --basetemp=build/pytest -v
-uv run python -m python.export --tiny --output build/fixtures/tiny.bin --golden build/fixtures/golden
-cmake --preset debug
-cmake --build --preset debug
-ctest --preset debug --verbose --no-tests=error
-cmake --preset asan
-cmake --build --preset asan
-ctest --preset asan --verbose --no-tests=error
+uv run python -m pytest --basetemp=build/pytest
+cmake --preset debug && cmake --build --preset debug && ctest --preset debug
+cmake --preset asan && cmake --build --preset asan && ctest --preset asan
 ```
 
-Export the real pretrained model:
+On Windows, run `. .\scripts\dev-shell.ps1` first; it loads the x64 compiler
+and the project venv. CTest builds a seeded tiny GPT-2, so the suite needs no
+download.
 
-```powershell
-python -m python.export --output models/gpt2.bin --golden golden
+Export the real model (f32 and int8) and generate text:
+
+```sh
+uv run python -m python.export --revision 607a30d783dfa663caf39e06633721c8d4cfcd7e --output models/gpt2.bin --golden golden
+uv run python -m python.export --revision 607a30d783dfa663caf39e06633721c8d4cfcd7e --quant int8 --output models/gpt2-int8.bin
+cmake --preset release -DNANOINFER_BENCHMARKS=ON && cmake --build --preset release
+uv run python -m python.generate --executable build/release/gpt2rt --model models/gpt2-int8.bin --prompt "Hello" --max-new 32 --temp 0.8 --top-p 0.9 --seed 42
 ```
 
-The exporter prints and saves the tensor manifest beside the model. Full weights,
-download caches and generated test weights are ignored by Git. Only the small
-pretrained golden set is committed. Golden fixtures are correctness data, not a
-replacement for the model download.
+`gpt2rt` takes `--gemm` (auto, reference, naive, reordered, blocked, packed,
+avx2) and `--threads` (default: one per physical core).
 
-Inspect or independently verify every exported tensor:
+Reproduce every number in the results table:
 
-```powershell
-.\build\debug\gpt2inspect.exe models/gpt2.bin
-python tests/roundtrip.py --inspector build/debug/gpt2inspect.exe --model models/gpt2.bin --manifest models/gpt2.json
+```sh
+uv run python bench/run_gemm.py      # results/m4-gemm.*      GEMM steps, one core
+uv run python bench/run_m5.py        # results/m5-*           bandwidth, GEMV, scaling
+uv run python bench/run_kernels.py   # results/m7-kernels.*   all-core peak, threaded GEMM
+uv run python bench/run_m7.py        # results/m7-e2e.json    runtime vs PyTorch
+uv run python -m python.perplexity --revision b08601e04326c79dfdd32d625aee71d232d685c3 --ids build/wikitext2-slice-ids.txt --report results/m6-perplexity-pytorch.json
+uv run python scripts/perplexity_table.py                     # results/m6-perplexity.*
+uv run python scripts/plot_roofline.py                        # docs/roofline.png
 ```
 
-When `models/gpt2.bin` exists, `scripts/test.ps1` also runs the full pretrained
-round-trip and saves a separate `results/m1-<preset>-gpt2.txt` log. The test binary
-accepts `--seed=N`; random integration tests accept the same option.
-
-Run the reference CLI with whitespace-separated token IDs:
-
-```powershell
-Set-Content -Path build/ids.txt -Value '15496' -Encoding ascii
-.\build\debug\gpt2ref.exe models/gpt2.bin build/ids.txt build/reference-output 32
-.\scripts\test-m3.ps1 -Preset debug -Pretrained
-.\scripts\test-m3.ps1 -Preset asan -Pretrained
-```
-
-`gpt2ref` writes float32 logits, complete block outputs, final LayerNorm output,
-and `output.json` with the generated IDs. It recomputes the full prefix at each
-step, using absolute position embeddings and tied token embeddings for the
-output projection. Generation emits the requested count, including after EOS;
-ties choose the lowest token ID. The default continuation length is 32.
-Prompt plus continuation must fit the model context. This is a correctness
-driver; tokenization remains in Python.
-
-For Linux, run `uv run python -m tests.golden_forward --executable
-build/debug/gpt2ref --model models/gpt2.bin --golden golden --directory
-build/debug/pretrained --timeout 7200 --report results/m2-debug-pretrained.json`,
-then repeat with the ASan executable. The optional `--jobs 3` runs independent
-correctness cases in separate processes; each runtime uses one thread. These are
-not throughput measurements. Every native run in the correctness harness is
-bounded by `--timeout` (60 seconds by default, enough for the tiny model); the
-pretrained scalar reference needs the longer limit.
-
-Debug uses unoptimized code with symbols. ASan uses MSVC AddressSanitizer on
-Windows and address plus undefined-behavior sanitizers on Linux. The local
-benchmark-only `release` preset enables `-O3 -march=native` on GCC/Clang and
-`/O2 /arch:AVX2` on MSVC. These binaries require the corresponding CPU features.
-Set `NANOINFER_NATIVE_RELEASE=OFF` for a portable Release build. Debug and sanitizer
-presets keep the baseline ISA; M4's dispatched AVX2 kernels will have separate
-translation units. `tsan` is a Linux preset reserved for the threaded milestone.
-
-## Cached generation
-
-```powershell
-.\build\debug\gpt2rt.exe --model models/gpt2.bin --prompt-ids build/ids.txt --max-new 32 --temp 0.8 --top-k 40 --top-p 0.9 --seed 42
-python -m python.generate --executable build/debug/gpt2rt.exe --model models/gpt2.bin --prompt "Hello" --max-new 32 --temp 0.8 --top-p 0.9 --seed 42
-```
-
-The runtime emits JSON token IDs. The Python wrapper only tokenizes with tiktoken,
-calls the runtime, and decodes the prompt plus continuation. Temperature zero is
-greedy; top-k zero and top-p one disable their respective filters. Generation
-emits exactly the requested number of tokens, including after EOS. Prompt plus
-continuation must fit the context. See [the runtime contract](docs/runtime.md)
-for cache ownership, validation, sampling order and reproducibility guarantees.
-
-`cached_forward` tests all tiny-model positions against full recomputation.
-`golden_cached` additionally compares cached captures and 32 generated IDs with
-PyTorch in CI, while checking all logits and hidden channels against the scalar
-reference at every prefill/decode position. `generation_cli` tests seeded replay,
-filter controls, context limits and malformed input. Use `test-m3.ps1 -Pretrained`
-to repeat the checks on the pretrained golden prompts; results stay separate from
-approved M2 evidence. The runtime remains single-threaded, so TSan starts in M5.
-The [M3 review packet](docs/m3-review.md) links the full test output and per-position
-reports.
+The benchmark drivers record CPU, memory, OS, compiler flags, power state and
+background load with every result, and `run_m7.py` refuses to run on battery.
 
 ## Design decisions
 
-- Use a fixed binary table because it can be validated before interpreting any
-  tensor pointer; see [the format](docs/format.md).
-- Preserve Hugging Face Conv1D's `[in, out]` layout because it directly matches
-  `x @ weight`, and test the orientation explicitly.
-- Map f32 data because inference can share the file-backed pages without
-  allocating a second weight buffer.
-- Store metadata and payload CRC32 values because structural validation alone
-  cannot detect changes to otherwise valid float bytes.
-- Capture complete block outputs with hooks because the final Hugging Face
-  `hidden_states` entry is after `ln_f`, not before it.
-- Recompute the full sequence in M2 because it supplies the reference for M3's
-  cached decode equivalence checks.
+- Chose a fixed 6 x 16 register tile over a larger AVX-512 one because Zen 4
+  issues 512-bit FMAs as two 256-bit halves: twelve YMM accumulators already
+  saturate both FMA pipes, and AVX2 runs on far more CPUs.
+- Chose static partitioning with fixed work units over work stealing because
+  every output tile and every GEMV block is then summed in the same order for
+  any thread count. Results are bit-identical from 1 to 16 threads, which makes
+  "golden outputs match with any thread count" a byte comparison.
+- Chose a separate fixed-order GEMV for decode over reusing the GEMM because a
+  one-row product is bandwidth-bound: packing would read the weights twice, and
+  32-row partial sums stream them once while matching the int8 group size.
+- Chose to dequantize int8 inside the inner loop over dequantizing to a buffer
+  because the point of int8 is reading 1.125 bytes per weight instead of 4;
+  prefill instead dequantizes while packing, so the GEMM micro-kernels are shared.
+- Chose to judge optimized hidden states against a float64 oracle as well as
+  PyTorch float32 because the blocked kernels proved 3 to 25 times more
+  accurate than PyTorch's own float32 order; a bound tied to one float32
+  summation order rejected the better result.
+- Chose to keep AVX2 code in translation units with no shared inline functions
+  because a linker keeps one copy of an inline function, and an AVX2-encoded
+  copy would crash the scalar fallback on a CPU without AVX2.
 
 ## Testing
 
-Python tests check the binary layout, export constraints, weight tying, matrix
-orientation and golden capture against PyTorch. C++ tests exercise mapping
-ownership, Unicode paths, malformed input and tensor validation. The export
-round-trip compares every shape and checksum with the independently saved Python
-manifest. See [the GPT-2 contract](docs/gpt2-contract.md) for source references and
-golden-state semantics.
-
-The loader checks every required tensor name and shape against the header
-configuration, including `wte=[vocab,d_model]`. The inspector's explicit
-`--layout-only` option supports arbitrary format fixtures; inference always
-uses the complete GPT-2 schema.
-
-Reference operations have independent analytical or double-precision checks,
-random awkward matrix shapes and explicit causal-mask, head, LayerNorm and GELU
-tests. Integration tests compare full-context logits with PyTorch, verify
-prefix invariance and absolute positions, and reject invalid token input.
-Pretrained tests compare every logit and complete block state for every golden
-prompt, then require exactly the same 32 greedy tokens.
-
-The owner-approved M2 clarification uses the **elementwise** hidden-state bound
-`abs(actual - expected) <= 1e-4 + 1e-6 * abs(expected)`, including final LayerNorm.
-The logits gate remains **strict max absolute error < 1e-3**. Dedicated tests
-guard the bounds, reject nonfinite values, and prevent the scale of a large
-hidden element from masking an error in a small element. The original spec is
-unchanged; [the M2 review packet](docs/m2-review.md) records this clarification
-and links the full validation output.
-
-The owner withdrew the separate strict `1e-4` gate for `abs(torch) < 1024`;
-the reviewer identified the errors in channels 138/447/373 as float32
-accumulation. The subset remains visible in
-[Debug statistics](results/m2-debug-hidden-stats.json) and
-[ASan statistics](results/m2-asan-hidden-stats.json), alongside every requested
-error maximum, violation count and worst-element coordinate. Regenerate with:
-
-```powershell
-python scripts/hidden_error_stats.py --golden golden --captures build/debug/pretrained --output results/m2-debug-hidden-stats.json
-python scripts/hidden_error_stats.py --golden golden --captures build/asan/pretrained --output results/m2-asan-hidden-stats.json
-```
-
-`golden_negative` requires the default forward to pass a fixed tiny stress
-fixture, then rejects two separately compiled test-only variants: exact erf
-GELU and LayerNorm epsilon `1e-6`. The fixture scales MLP weights to exercise
-GELU away from zero. Both variants must fail the same approved numerical gate
-on every prompt. The switches do not enter the normal library or CLI.
-M4 will compare the complete optimized forward against the scalar reference
-as well as PyTorch, since layer 11 already lies close to the tolerance bound.
-
-CI builds Debug and ASan on Windows and Linux and runs formatting and Python lint
-checks. CI uses a seeded tiny GPT-2 so weights are neither committed nor downloaded
-for each job. Its golden test compares native logits, block states and 32 greedy
-tokens against freshly generated PyTorch outputs. Linux TSan will be required
-when runtime worker threads arrive in M5.
+- **Differential tests:** every optimized kernel (five GEMM steps, threaded
+  GEMM, f32 and int8 GEMV, int8 GEMM, attention) is compared with its scalar
+  twin on random and awkward shapes (1, 7, 63, 65, 767, 769, tile and cache-block
+  edges), with error measured relative to `sum |a||b|`. Seeds are printed and
+  can be set with `--seed=N`.
+- **Golden tests:** logits within 1e-3 of PyTorch, hidden states within the
+  approved bound or no less accurate than PyTorch float32 against a float64
+  oracle, and exactly 32 greedy tokens, for the scalar reference, every GEMM step
+  and the cached runtime. CI uses a seeded tiny model; the pretrained check runs
+  locally on three prompts.
+- **Negative tests:** separately compiled variants with exact GELU or a wrong
+  LayerNorm epsilon must fail the same golden comparison.
+- **Equivalence and invariance:** cached decode equals full recomputation at
+  every position, bit for bit; every runtime output is byte-identical across
+  thread counts; C++ and PyTorch perplexity agree on the tiny model.
+- **Malformed input:** every truncation length and every single-bit corruption
+  of a model file, overflowing shapes, bad q8 groupings, scales and padding, and
+  CLI argument errors, all through the native tools.
+- **Sanitizers:** Debug, ASan and UBSan (fatal) on Linux and Windows, TSan on
+  every threaded test, in CI. The local MSVC ASan runtime has a shutdown
+  deadlock outside this code, documented with stacks in
+  [docs/m3-asan-investigation.md](docs/m3-asan-investigation.md).
 
 ## Limitations
 
-M3 has no runtime worker threads, optimized kernels or quantization.
-Naive matrix multiplication remains slow; the reference correctness driver
-also recomputes the full prefix.
-CRC32 detects accidental corruption but does not authenticate untrusted files.
-The file must remain unchanged throughout the mapping's lifetime. The current
-format targets little-endian IEEE-754 hosts and f32 weights.
+- GPT-2 small only, batch size one, single sequence per runtime instance.
+- Prefill attention is vectorized but not blocked; at long prompts the logits
+  for every position (a 50257-wide product) are part of the prefill cost.
+- Decode does not reach the bandwidth ceiling: about a hundred short parallel
+  regions per token leave synchronization overhead, and decode is fastest at
+  fewer threads than cores on this machine.
+- Benchmarks come from one laptop (single DDR5 channel, Windows Balanced power
+  plan, turbo left on); absolute numbers move with power and thermal state.
+- int8 is weight-only with per-group symmetric scales; activations stay float32.
+- CRC32 detects accidental corruption, not tampering. Tokenization stays in
+  Python (tiktoken).
