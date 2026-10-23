@@ -12,7 +12,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from bench.common import ROOT, SUFFIX, run_google_benchmark, sanitize, summary  # noqa: E402
+from bench.common import ROOT, SUFFIX, power_state, run_google_benchmark, sanitize, summary  # noqa: E402
 from scripts.machine_info import collect  # noqa: E402
 
 
@@ -25,6 +25,7 @@ def main():
     parser.add_argument("--fma-latency", type=int, default=4)
     args = parser.parse_args()
     build = args.build.resolve()
+    power = power_state()
     _, peak = run_google_benchmark(build / f"peak_bench{SUFFIX}", args.repetitions)
     cores = int(peak["fma_all_cores_chain"][0]["threads"])
     clock = statistics.median(r["chain_steps"] for r in peak["fma_all_cores_chain"]) * (
@@ -54,6 +55,7 @@ def main():
     report = dict(
         purpose="M7 all-core compute ceiling and threaded GEMM (step 6)",
         machine=sanitize(collect(build)),
+        power=power,
         context=sanitize(report_raw["context"]),
         peak=dict(
             formula="cores x clock x FMA units x SIMD lanes x 2",

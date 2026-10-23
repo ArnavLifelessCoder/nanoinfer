@@ -11,7 +11,15 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from bench.common import ROOT, SUFFIX, run_google_benchmark, sanitize, summary, write_ids  # noqa: E402
+from bench.common import (
+    ROOT,
+    SUFFIX,
+    power_state,
+    run_google_benchmark,
+    sanitize,
+    summary,
+    write_ids,
+)  # noqa: E402
 from scripts.machine_info import collect  # noqa: E402
 
 
@@ -50,6 +58,7 @@ def main():
     parser.add_argument("--repetitions", type=int, default=5)
     args = parser.parse_args()
     build = args.build.resolve()
+    power = power_state()
     ids = write_ids(build / "bench-prompt-ids.txt", 512)
 
     _, stream_rows = run_google_benchmark(build / f"stream_bench{SUFFIX}", 5)
@@ -89,6 +98,7 @@ def main():
     bandwidth = dict(
         purpose="M5 memory bandwidth (STREAM triad) and decode GEMV bandwidth",
         machine=machine,
+        power=power,
         context=sanitize(gemv_report["context"]),
         triad_bytes_counted="3 x 4 bytes per element (STREAM convention; write-allocate not counted)",
         triad_gb_per_second={str(k): v for k, v in sorted(triad.items())},
@@ -104,6 +114,7 @@ def main():
     scaling_report = dict(
         purpose="M5 thread scaling: prefill 128 tokens; decode 128 tokens after a 32-token prompt",
         machine=machine,
+        power=power,
         kernel="avx2",
         repetitions=args.repetitions,
         prompt="bench.common.PROMPT_TEXT tokens, identical for every run",

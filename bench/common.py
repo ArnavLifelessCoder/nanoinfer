@@ -71,3 +71,20 @@ def sanitize(value):
         for form in (old, old.replace("\\", "\\\\"), old.replace("\\", "/")):
             text = text.replace(form, new)
     return json.loads(text)
+
+
+def power_state():
+    if sys.platform != "win32":
+        return dict(note="not recorded on this platform")
+    script = (
+        "$b = Get-CimInstance Win32_Battery | Select-Object -First 1;"
+        "$load = (Get-Counter '\\Processor(_Total)\\% Processor Time' -SampleInterval 2 "
+        "-MaxSamples 1).CounterSamples.CookedValue;"
+        "[ordered]@{on_battery = ($b -ne $null -and $b.BatteryStatus -ne 2);"
+        "battery_percent = $b.EstimatedChargeRemaining; background_cpu_percent = $load;"
+        "power_scheme = (powercfg /getactivescheme)} | ConvertTo-Json"
+    )
+    output = subprocess.run(
+        ["powershell", "-NoProfile", "-Command", script], capture_output=True, text=True
+    ).stdout
+    return json.loads(output)

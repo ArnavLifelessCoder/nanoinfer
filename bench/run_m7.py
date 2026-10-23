@@ -15,26 +15,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-from bench.common import ROOT, sanitize, write_ids  # noqa: E402
+from bench.common import ROOT, power_state, sanitize, write_ids  # noqa: E402
 from bench.run_m5 import e2e, scaling_row  # noqa: E402
 from scripts.machine_info import collect  # noqa: E402
-
-
-def power_state():
-    if sys.platform != "win32":
-        return dict(note="not recorded on this platform")
-    script = (
-        "$b = Get-CimInstance Win32_Battery | Select-Object -First 1;"
-        "$load = (Get-Counter '\\Processor(_Total)\\% Processor Time' -SampleInterval 2 "
-        "-MaxSamples 1).CounterSamples.CookedValue;"
-        "[ordered]@{on_battery = ($b -ne $null -and $b.BatteryStatus -ne 2);"
-        "battery_percent = $b.EstimatedChargeRemaining; background_cpu_percent = $load;"
-        "power_scheme = (powercfg /getactivescheme)} | ConvertTo-Json"
-    )
-    output = subprocess.run(
-        ["powershell", "-NoProfile", "-Command", script], capture_output=True, text=True
-    ).stdout
-    return json.loads(output)
 
 
 def pytorch(ids, threads, repetitions, prefill, prompt, new):
