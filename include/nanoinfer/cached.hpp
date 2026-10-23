@@ -2,6 +2,9 @@
 
 #include <memory>
 #include <optional>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include "nanoinfer/gemm.hpp"
 #include "nanoinfer/kv_cache.hpp"
@@ -35,6 +38,11 @@ class CachedTransformer {
 
  private:
   void validate_tokens(std::span<const std::uint32_t> tokens) const;
+  [[nodiscard]] bool int8_kernels() const noexcept;
+  [[nodiscard]] std::span<const float> f32(const TensorView& view) const;
+  void embed(std::span<const std::uint32_t> tokens, std::span<float> output) const;
+  void matmul(std::span<const float> a, const TensorView& b, std::size_t rows, std::size_t columns,
+              std::size_t inner, std::span<float> output, bool transpose_b = false) const;
   void matmul(std::span<const float> a, std::span<const float> b, std::size_t rows,
               std::size_t columns, std::size_t inner, std::span<float> output,
               bool transpose_b = false) const;
@@ -46,6 +54,7 @@ class CachedTransformer {
   KVCache cache_;
   std::optional<kernels::GemmStep> gemm_;
   std::unique_ptr<ThreadPool> pool_;
+  std::unordered_map<std::string, std::vector<float>> dequantized_;
   std::size_t position_ = 0;
 };
 }  // namespace nanoinfer

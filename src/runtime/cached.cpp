@@ -26,6 +26,68 @@ CachedTransformer::CachedTransformer(const std::filesystem::path& path,
     if (!gemm_) throw std::invalid_argument("the scalar reference path is single-threaded");
     pool_ = std::make_unique<ThreadPool>(threads);
   }
+  // Without the int8 kernels (reference or steps 1-3), int8 weights are
+  // dequantized once into float32 copies; this is the int8 forward's
+  // reference twin, used to test the int8 kernels.
+  if (!int8_kernels()) {
+    for (const auto& view : model_.tensors()) {
+      if (view.dtype != DType::q8) continue;
+      std::vector<float> values(view.quantized.size());
+      const auto columns = static_cast<std::size_t>(view.shape[1]);
+      for (std::size_t i = 0; i < values.size(); ++i) {
+        const auto row = i / columns, column = i % columns;
+        const auto scale = view.axis == 0
+                               ? view.scales[row / view.group * columns + column]
+                               : view.scales[row * (columns / view.group) + column / view.group];
+        values[i] = static_cast<float>(view.quantized[i]) * scale;
+      }
+      dequantized_.emplace(view.name, std::move(values));
+    }
+  }
+}
+
+bool CachedTransformer::int8_kernels() const noexcept {
+  return gemm_ == kernels::GemmStep::packed || gemm_ == kernels::GemmStep::avx2;
+}
+
+std::span<const float> CachedTransformer::f32(const TensorView& view) const {
+  if (view.dtype == DType::f32) return view.values;
+  return dequantized_.at(view.name);
+}
+
+void CachedTransformer::matmul(std::span<const float> a, const TensorView& b, std::size_t rows,
+                               std::size_t columns, std::size_t inner, std::span<float> output,
+                               bool transpose_b) const {
+  if (b.dtype == DType::f32 || !int8_kernels()) {
+    return matmul(a, f32(b), rows, columns, inner, output, transpose_b);
+  }
+  const kernels::QuantizedMatrix q8{b.quantized, b.scales, b.group};
+  if (rows == 1) {
+    const auto kernel =
+        *gemm_ == kernels::GemmStep::avx2 ? kernels::GemvKernel::avx2 : kernels::GemvKernel::scalar;
+    kernels::gemv(kernel, a, q8, columns, inner, output, transpose_b, pool_.get());
+  } else {
+    kernels::gemm(*gemm_, a, q8, rows, columns, inner, output, transpose_b, pool_.get());
+  }
+}
+
+void CachedTransformer::embed(std::span<const std::uint32_t> tokens,
+                              std::span<float> output) const {
+  const auto& table = model_.tensor("wte.weight");
+  const std::size_t d = config().d_model;
+  if (table.dtype == DType::f32 || !int8_kernels()) {
+    return ref::embedding(tokens, f32(table), config().vocab, d, output);
+  }
+  // Token rows of the int8 table, dequantized; groups run along d (axis 1).
+  for (std::size_t row = 0; row < tokens.size(); ++row) {
+    if (tokens[row] >= config().vocab) throw std::out_of_range("token ID outside embedding");
+    const auto offset = static_cast<std::size_t>(tokens[row]) * d;
+    const float* scales = table.scales.data() + offset / table.group;
+    for (std::size_t j = 0; j < d; ++j) {
+      output[row * d + j] =
+          static_cast<float>(table.quantized[offset + j]) * scales[j / table.group];
+    }
+  }
 }
 
 CachedTransformer::~CachedTransformer() = default;
@@ -99,12 +161,15 @@ ForwardResult CachedTransformer::append(std::span<const std::uint32_t> tokens,
     const auto nd = ref::elements(n, d);
     const auto three_d = ref::elements(3, d);
     const auto four_d = ref::elements(4, d);
-    auto weight = [this](const std::string& name) { return model_.tensor(name).values; };
+    auto weight = [this](const std::string& name) { return f32(model_.tensor(name)); };
+    auto matrix = [this](const std::string& name) -> const TensorView& {
+      return model_.tensor(name);
+    };
     std::vector<float> hidden(nd), normalized(nd), projected(nd), attended(nd);
     std::vector<float> qkv(ref::elements(n, three_d)), expanded(ref::elements(n, four_d));
     std::vector<std::uint32_t> positions(n);
     std::iota(positions.begin(), positions.end(), static_cast<std::uint32_t>(position_));
-    ref::embedding(tokens, weight("wte.weight"), config().vocab, d, hidden);
+    embed(tokens, hidden);
     ref::embedding(positions, weight("wpe.weight"), config().ctx, d, projected);
     ref::residual(hidden, projected);
 
@@ -113,7 +178,7 @@ ForwardResult CachedTransformer::append(std::span<const std::uint32_t> tokens,
     for (std::uint32_t layer = 0; layer < config().layers; ++layer) {
       const auto prefix = "h." + std::to_string(layer) + ".";
       layer_norm(hidden, weight(prefix + "ln_1.weight"), weight(prefix + "ln_1.bias"), normalized);
-      matmul(normalized, weight(prefix + "attn.c_attn.weight"), n, three_d, d, qkv);
+      matmul(normalized, matrix(prefix + "attn.c_attn.weight"), n, three_d, d, qkv);
       ref::bias(qkv, weight(prefix + "attn.c_attn.bias"));
       cache_.store(layer, position_, qkv);
       const auto keys = cache_.keys(layer).first(valid_elements);
@@ -139,15 +204,15 @@ ForwardResult CachedTransformer::append(std::span<const std::uint32_t> tokens,
       } else {
         ref::cached_attention(qkv, keys, values, position_, d, config().heads, attended);
       }
-      matmul(attended, weight(prefix + "attn.c_proj.weight"), n, d, d, projected);
+      matmul(attended, matrix(prefix + "attn.c_proj.weight"), n, d, d, projected);
       ref::bias(projected, weight(prefix + "attn.c_proj.bias"));
       ref::residual(hidden, projected);
 
       layer_norm(hidden, weight(prefix + "ln_2.weight"), weight(prefix + "ln_2.bias"), normalized);
-      matmul(normalized, weight(prefix + "mlp.c_fc.weight"), n, four_d, d, expanded);
+      matmul(normalized, matrix(prefix + "mlp.c_fc.weight"), n, four_d, d, expanded);
       ref::bias(expanded, weight(prefix + "mlp.c_fc.bias"));
       gelu(expanded);
-      matmul(expanded, weight(prefix + "mlp.c_proj.weight"), n, d, four_d, projected);
+      matmul(expanded, matrix(prefix + "mlp.c_proj.weight"), n, d, four_d, projected);
       ref::bias(projected, weight(prefix + "mlp.c_proj.bias"));
       ref::residual(hidden, projected);
       if (capture_hidden) result.hidden_states.push_back(hidden);
@@ -155,7 +220,7 @@ ForwardResult CachedTransformer::append(std::span<const std::uint32_t> tokens,
     layer_norm(hidden, weight("ln_f.weight"), weight("ln_f.bias"), normalized);
     result.positions = n;
     result.logits.resize(ref::elements(n, config().vocab));
-    matmul(normalized, weight("wte.weight"), n, config().vocab, d, result.logits, true);
+    matmul(normalized, matrix("wte.weight"), n, config().vocab, d, result.logits, true);
     if (capture_hidden) result.final_ln = std::move(normalized);
     position_ += n;
     return result;

@@ -18,7 +18,24 @@ import numpy as np  # noqa: E402
 import torch  # noqa: E402
 from transformers import GPT2LMHeadModel  # noqa: E402
 
-from python.export import make_tiny  # noqa: E402
+from python.export import make_tiny, quantized_axis  # noqa: E402
+from python.quantize import GROUP, dequantize, quantize  # noqa: E402
+
+
+def apply_int8(model, group):
+    """Replace every quantized weight with its exact int8 dequantization.
+
+    The result is the int8 model's own weights in float64, so its states are
+    the exact answer the int8 runtime approximates.
+    """
+    with torch.no_grad():
+        for name, parameter in model.transformer.named_parameters():
+            axis = quantized_axis(name)
+            if axis is None:
+                continue
+            weights = parameter.detach().cpu().float().numpy()
+            q, scales = quantize(weights, axis, group)
+            parameter.copy_(torch.from_numpy(dequantize(q, scales, axis, group)).double())
 
 
 def oracle_states(model, tokens):
@@ -47,6 +64,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--golden", type=Path, default=ROOT / "golden")
     parser.add_argument("--tiny", action="store_true", help="seeded tiny model, no download")
+    parser.add_argument("--quant", choices=["int8"], help="oracle of the int8 model's weights")
+    parser.add_argument("--group", type=int, default=GROUP, help="int8 group size")
     args = parser.parse_args()
     torch.set_num_threads(1)
     manifest = json.loads((args.golden / "manifest.json").read_text(encoding="utf-8"))
@@ -63,10 +82,14 @@ def main():
             .cpu()
             .eval()
         )
+    prefix = "oracle_"
+    if args.quant:
+        apply_int8(model, args.group)
+        prefix = "oracle_int8_"
     for prompt in manifest["prompts"]:
         arrays = oracle_states(model, prompt["ids"])
         assert all(array.dtype == np.float64 for array in arrays.values())
-        np.savez_compressed(args.golden / f"oracle_{prompt['file']}", **arrays)
+        np.savez_compressed(args.golden / f"{prefix}{prompt['file']}", **arrays)
         print(f"wrote float64 oracle for {prompt['file']}", flush=True)
 
 
