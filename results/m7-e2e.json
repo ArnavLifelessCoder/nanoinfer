@@ -1,0 +1,547 @@
+{
+  "purpose": "M7 end-to-end: runtime f32 and int8 vs PyTorch CPU, same prompts and threads",
+  "machine": {
+    "platform": "Windows-11-10.0.26300-SP0",
+    "python": "3.13.15",
+    "machine": "AMD64",
+    "system": {
+      "cpu": "AMD Ryzen 9 8940HX with Radeon Graphics",
+      "physical_cores": 16,
+      "logical_processors": 32,
+      "reported_base_mhz": 2401,
+      "l2_kib": 16384,
+      "l3_kib": 65536,
+      "ram_bytes": 16162496512,
+      "memory_modules": [
+        {
+          "capacity_bytes": 17179869184,
+          "rated_mt_s": 5600,
+          "configured_mt_s": 5200,
+          "part": "M425R2GA3EB0-CWMOL"
+        }
+      ],
+      "os": "Microsoft Windows 11 Home",
+      "os_version": "10.0.26300",
+      "kernel_build": "26300",
+      "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+    },
+    "compiler": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_CXX_COMPILER": "C:/Program Files (x86)/Microsoft Visual Studio/2022/BuildTools/VC/Tools/MSVC/14.44.35207/bin/Hostx64/x64/cl.exe",
+      "CMAKE_CXX_FLAGS_RELEASE": "/O2 /Ob2 /DNDEBUG",
+      "command src/kernels/gemm.cpp": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe\"  /nologo /TP -DNANOINFER_HAVE_AVX2_KERNEL -I\"<project>\\include\" -I\"<project>\\src\" /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /W4 /WX /permissive- /Zc:__cplusplus /utf-8 /O2 /arch:AVX2 /FoCMakeFiles\\nanoinfer.dir\\src\\kernels\\gemm.cpp.obj /FdCMakeFiles\\nanoinfer.dir\\nanoinfer.pdb /FS -c \"<project>\\src\\kernels\\gemm.cpp\"",
+      "command src/kernels/gemm_avx2.cpp": "\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\VC\\Tools\\MSVC\\14.44.35207\\bin\\Hostx64\\x64\\cl.exe\"  /nologo /TP -DNANOINFER_HAVE_AVX2_KERNEL -I\"<project>\\include\" -I\"<project>\\src\" /DWIN32 /D_WINDOWS /EHsc /O2 /Ob2 /DNDEBUG -std:c++20 -MD /W4 /WX /permissive- /Zc:__cplusplus /utf-8 /O2 /arch:AVX2 /arch:AVX2 /FoCMakeFiles\\nanoinfer.dir\\src\\kernels\\gemm_avx2.cpp.obj /FdCMakeFiles\\nanoinfer.dir\\nanoinfer.pdb /FS -c \"<project>\\src\\kernels\\gemm_avx2.cpp\"",
+      "version": "Microsoft (R) C/C++ Optimizing Compiler Version 19.44.35229 for x64"
+    }
+  },
+  "power_before": {
+    "on_battery": false,
+    "battery_percent": 30,
+    "background_cpu_percent": 5.1918740844193785,
+    "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+  },
+  "power_after": {
+    "on_battery": false,
+    "battery_percent": 39,
+    "background_cpu_percent": 6.95893569358913,
+    "power_scheme": "Power Scheme GUID: 381b4222-f694-41f0-9685-ff5bb260df2e  (Balanced)"
+  },
+  "prompt": "bench.common.PROMPT_TEXT tokens; identical IDs for every system",
+  "phases": {
+    "prefill": "whole prompt in one call, cache filled, logits for every position",
+    "decode": "128 greedy steps after a 32-token prompt; each step timed alone"
+  },
+  "pytorch_settings": "float32, torch.inference_mode(), eager attention, torch.set_num_threads(threads), HF KV cache",
+  "runtime_settings": "avx2 kernels, one pinned thread per physical core up to threads",
+  "repetitions": 5,
+  "results": {
+    "PyTorch f32": [
+      {
+        "threads": 1,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 137.96402394076344,
+              "minimum": 136.19662621813387,
+              "maximum": 151.58601007981724,
+              "p99": 151.58601007981724,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 16.164362266334194,
+            "minimum": 16.083840436079967,
+            "maximum": 16.56423884875066,
+            "p99": 16.56423884875066,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 62.57785000025251,
+            "minimum": 48.429500000565895,
+            "maximum": 74.93270000031771,
+            "p99": 69.37709999965591,
+            "samples": 640
+          }
+        },
+        "torch": "2.11.0+cu128"
+      },
+      {
+        "threads": 2,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 175.79944798964817,
+              "minimum": 170.61313963766094,
+              "maximum": 189.90602025839712,
+              "p99": 189.90602025839712,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 16.549714488974384,
+            "minimum": 16.37319756676998,
+            "maximum": 16.73257164751001,
+            "p99": 16.73257164751001,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 60.24115000036545,
+            "minimum": 49.82209999980114,
+            "maximum": 84.59070000026259,
+            "p99": 66.23670000044513,
+            "samples": 640
+          }
+        },
+        "torch": "2.11.0+cu128"
+      },
+      {
+        "threads": 4,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 303.1274703113878,
+              "minimum": 291.1118105885156,
+              "maximum": 325.7892754244165,
+              "p99": 325.7892754244165,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 16.115015687088736,
+            "minimum": 16.01159539721711,
+            "maximum": 16.279768845087535,
+            "p99": 16.279768845087535,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 61.89970000014,
+            "minimum": 50.33149999962916,
+            "maximum": 72.74330000018381,
+            "p99": 68.11770000058459,
+            "samples": 640
+          }
+        },
+        "torch": "2.11.0+cu128"
+      },
+      {
+        "threads": 8,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 516.062027430049,
+              "minimum": 467.0966875541291,
+              "maximum": 635.0526225453249,
+              "p99": 635.0526225453249,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 16.910513407538193,
+            "minimum": 16.332328797290828,
+            "maximum": 17.10249479703092,
+            "p99": 17.10249479703092,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 59.92030000015802,
+            "minimum": 49.28900000049907,
+            "maximum": 76.29640000050131,
+            "p99": 74.14459999927203,
+            "samples": 640
+          }
+        },
+        "torch": "2.11.0+cu128"
+      },
+      {
+        "threads": 16,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 632.0091917818586,
+              "minimum": 620.1466259165652,
+              "maximum": 638.5539944807173,
+              "p99": 638.5539944807173,
+              "samples": 5
+            }
+          },
+          "512": {
+            "tokens_per_second": {
+              "median": 834.3051956852023,
+              "minimum": 813.3403060314695,
+              "maximum": 842.2787060756722,
+              "p99": 842.2787060756722,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 16.412862899140407,
+            "minimum": 16.29175457372464,
+            "maximum": 16.56158684843404,
+            "p99": 16.56158684843404,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 60.63590000030672,
+            "minimum": 55.27970000002824,
+            "maximum": 69.52910000018164,
+            "p99": 66.564699999617,
+            "samples": 640
+          }
+        },
+        "torch": "2.11.0+cu128"
+      }
+    ],
+    "runtime f32": [
+      {
+        "threads": 1,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 102.32141715162754,
+              "minimum": 101.62036853261776,
+              "maximum": 108.72427354347697,
+              "p99": 108.72427354347697,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 25.268299494967632,
+            "minimum": 24.866094623454963,
+            "maximum": 25.683858311062785,
+            "p99": 25.683858311062785,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 40.44115,
+            "minimum": 32.8784,
+            "maximum": 43.4578,
+            "p99": 42.7581,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 2,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 217.81302113466973,
+              "minimum": 197.03220245058802,
+              "maximum": 229.53300792247524,
+              "p99": 229.53300792247524,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 35.99512097383675,
+            "minimum": 35.365925428183274,
+            "maximum": 36.64721711053986,
+            "p99": 36.64721711053986,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 28.28855,
+            "minimum": 23.4116,
+            "maximum": 34.8964,
+            "p99": 31.5673,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 4,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 364.13394439560875,
+              "minimum": 360.4181977400653,
+              "maximum": 396.2198153244205,
+              "p99": 396.2198153244205,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 40.56522828494208,
+            "minimum": 39.74007383767813,
+            "maximum": 40.9917741998862,
+            "p99": 40.9917741998862,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 24.99435,
+            "minimum": 20.882499999999997,
+            "maximum": 55.054,
+            "p99": 28.462,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 8,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 552.6961207641024,
+              "minimum": 178.68609877990897,
+              "maximum": 632.2767396254748,
+              "p99": 632.2767396254748,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 41.94526405199115,
+            "minimum": 27.137643868204847,
+            "maximum": 44.276557883660786,
+            "p99": 44.276557883660786,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 23.022550000000003,
+            "minimum": 20.485699999999998,
+            "maximum": 264.788,
+            "p99": 83.61250000000001,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 16,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 526.1405535163042,
+              "minimum": 452.1290687200862,
+              "maximum": 561.8766680713583,
+              "p99": 561.8766680713583,
+              "samples": 5
+            }
+          },
+          "512": {
+            "tokens_per_second": {
+              "median": 809.1957510901226,
+              "minimum": 673.9777455707683,
+              "maximum": 904.1000584486562,
+              "p99": 904.1000584486562,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 31.75642583213558,
+            "minimum": 24.38401222614373,
+            "maximum": 33.80621894978023,
+            "p99": 33.80621894978023,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 28.4687,
+            "minimum": 23.4446,
+            "maximum": 280.397,
+            "p99": 161.331,
+            "samples": 640
+          }
+        }
+      }
+    ],
+    "runtime int8": [
+      {
+        "threads": 1,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 79.28887787654475,
+              "minimum": 72.96440705018583,
+              "maximum": 87.86139864363966,
+              "p99": 87.86139864363966,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 29.349116615665313,
+            "minimum": 28.52385867016333,
+            "maximum": 30.25977973622645,
+            "p99": 30.25977973622645,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 35.039699999999996,
+            "minimum": 25.2396,
+            "maximum": 39.0124,
+            "p99": 37.6922,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 2,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 158.16332834954096,
+              "minimum": 154.44332231718073,
+              "maximum": 172.34739849680756,
+              "p99": 172.34739849680756,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 57.46695021817686,
+            "minimum": 56.38995060592764,
+            "maximum": 57.68490208100537,
+            "p99": 57.68490208100537,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 17.869799999999998,
+            "minimum": 15.5894,
+            "maximum": 22.0093,
+            "p99": 20.5795,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 4,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 291.98811973337837,
+              "minimum": 279.7196684447805,
+              "maximum": 308.7849312953528,
+              "p99": 308.7849312953528,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 81.52219256993999,
+            "minimum": 79.26467155011353,
+            "maximum": 85.57026026996883,
+            "p99": 85.57026026996883,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 12.311050000000002,
+            "minimum": 10.5868,
+            "maximum": 19.762600000000003,
+            "p99": 15.438199999999998,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 8,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 475.03646275973915,
+              "minimum": 385.2161273139301,
+              "maximum": 481.60494849084574,
+              "p99": 481.60494849084574,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 78.12536239792128,
+            "minimum": 72.31293603853014,
+            "maximum": 84.27634503236048,
+            "p99": 84.27634503236048,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 11.50255,
+            "minimum": 10.1005,
+            "maximum": 132.75400000000002,
+            "p99": 35.186,
+            "samples": 640
+          }
+        }
+      },
+      {
+        "threads": 16,
+        "prefill": {
+          "128": {
+            "tokens_per_second": {
+              "median": 445.583156956667,
+              "minimum": 144.03060650388207,
+              "maximum": 496.8770501030632,
+              "p99": 496.8770501030632,
+              "samples": 5
+            }
+          },
+          "512": {
+            "tokens_per_second": {
+              "median": 667.7770198624536,
+              "minimum": 625.3824665719636,
+              "maximum": 794.323072292708,
+              "p99": 794.323072292708,
+              "samples": 5
+            }
+          }
+        },
+        "decode": {
+          "tokens_per_second": {
+            "median": 45.42115703300486,
+            "minimum": 42.404169310439634,
+            "maximum": 57.963354299463504,
+            "p99": 57.963354299463504,
+            "samples": 5
+          },
+          "ms_per_token": {
+            "median": 16.94775,
+            "minimum": 12.7151,
+            "maximum": 90.699,
+            "p99": 60.9327,
+            "samples": 640
+          }
+        }
+      }
+    ]
+  }
+}
