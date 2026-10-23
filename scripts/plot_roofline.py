@@ -92,10 +92,15 @@ def main():
             )
     for label, manifest in [("runtime f32", "gpt2.json"), ("runtime int8", "gpt2-int8.json")]:
         flops, weight_bytes = model_costs(manifest)
-        rate = m7["results"][label][-1]["decode"]["tokens_per_second"]["median"]
+        # The fastest thread count: decode peaks below the core count here.
+        best = max(
+            m7["results"][label], key=lambda row: row["decode"]["tokens_per_second"]["median"]
+        )
+        rate = best["decode"]["tokens_per_second"]["median"]
         points["all_cores"].append(
             dict(
-                label=f"decode {label.split()[1]}",
+                label=f"decode {label.split()[1]} ({best['threads']} threads)",
+                threads=best["threads"],
                 ai=flops / weight_bytes,
                 gflops=rate * flops / 1e9,
                 ceiling_tokens_per_second=m5["measured_bandwidth_gb_per_second"]
@@ -116,15 +121,12 @@ def main():
         (axes[1], "all_cores", peak, bandwidth, f"{full} cores: kernels and decode"),
     ]:
         ceilings(axis, top, bw, "peak")
-        for point in points[key]:
-            axis.loglog(point["ai"], point["gflops"], "o")
-            axis.annotate(
-                point["label"],
-                (point["ai"], point["gflops"]),
-                fontsize=7,
-                xytext=(4, 2),
-                textcoords="offset points",
+        markers = "osD^v<>phX*"
+        for index, point in enumerate(points[key]):
+            axis.loglog(
+                point["ai"], point["gflops"], markers[index % len(markers)], label=point["label"]
             )
+        axis.legend(fontsize=7, loc="upper left")
         axis.set_xlabel("Arithmetic intensity (flops per byte)")
         axis.set_ylabel("Achieved GFLOPS")
         axis.set_title(title)

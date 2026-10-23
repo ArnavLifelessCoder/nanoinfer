@@ -1,0 +1,116 @@
+{
+  "purpose": "values plotted in docs/roofline.png",
+  "single_core": {
+    "peak_gflops": 62.295143088435736,
+    "read_bandwidth_gb_per_second": 27.204729187047683
+  },
+  "all_cores": {
+    "peak_gflops": 896.772881526034,
+    "read_bandwidth_gb_per_second": 29.6087277569653,
+    "threads": 16
+  },
+  "points": {
+    "single_core": [
+      {
+        "label": "naive 768x768x768",
+        "ai": 128.0,
+        "gflops": 1.1301269551782382
+      },
+      {
+        "label": "naive 1024x3072x768",
+        "ai": 192.0,
+        "gflops": 0.19956357750903478
+      },
+      {
+        "label": "reordered 768x768x768",
+        "ai": 128.0,
+        "gflops": 21.53475169542572
+      },
+      {
+        "label": "reordered 1024x3072x768",
+        "ai": 192.0,
+        "gflops": 21.543901440468684
+      },
+      {
+        "label": "blocked 768x768x768",
+        "ai": 128.0,
+        "gflops": 24.856452021916922
+      },
+      {
+        "label": "blocked 1024x3072x768",
+        "ai": 192.0,
+        "gflops": 21.091873673246713
+      },
+      {
+        "label": "packed 768x768x768",
+        "ai": 128.0,
+        "gflops": 5.075043779329456
+      },
+      {
+        "label": "packed 1024x3072x768",
+        "ai": 192.0,
+        "gflops": 5.0451380688118865
+      },
+      {
+        "label": "avx2 768x768x768",
+        "ai": 128.0,
+        "gflops": 53.20988914813359
+      },
+      {
+        "label": "avx2 1024x3072x768",
+        "ai": 192.0,
+        "gflops": 51.61728812946536
+      }
+    ],
+    "all_cores": [
+      {
+        "label": "GEMM 1024x3072x768",
+        "ai": 192.0,
+        "gflops": 541.9860276783038
+      },
+      {
+        "label": "GEMM 768x768x768",
+        "ai": 128.0,
+        "gflops": 386.0425407248297
+      },
+      {
+        "label": "GEMV 768->3072 int8",
+        "ai": 1.7777777777777777,
+        "gflops": 21.986311480176827
+      },
+      {
+        "label": "GEMV 768->50257 int8 transposed",
+        "ai": 1.7777777777777777,
+        "gflops": 194.2112149481749
+      },
+      {
+        "label": "GEMV 768->3072 f32",
+        "ai": 0.5,
+        "gflops": 23.59536242246207
+      },
+      {
+        "label": "GEMV 768->50257 f32 transposed",
+        "ai": 0.5,
+        "gflops": 20.69094518828385
+      },
+      {
+        "label": "decode f32 (8 threads)",
+        "threads": 8,
+        "ai": 0.49950623571499553,
+        "gflops": 10.363167402238041,
+        "ceiling_tokens_per_second": 59.861980357417906,
+        "measured_tokens_per_second": 41.94526405199115,
+        "weight_bytes_per_token": 494616576
+      },
+      {
+        "label": "decode int8 (4 threads)",
+        "threads": 4,
+        "ai": 1.7715513354521042,
+        "gflops": 20.141204202519976,
+        "ceiling_tokens_per_second": 212.30680152209294,
+        "measured_tokens_per_second": 81.52219256993999,
+        "weight_bytes_per_token": 139461984
+      }
+    ]
+  }
+}
