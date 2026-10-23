@@ -70,7 +70,9 @@ def main():
                 shape=f"768->{parts['n']}",
                 layout=rows[0]["label"],
                 threads=int(parts["threads"]),
-                weight_bytes=768 * int(parts["n"]) * 4,
+                weight_bytes=int(
+                    768 * int(parts["n"]) * (4 if "f32" in rows[0]["label"] else 1.125)
+                ),
                 gb_per_second=rates,
                 percent_of_measured_bandwidth=100 * rates["median"] / measured_bandwidth,
             )

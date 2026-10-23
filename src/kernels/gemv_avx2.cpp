@@ -2,6 +2,7 @@
 #include <immintrin.h>
 
 #include <cstddef>
+#include <cstdint>
 
 #include "kernels/vector_kernels.hpp"
 
@@ -24,6 +25,45 @@ void axpy_avx2(float* y, const float* source, float x, std::size_t count) {
                      _mm256_fmadd_ps(scale, _mm256_loadu_ps(source + j), _mm256_loadu_ps(y + j)));
   }
   for (; j < count; ++j) y[j] += x * source[j];  // Scalar tail: no load past the end.
+}
+
+namespace {
+// Eight int8 values widened to eight floats: load 8 bytes, sign-extend to
+// 32-bit lanes, convert.
+inline __m256 load_q8(const std::int8_t* q) {
+  return _mm256_cvtepi32_ps(
+      _mm256_cvtepi8_epi32(_mm_loadl_epi64(reinterpret_cast<const __m128i*>(q))));
+}
+}  // namespace
+
+void axpy_q8_avx2(float* y, const std::int8_t* q, float x, std::size_t count) {
+  const __m256 scale = _mm256_set1_ps(x);
+  std::size_t j = 0;
+  for (; j + 16 <= count; j += 16) {
+    _mm256_storeu_ps(y + j, _mm256_fmadd_ps(scale, load_q8(q + j), _mm256_loadu_ps(y + j)));
+    _mm256_storeu_ps(y + j + 8,
+                     _mm256_fmadd_ps(scale, load_q8(q + j + 8), _mm256_loadu_ps(y + j + 8)));
+  }
+  for (; j + 8 <= count; j += 8) {
+    _mm256_storeu_ps(y + j, _mm256_fmadd_ps(scale, load_q8(q + j), _mm256_loadu_ps(y + j)));
+  }
+  for (; j < count; ++j) y[j] += x * static_cast<float>(q[j]);  // No load past the end.
+}
+
+float dot_q8_avx2(const float* x, const std::int8_t* q, const float* scales, std::size_t count,
+                  std::size_t group) {
+  __m256 total = _mm256_setzero_ps();
+  for (std::size_t start = 0, g = 0; start < count; start += group, ++g) {
+    __m256 sum = _mm256_setzero_ps();
+    for (std::size_t i = start; i < start + group; i += 8) {
+      sum = _mm256_fmadd_ps(_mm256_loadu_ps(x + i), load_q8(q + i), sum);
+    }
+    total = _mm256_fmadd_ps(sum, _mm256_set1_ps(scales[g]), total);
+  }
+  alignas(32) float lanes[8];
+  _mm256_store_ps(lanes, total);
+  return ((lanes[0] + lanes[1]) + (lanes[2] + lanes[3])) +
+         ((lanes[4] + lanes[5]) + (lanes[6] + lanes[7]));
 }
 
 float dot_avx2(const float* a, const float* b, std::size_t count) {

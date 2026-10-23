@@ -137,18 +137,42 @@ void pack_a(const float* a, std::size_t lda, std::size_t row0, std::size_t mc, s
   }
 }
 
+// Element sources for B: float32, or int8 dequantized while packing. Packed
+// panels are float32 either way, so the micro-kernels are shared.
+struct FloatSource {
+  const float* b;
+  std::size_t inner, columns;
+  bool transpose_b;
+  float operator()(std::size_t p, std::size_t j) const {
+    return b_at(b, p, j, inner, columns, transpose_b);
+  }
+};
+
+struct QuantizedSource {
+  const std::int8_t* q;
+  const float* scales;
+  std::size_t inner, columns, group;
+  bool transpose_b;
+  // float(q) * scale, the exact dequantization of python/quantize.py.
+  float operator()(std::size_t p, std::size_t j) const {
+    if (transpose_b) {
+      return static_cast<float>(q[j * inner + p]) * scales[j * (inner / group) + p / group];
+    }
+    return static_cast<float>(q[p * columns + j]) * scales[(p / group) * columns + j];
+  }
+};
+
 // One NR-column panel (number `panel`) of a kc x nc block of B, row by row,
 // zero padded. Panels are independent, so they can be packed in parallel.
-void pack_b_panel(const float* b, bool transpose_b, std::size_t inner, std::size_t columns,
-                  std::size_t row0, std::size_t kc, std::size_t col0, std::size_t nc,
-                  std::size_t panel, float* packed) {
+template <typename Source>
+void pack_b_panel(const Source& source, std::size_t row0, std::size_t kc, std::size_t col0,
+                  std::size_t nc, std::size_t panel, float* packed) {
   const auto jr = panel * kNr;
   const auto valid = std::min(kNr, nc - jr);
   float* destination = packed + jr * kc;
   for (std::size_t p = 0; p < kc; ++p) {
     for (std::size_t j = 0; j < kNr; ++j) {
-      *destination++ =
-          j < valid ? b_at(b, row0 + p, col0 + jr + j, inner, columns, transpose_b) : 0.0F;
+      *destination++ = j < valid ? source(row0 + p, col0 + jr + j) : 0.0F;
     }
   }
 }
@@ -183,8 +207,9 @@ void micro_kernel_scalar(std::size_t depth, const float* a, const float* b, floa
 // (128 columns) of B. A shape constant, never derived from the thread count.
 constexpr std::size_t kPanelsPerUnit = 8;
 
-void gemm_packed(detail::MicroKernel kernel, const float* a, const float* b, float* c,
-                 std::size_t m, std::size_t n, std::size_t k, bool transpose_b, ThreadPool* pool) {
+template <typename Source>
+void gemm_packed(detail::MicroKernel kernel, const float* a, const Source& source, float* c,
+                 std::size_t m, std::size_t n, std::size_t k, ThreadPool* pool) {
   // The caller's packed B block is shared read-only by every thread.
   thread_local Workspace b_space;
   float* packed_b = b_space.get(kKc * ((std::min(n, kNc) + kNr - 1) / kNr * kNr));
@@ -197,7 +222,7 @@ void gemm_packed(detail::MicroKernel kernel, const float* a, const float* b, flo
       const auto kc = std::min(kKc, k - pc);
       run(pool, panels, [&](std::size_t begin, std::size_t end) {
         for (auto panel = begin; panel < end; ++panel) {
-          pack_b_panel(b, transpose_b, k, n, pc, kc, jc, nc, panel, packed_b);
+          pack_b_panel(source, pc, kc, jc, nc, panel, packed_b);
         }
       });
       // Units are ordered by row block, so a thread's contiguous range of
@@ -311,19 +336,46 @@ void gemm(GemmStep step, std::span<const float> a, std::span<const float> b, std
     case GemmStep::blocked:
       return gemm_blocked(left, right, destination, rows, columns, inner, transpose_b);
     case GemmStep::packed:
-      return gemm_packed(micro_kernel_scalar, left, right, destination, rows, columns, inner,
-                         transpose_b, pool);
+      return gemm_packed(micro_kernel_scalar, left, FloatSource{right, inner, columns, transpose_b},
+                         destination, rows, columns, inner, pool);
     case GemmStep::avx2:
 #if defined(NANOINFER_HAVE_AVX2_KERNEL)
       if (!available(GemmStep::avx2)) {
         throw std::runtime_error("the AVX2 GEMM needs a CPU with AVX2 and FMA");
       }
-      return gemm_packed(detail::micro_kernel_avx2, left, right, destination, rows, columns, inner,
-                         transpose_b, pool);
+      return gemm_packed(detail::micro_kernel_avx2, left,
+                         FloatSource{right, inner, columns, transpose_b}, destination, rows,
+                         columns, inner, pool);
 #else
       throw std::runtime_error("this build has no AVX2 GEMM");
 #endif
   }
   throw std::invalid_argument("unknown GEMM step");
+}
+void gemm(GemmStep step, std::span<const float> a, const QuantizedMatrix& b, std::size_t rows,
+          std::size_t columns, std::size_t inner, std::span<float> output, bool transpose_b,
+          ThreadPool* pool) {
+  if (inner == 0 || columns == 0 || a.size() != ops::ref::elements(rows, inner) ||
+      output.size() != ops::ref::elements(rows, columns)) {
+    throw std::invalid_argument("gemm shape mismatch");
+  }
+  validate(b, columns, inner);
+  if (rows == 0) return;
+  const QuantizedSource source{b.values.data(), b.scales.data(), inner,
+                               columns,         b.group,         transpose_b};
+  if (step == GemmStep::packed) {
+    return gemm_packed(micro_kernel_scalar, a.data(), source, output.data(), rows, columns, inner,
+                       pool);
+  }
+#if defined(NANOINFER_HAVE_AVX2_KERNEL)
+  if (step == GemmStep::avx2) {
+    if (!available(GemmStep::avx2)) {
+      throw std::runtime_error("the AVX2 GEMM needs a CPU with AVX2 and FMA");
+    }
+    return gemm_packed(detail::micro_kernel_avx2, a.data(), source, output.data(), rows, columns,
+                       inner, pool);
+  }
+#endif
+  throw std::invalid_argument("int8 GEMM supports the packed and avx2 steps");
 }
 }  // namespace nanoinfer::kernels

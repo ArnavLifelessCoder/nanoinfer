@@ -4,6 +4,8 @@
 #include <span>
 #include <string_view>
 
+#include "nanoinfer/quantized.hpp"
+
 namespace nanoinfer {
 class ThreadPool;
 }
@@ -47,6 +49,12 @@ struct CpuFeatures {
 // one thread in a fixed order, so the result is bit-identical for any thread
 // count. Steps 1-3 ignore the pool.
 void gemm(GemmStep step, std::span<const float> a, std::span<const float> b, std::size_t rows,
+          std::size_t columns, std::size_t inner, std::span<float> output, bool transpose_b = false,
+          ThreadPool* pool = nullptr);
+
+// int8 weights for prefill (packed and avx2 steps): B panels are dequantized
+// to float32 while they are packed, so the micro-kernels are unchanged.
+void gemm(GemmStep step, std::span<const float> a, const QuantizedMatrix& b, std::size_t rows,
           std::size_t columns, std::size_t inner, std::span<float> output, bool transpose_b = false,
           ThreadPool* pool = nullptr);
 
