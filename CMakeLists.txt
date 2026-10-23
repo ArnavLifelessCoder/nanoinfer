@@ -116,6 +116,8 @@ if(NANOINFER_BENCHMARKS)
   endforeach()
 endif()
 
+add_executable(gpt2ppl src/tools/perplexity.cpp)
+target_link_libraries(gpt2ppl PRIVATE nanoinfer project_options)
 add_executable(gpt2inspect src/tools/inspect.cpp ${INSPECT_MAIN})
 target_include_directories(gpt2inspect PRIVATE src)
 target_link_libraries(gpt2inspect PRIVATE nanoinfer project_options)
@@ -128,7 +130,7 @@ target_link_libraries(gpt2rt PRIVATE nanoinfer project_options)
 if(BUILD_TESTING)
   add_executable(nanoinfer_tests tests/test_main.cpp tests/test_mapped_file.cpp tests/test_loader.cpp
     tests/test_ref_ops.cpp tests/test_kv_cache.cpp tests/test_sampling.cpp tests/test_gemm.cpp
-    tests/test_gemv.cpp tests/test_thread_pool.cpp tests/test_attention.cpp)
+    tests/test_gemv.cpp tests/test_thread_pool.cpp tests/test_attention.cpp tests/test_quantized.cpp)
   target_link_libraries(nanoinfer_tests PRIVATE nanoinfer project_options GTest::gtest)
   add_test(NAME unit COMMAND nanoinfer_tests)
   set_tests_properties(unit PROPERTIES LABELS concurrency)
@@ -199,6 +201,28 @@ if(BUILD_TESTING)
     --golden "${CMAKE_BINARY_DIR}/fixtures/golden")
   set_tests_properties(oracle_tiny PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     FIXTURES_REQUIRED tiny_model FIXTURES_SETUP tiny_oracle)
+  add_test(NAME quantized_model COMMAND "${Python3_EXECUTABLE}" -m tests.quantized_model
+    --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/quantized")
+  set_tests_properties(quantized_model PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+  add_test(NAME export_tiny_int8 COMMAND "${Python3_EXECUTABLE}" -m python.export --tiny
+    --quant int8 --group 16 --output "${CMAKE_BINARY_DIR}/fixtures/tiny-int8.bin")
+  set_tests_properties(export_tiny_int8 PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_SETUP tiny_int8)
+  add_test(NAME oracle_tiny_int8 COMMAND "${Python3_EXECUTABLE}" -m python.oracle --tiny
+    --quant int8 --group 16 --golden "${CMAKE_BINARY_DIR}/fixtures/golden")
+  set_tests_properties(oracle_tiny_int8 PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED tiny_model FIXTURES_SETUP tiny_int8_oracle)
+  add_test(NAME golden_int8 COMMAND "${Python3_EXECUTABLE}" -m tests.golden_int8
+    --executable "$<TARGET_FILE:gpt2opt>" --model "${CMAKE_BINARY_DIR}/fixtures/tiny-int8.bin"
+    --golden "${CMAKE_BINARY_DIR}/fixtures/golden" --directory "${CMAKE_BINARY_DIR}/int8-golden"
+    --report "${CMAKE_BINARY_DIR}/int8-golden-report.json")
+  set_tests_properties(golden_int8 PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED "tiny_model;tiny_oracle;tiny_int8;tiny_int8_oracle" LABELS concurrency)
+  add_test(NAME perplexity_consistency COMMAND "${Python3_EXECUTABLE}" -m
+    tests.perplexity_consistency --executable "$<TARGET_FILE:gpt2ppl>"
+    --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin" --directory "${CMAKE_BINARY_DIR}/perplexity")
+  set_tests_properties(perplexity_consistency PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED tiny_model LABELS concurrency)
   add_test(NAME loader_integration COMMAND "${Python3_EXECUTABLE}" -m tests.loader_integration
     --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/awkward")
   set_tests_properties(loader_integration PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
