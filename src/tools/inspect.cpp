@@ -27,9 +27,10 @@ int inspect_model(const std::filesystem::path& path, bool layout_only) {
   try {
     const Model model(path, layout_only ? ModelValidation::layout_only : ModelValidation::gpt2);
     const auto& config = model.config();
-    std::cout << "{\"format_version\":1,\"config\":{\"layers\":" << config.layers
-              << ",\"d_model\":" << config.d_model << ",\"heads\":" << config.heads
-              << ",\"vocab\":" << config.vocab << ",\"ctx\":" << config.ctx << "},\"tensors\":[";
+    std::cout << "{\"format_version\":" << model.version()
+              << ",\"config\":{\"layers\":" << config.layers << ",\"d_model\":" << config.d_model
+              << ",\"heads\":" << config.heads << ",\"vocab\":" << config.vocab
+              << ",\"ctx\":" << config.ctx << "},\"tensors\":[";
     bool first = true;
     for (const auto& tensor : model.tensors()) {
       if (!first) {
@@ -38,16 +39,18 @@ int inspect_model(const std::filesystem::path& path, bool layout_only) {
       first = false;
       std::cout << "{\"name\":";
       json_string(tensor.name);
-      std::cout << ",\"dtype\":\"f32\",\"shape\":[";
+      const bool q8 = tensor.dtype == DType::q8;
+      std::cout << ",\"dtype\":\"" << (q8 ? "q8" : "f32") << "\",\"shape\":[";
       for (std::size_t axis = 0; axis < tensor.shape.size(); ++axis) {
         if (axis != 0) {
           std::cout << ',';
         }
         std::cout << tensor.shape[axis];
       }
-      std::cout << "],\"offset\":" << tensor.offset
-                << ",\"byte_size\":" << tensor.values.size_bytes()
-                << ",\"crc32\":" << crc32(std::as_bytes(tensor.values)) << '}';
+      std::cout << "],\"offset\":" << tensor.offset << ",\"byte_size\":" << tensor.payload.size()
+                << ",\"crc32\":" << crc32(tensor.payload);
+      if (q8) std::cout << ",\"group\":" << tensor.group << ",\"axis\":" << tensor.axis;
+      std::cout << '}';
     }
     std::cout << "]}\n" << std::flush;
     return 0;

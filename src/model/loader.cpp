@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <array>
 #include <bit>
+#include <cmath>
 #include <cstring>
 #include <limits>
 #include <unordered_set>
@@ -56,7 +57,10 @@ Model::Model(const std::filesystem::path& path, ModelValidation validation) : fi
   const auto bytes = file_.bytes();
   require(bytes.size() >= kHeader, "truncated header");
   require(std::memcmp(bytes.data(), "GPT2RT01", 8) == 0, "invalid magic");
-  require(read<std::uint32_t>(bytes, 8) == 1, "unsupported format version");
+  // Version 2 adds q8 tensors; version 1 files contain only f32.
+  const auto version = read<std::uint32_t>(bytes, 8);
+  require(version == 1 || version == 2, "unsupported format version");
+  version_ = version;
   config_ = {read<std::uint32_t>(bytes, 12), read<std::uint32_t>(bytes, 16),
              read<std::uint32_t>(bytes, 20), read<std::uint32_t>(bytes, 24),
              read<std::uint32_t>(bytes, 28)};
@@ -91,7 +95,9 @@ Model::Model(const std::filesystem::path& path, ModelValidation validation) : fi
     TensorView view;
     view.name.assign(reinterpret_cast<const char*>(name_bytes.data()), length);
     require(names.insert(view.name).second, "duplicate tensor name");
-    require(read<std::uint32_t>(entry, 64) == 1, "unsupported tensor dtype");
+    const auto dtype = read<std::uint32_t>(entry, 64);
+    require(dtype == 1 || (dtype == 2 && version == 2), "unsupported tensor dtype");
+    view.dtype = dtype == 1 ? DType::f32 : DType::q8;
     const auto rank = read<std::uint32_t>(entry, 68);
     require(rank >= 1 && rank <= 4, "invalid tensor rank");
     std::uint64_t elements = 1;
@@ -110,7 +116,24 @@ Model::Model(const std::filesystem::path& path, ModelValidation validation) : fi
             "tensor byte size overflow");
     view.offset = read<std::uint64_t>(entry, 104);
     const auto size = read<std::uint64_t>(entry, 112);
-    require(size == elements * sizeof(float), "tensor shape and byte size disagree");
+    const auto extra = read<std::uint32_t>(entry, 124);
+    std::uint64_t value_bytes = elements * sizeof(float);
+    if (view.dtype == DType::q8) {
+      // extra = group | axis << 16. int8 values, zero padding to 4 bytes, then
+      // one f32 scale per group of `group` values along `axis`.
+      view.group = extra & 0xffffU;
+      view.axis = extra >> 16;
+      require(
+          rank == 2 && view.group > 0 && view.axis <= 1 && view.shape[view.axis] % view.group == 0,
+          "invalid q8 grouping");
+      value_bytes = elements;
+      const auto padded = (value_bytes + 3) / 4 * 4;
+      require(size == padded + elements / view.group * sizeof(float),
+              "tensor shape and byte size disagree");
+    } else {
+      require(extra == 0, "nonzero tensor reserved field");
+      require(size == value_bytes, "tensor shape and byte size disagree");
+    }
     require(view.offset % 64 == 0, "unaligned tensor");
     require(view.offset == expected_offset, "overlapping, reordered or noncanonical tensor offset");
     require(view.offset <= bytes.size() && size <= bytes.size() - view.offset,
@@ -119,9 +142,24 @@ Model::Model(const std::filesystem::path& path, ModelValidation validation) : fi
         bytes.subspan(static_cast<std::size_t>(view.offset), static_cast<std::size_t>(size));
     view.checksum = crc32(payload);
     require(read<std::uint32_t>(entry, 120) == view.checksum, "tensor checksum mismatch");
-    require(read<std::uint32_t>(entry, 124) == 0, "nonzero tensor reserved field");
-    view.values = {reinterpret_cast<const float*>(payload.data()),
-                   static_cast<std::size_t>(elements)};
+    view.payload = payload;
+    if (view.dtype == DType::f32) {
+      view.values = {reinterpret_cast<const float*>(payload.data()),
+                     static_cast<std::size_t>(elements)};
+    } else {
+      view.quantized = {reinterpret_cast<const std::int8_t*>(payload.data()),
+                        static_cast<std::size_t>(elements)};
+      const auto scales_offset = static_cast<std::size_t>((value_bytes + 3) / 4 * 4);
+      require(all_zero(payload.subspan(static_cast<std::size_t>(value_bytes),
+                                       scales_offset - static_cast<std::size_t>(value_bytes))),
+              "nonzero q8 padding");
+      // Payloads start 64-byte aligned and the scales 4-byte aligned after it.
+      view.scales = {reinterpret_cast<const float*>(payload.data() + scales_offset),
+                     static_cast<std::size_t>(elements / view.group)};
+      require(std::all_of(view.scales.begin(), view.scales.end(),
+                          [](float scale) { return std::isfinite(scale) && scale >= 0; }),
+              "invalid q8 scale");
+    }
     view.strides.resize(rank);
     std::uint64_t stride = 1;
     for (std::size_t axis = rank; axis > 0; --axis) {
@@ -144,7 +182,11 @@ Model::Model(const std::filesystem::path& path, ModelValidation validation) : fi
 void Model::validate_gpt2() const {
   const std::uint64_t d = config_.d_model;
   require(tensors_.size() == 4ULL + 12ULL * config_.layers, "GPT-2 tensor count mismatch");
-  auto shape = [this](const std::string& name, std::vector<std::uint64_t> expected) {
+  // q8_axis: the input-dimension axis along which a matrix may be int8
+  // quantized (-1: must stay f32). Conv1D matrices are [in, out]; the tied
+  // embedding is used as [N, K] for the logits.
+  auto shape = [this](const std::string& name, std::vector<std::uint64_t> expected,
+                      int q8_axis = -1) {
     const auto found = std::find_if(tensors_.begin(), tensors_.end(),
                                     [&name](const auto& view) { return view.name == name; });
     if (found == tensors_.end()) {
@@ -153,8 +195,11 @@ void Model::validate_gpt2() const {
     if (found->shape != expected) {
       throw FormatError("tensor shape disagrees with header config: " + name);
     }
+    if (found->dtype == DType::q8 && static_cast<int>(found->axis) != q8_axis) {
+      throw FormatError("tensor may not be int8 quantized along this axis: " + name);
+    }
   };
-  shape("wte.weight", {config_.vocab, d});
+  shape("wte.weight", {config_.vocab, d}, 1);
   shape("wpe.weight", {config_.ctx, d});
   shape("ln_f.weight", {d});
   shape("ln_f.bias", {d});
@@ -164,13 +209,13 @@ void Model::validate_gpt2() const {
       shape(prefix + norm + ".weight", {d});
       shape(prefix + norm + ".bias", {d});
     }
-    shape(prefix + "attn.c_attn.weight", {d, 3 * d});
+    shape(prefix + "attn.c_attn.weight", {d, 3 * d}, 0);
     shape(prefix + "attn.c_attn.bias", {3 * d});
-    shape(prefix + "attn.c_proj.weight", {d, d});
+    shape(prefix + "attn.c_proj.weight", {d, d}, 0);
     shape(prefix + "attn.c_proj.bias", {d});
-    shape(prefix + "mlp.c_fc.weight", {d, 4 * d});
+    shape(prefix + "mlp.c_fc.weight", {d, 4 * d}, 0);
     shape(prefix + "mlp.c_fc.bias", {4 * d});
-    shape(prefix + "mlp.c_proj.weight", {4 * d, d});
+    shape(prefix + "mlp.c_proj.weight", {4 * d, d}, 0);
     shape(prefix + "mlp.c_proj.bias", {d});
   }
 }

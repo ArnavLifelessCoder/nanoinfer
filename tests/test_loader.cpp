@@ -115,7 +115,7 @@ TEST_F(LoaderTest, RejectsBitCorruptionAtEveryByte) {
 
 TEST_F(LoaderTest, RejectsInvalidMetadataEvenWithCorrectChecksum) {
   const std::array<std::pair<std::size_t, std::uint32_t>, 15> invalid{{
-      {8, 2},
+      {8, 3},  // Versions 1 and 2 are supported; 3 is not.
       {12, 0},
       {20, 2},
       {32, 0},

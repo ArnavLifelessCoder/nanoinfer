@@ -21,7 +21,13 @@ struct ForwardResult {
 // complete prefix, using absolute position IDs starting at zero; no KV cache.
 class ReferenceTransformer {
  public:
-  explicit ReferenceTransformer(const std::filesystem::path& path) : model_(path) {}
+  explicit ReferenceTransformer(const std::filesystem::path& path) : model_(path) {
+    for (const auto& view : model_.tensors()) {
+      if (view.dtype != DType::f32) {
+        throw std::invalid_argument("the full-prefix reference needs a float32 model");
+      }
+    }
+  }
   [[nodiscard]] const ModelConfig& config() const noexcept { return model_.config(); }
   [[nodiscard]] ForwardResult forward(std::span<const std::uint32_t> tokens,
                                       bool capture_hidden = true,
