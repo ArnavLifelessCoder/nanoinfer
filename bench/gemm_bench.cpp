@@ -1,10 +1,12 @@
 // Single-thread GEMM throughput for every optimization step on the spec shapes.
 #include <benchmark/benchmark.h>
 
+#include <memory>
 #include <random>
 #include <vector>
 
 #include "nanoinfer/gemm.hpp"
+#include "nanoinfer/thread_pool.hpp"
 
 namespace {
 using nanoinfer::kernels::GemmStep;
@@ -32,6 +34,36 @@ void gemm(benchmark::State& state) {
   state.counters["flops"] = benchmark::Counter(2.0 * static_cast<double>(m * n * k),
                                                benchmark::Counter::kIsIterationInvariantRate);
 }
+
+// Step 6: the avx2 step split across one pinned thread per physical core.
+void gemm_threads(benchmark::State& state) {
+  const auto m = static_cast<std::size_t>(state.range(0));
+  const auto n = static_cast<std::size_t>(state.range(1));
+  const auto k = static_cast<std::size_t>(state.range(2));
+  const auto threads = static_cast<std::size_t>(state.range(3));
+  const auto step = nanoinfer::kernels::best_step();
+  std::mt19937 generator(42);
+  std::uniform_real_distribution<float> distribution(-1, 1);
+  std::vector<float> a(m * k), b(k * n), c(m * n);
+  for (auto& value : a) value = distribution(generator);
+  for (auto& value : b) value = distribution(generator);
+  auto pool = std::make_unique<nanoinfer::ThreadPool>(threads);
+  for (auto _ : state) {
+    nanoinfer::kernels::gemm(step, a, b, m, n, k, c, false, pool.get());
+    benchmark::DoNotOptimize(c.data());
+    benchmark::ClobberMemory();
+  }
+  state.SetLabel(std::string(nanoinfer::kernels::name(step)) + " threaded");
+  state.counters["flops"] = benchmark::Counter(2.0 * static_cast<double>(m * n * k),
+                                               benchmark::Counter::kIsIterationInvariantRate);
+}
+BENCHMARK(gemm_threads)
+    ->ArgNames({"m", "n", "k", "threads"})
+    ->ArgsProduct({{768}, {768}, {768}, {1, 2, 4, 8, 16}})
+    ->ArgsProduct({{1024}, {3072}, {768}, {1, 2, 4, 8, 16}})
+    ->Unit(benchmark::kMillisecond)
+    ->UseRealTime()
+    ->MinTime(0.5);
 
 void shapes(benchmark::internal::Benchmark* benchmark) {
   for (int step = 0; step <= static_cast<int>(GemmStep::avx2); ++step) {
