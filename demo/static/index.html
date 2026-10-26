@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>nanoinfer demo</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <h1>nanoinfer</h1>
+      <p>GPT-2 small on this CPU, with hand-written kernels and no ML framework</p>
+    </div>
+    <div class="badge" id="runtime-badge">connecting</div>
+  </header>
+
+  <main>
+    <section class="panel controls" aria-label="Settings">
+      <label for="prompt">Prompt</label>
+      <textarea id="prompt" rows="5" spellcheck="false">The lighthouse keeper wrote down the weather every evening</textarea>
+
+      <span class="label">Weights</span>
+      <div class="segmented" id="model" role="radiogroup" aria-label="Weights"></div>
+
+      <div class="field">
+        <label for="threads">Threads <output id="threads-value"></output></label>
+        <input id="threads" type="range" min="1" max="16" value="4">
+        <small id="threads-hint">Decode was fastest at 4 to 8 threads in the benchmarks.</small>
+      </div>
+
+      <div class="grid">
+        <div class="field">
+          <label for="max-new">New tokens</label>
+          <input id="max-new" type="number" min="1" max="512" value="80">
+        </div>
+        <div class="field">
+          <label for="seed">Seed</label>
+          <input id="seed" type="number" min="0" value="42">
+        </div>
+        <div class="field">
+          <label for="temperature">Temperature</label>
+          <input id="temperature" type="number" min="0" max="5" step="0.1" value="0.8">
+        </div>
+        <div class="field">
+          <label for="top-k">Top-k</label>
+          <input id="top-k" type="number" min="0" max="50257" value="40">
+        </div>
+        <div class="field">
+          <label for="top-p">Top-p</label>
+          <input id="top-p" type="number" min="0.01" max="1" step="0.05" value="0.95">
+        </div>
+      </div>
+      <small class="note">Temperature 0 is greedy; top-k 0 and top-p 1 turn their filters off.</small>
+
+      <div class="actions">
+        <button id="generate" class="primary">Generate</button>
+        <button id="stop" disabled>Stop</button>
+      </div>
+      <p id="error" class="error" role="alert" hidden></p>
+    </section>
+
+    <section class="panel output" aria-label="Output">
+      <div class="text" id="text" aria-live="polite"><span class="placeholder">Generated text appears here, token by token.</span></div>
+
+      <div class="stats">
+        <div class="stat"><span class="value" id="stat-ttft">-</span><span class="name">time to first token</span></div>
+        <div class="stat"><span class="value" id="stat-prefill">-</span><span class="name">prefill tok/s</span></div>
+        <div class="stat"><span class="value" id="stat-decode">-</span><span class="name">decode tok/s</span></div>
+        <div class="stat"><span class="value" id="stat-latency">-</span><span class="name">ms/token p50 / p99</span></div>
+        <div class="stat"><span class="value" id="stat-tokens">-</span><span class="name">tokens generated</span></div>
+      </div>
+
+      <div class="chart-block">
+        <div class="chart-head">
+          <span>Decode time per token (ms)</span>
+          <span id="compare" class="compare"></span>
+        </div>
+        <canvas id="chart" height="140" aria-label="Per-token decode latency"></canvas>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Runs locally: the page talks to <code>demo/server.py</code>, which runs <code>gpt2rt --stream 1</code>.
+    Benchmark numbers come from <code>results/</code>.
+  </footer>
+  <script src="/app.js"></script>
+</body>
+</html>

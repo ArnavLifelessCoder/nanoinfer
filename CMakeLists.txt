@@ -223,6 +223,11 @@ if(BUILD_TESTING)
     --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin" --directory "${CMAKE_BINARY_DIR}/perplexity")
   set_tests_properties(perplexity_consistency PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
     FIXTURES_REQUIRED tiny_model LABELS concurrency)
+  add_test(NAME demo_stream COMMAND "${Python3_EXECUTABLE}" -m tests.demo_stream
+    --executable "$<TARGET_FILE:gpt2rt>" --model "${CMAKE_BINARY_DIR}/fixtures/tiny.bin"
+    --directory "${CMAKE_BINARY_DIR}/demo-stream")
+  set_tests_properties(demo_stream PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    FIXTURES_REQUIRED tiny_model LABELS concurrency)
   add_test(NAME loader_integration COMMAND "${Python3_EXECUTABLE}" -m tests.loader_integration
     --inspector "$<TARGET_FILE:gpt2inspect>" --directory "${CMAKE_BINARY_DIR}/awkward")
   set_tests_properties(loader_integration PROPERTIES WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
