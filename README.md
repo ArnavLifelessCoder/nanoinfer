@@ -13,6 +13,10 @@ peak and bandwidth, and uses int8 weights to cut the bytes decode has to read.
 
 ## Results
 
+Project page: https://arnavlifelesscoder.github.io/nanoinfer/ (built from `results/` by
+`scripts/build_site.py` and `.github/workflows/pages.yml`).
+
+
 AMD Ryzen 9 8940HX (Zen 4, 16 cores), one DDR5-5200 channel, Windows 11 on AC
 power with the Balanced plan, MSVC 19.44 `/O2 /arch:AVX2`. Medians of 5 to 7
 runs; every number links to a JSON file in `results/` written by a script in
