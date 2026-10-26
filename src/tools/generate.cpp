@@ -1,6 +1,7 @@
 #include "tools/generate.hpp"
 
 #include <charconv>
+#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <optional>
@@ -41,9 +42,10 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
   if (arguments.size() == 1 && arguments[0] == "--help") {
     std::cout << "gpt2rt --model MODEL --prompt-ids IDS [--max-new 128] [--temp 0]\n"
                  "       [--top-k 0] [--top-p 1] [--seed 42] [--gemm auto]\n"
-                 "       [--threads PHYSICAL_CORES]\n"
+                 "       [--threads PHYSICAL_CORES] [--stream 0]\n"
                  "stdout: JSON prompt_ids and generated_ids; temp=0 selects greedy.\n"
                  "--threads: worker count for optimized kernels; 1 with --gemm reference.\n"
+                 "--stream 1: one JSON line per event (prefill, token, done) as it happens.\n"
                  "--gemm: auto, reference, naive, reordered, blocked, packed or avx2.\n"
               << std::flush;
     return 0;
@@ -53,6 +55,7 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
     std::size_t new_tokens = 128;
     std::uint64_t seed = 42;
     std::optional<std::size_t> threads;
+    bool stream = false;
     SamplingOptions options;
     std::optional<kernels::GemmStep> gemm = kernels::best_step();
     std::set<std::string> seen;
@@ -75,6 +78,8 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
         options.top_k = number<std::size_t>(value.string());
       else if (name == "--top-p")
         options.top_p = number<double>(value.string());
+      else if (name == "--stream")
+        stream = number<unsigned>(value.string()) != 0;
       else if (name == "--threads")
         threads = number<std::size_t>(value.string());
       else if (name == "--gemm")
@@ -99,12 +104,38 @@ int generate_main(std::span<const std::filesystem::path> arguments) {
         new_tokens > transformer.config().ctx - ids.size()) {
       throw std::invalid_argument("prompt and continuation exceed model context");
     }
+    using clock = std::chrono::steady_clock;
+    const auto milliseconds = [](clock::time_point start) {
+      return std::chrono::duration<double, std::milli>(clock::now() - start).count();
+    };
+    auto start = clock::now();
     auto state = transformer.prefill(ids);
+    // Each token is reported with the time of the forward pass that produced
+    // its logits: the prefill for the first, one decode step for the rest.
+    double forward_ms = milliseconds(start);
+    if (stream) {
+      std::cout << "{\"event\":\"prefill\",\"tokens\":" << ids.size() << ",\"ms\":" << forward_ms
+                << ",\"threads\":" << transformer.threads() << "}\n"
+                << std::flush;
+    }
     std::vector<std::uint32_t> generated;
     generated.reserve(new_tokens);
     for (std::size_t i = 0; i < new_tokens; ++i) {
       generated.push_back(sampler.sample(std::span(state.logits).last(transformer.config().vocab)));
-      if (i + 1 < new_tokens) state = transformer.decode(generated.back());
+      if (stream) {
+        std::cout << "{\"event\":\"token\",\"id\":" << generated.back() << ",\"ms\":" << forward_ms
+                  << "}\n"
+                  << std::flush;
+      }
+      if (i + 1 < new_tokens) {
+        start = clock::now();
+        state = transformer.decode(generated.back());
+        forward_ms = milliseconds(start);
+      }
+    }
+    if (stream) {
+      std::cout << "{\"event\":\"done\",\"generated\":" << generated.size() << "}\n" << std::flush;
+      return 0;
     }
     auto write_ids = [](std::span<const std::uint32_t> values) {
       std::cout << '[';
