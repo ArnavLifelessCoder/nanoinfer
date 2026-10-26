@@ -111,7 +111,25 @@ uv run python -m python.generate --executable build/release/gpt2rt --model model
 ```
 
 `gpt2rt` takes `--gemm` (auto, reference, naive, reordered, blocked, packed,
-avx2) and `--threads` (default: one per physical core).
+avx2), `--threads` (default: one per physical core) and `--stream 1`, which
+prints one JSON line per event as tokens are produced.
+
+### Web demo
+
+```sh
+uv run python -m demo.server        # then open http://127.0.0.1:8008
+```
+
+![Demo](docs/demo.jpg)
+
+A local page streams tokens from the native runtime as they are generated and
+shows time to first token, prefill and decode tokens/s, per-token decode
+latency and the PyTorch decode rate measured at the same thread count. It lets
+you switch between the float32 and int8 models and set threads, length and
+sampling. The server (`demo/server.py`, standard library plus tiktoken) listens
+on 127.0.0.1 only, accepts only the exported model files, and runs `gpt2rt` with
+an argument list, never a shell; stopping a generation kills the runtime
+process. The page itself has no build step or external dependencies.
 
 Reproduce every number in the results table:
 
